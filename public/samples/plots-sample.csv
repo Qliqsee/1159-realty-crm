@@ -1,0 +1,9 @@
+coordinate,size,byRoadSide,status
+A-101,500 sqm,yes,AVAILABLE
+A-102,500 sqm,yes,AVAILABLE
+A-103,500 sqm,no,AVAILABLE
+B-201,1000 sqm,yes,AVAILABLE
+B-202,1000 sqm,no,SOLD
+C-301,750 sqm,yes,AVAILABLE
+C-302,750 sqm,yes,AVAILABLE
+D-401,300 sqm,no,ARCHIVED

@@ -1,0 +1,306 @@
+NEXT STEPS - REALTY CRM REMAINING TASKS
+========================================
+
+COMPLETED WORK SUMMARY
+----------------------
+- MetricCard component with 6 color variants (default, success, warning, danger, inactive, primary)
+- Input component with error states, icons, helper text, and password toggle functionality
+- Button component with success/warning/danger variants
+- SearchInput component with gold variant for leads and properties pages
+- Searchable Combobox component with debounce
+- Plot interface and types created at types/plot.ts
+- Plots mock data generator at lib/data/plots.ts
+- Plots API at lib/api/plots.ts with CRUD operations
+- Properties page updated with 7 MetricCards
+- Leads and Properties pages use gold search variant
+- Plot count column removed from properties DataTable
+- Property and lead names link to detail pages in current tab
+- Property detail page overhauled with metric cards at top, plots list at bottom, sidebar actions cleaned up
+- Plots mock data initialized when properties load
+
+REMAINING TASKS
+---------------
+
+1. UPDATE FORMS TO USE NEW INPUT VARIANTS
+
+   Task: Update LeadForm component
+   File: components/forms/entities/lead-form.tsx
+   Details: Replace basic Input usage with new Input component that supports error prop, helperText, icon, and showPasswordToggle
+   Example: <Input error={errors.email?.message} helperText="Enter a valid email" />
+
+   Task: Update PropertyForm component
+   File: components/forms/entities/property-form.tsx (may need to be created)
+   Details: Same as above - use enhanced Input component features
+
+2. EDIT PROPERTY FUNCTIONALITY
+
+   Task: Create Edit Property form
+   File: Should be similar to LeadForm at components/forms/entities/property-form.tsx
+   Details:
+   - Include all property fields: name, type, subtype, status, description, state, stateId, lga, lgaId, area, areaId, latitude, longitude, nearbyLandmarks, regularPrice, marketPrice, discountPercentage, finalPrice, availableSizes, paymentDurations, interestRate, overduepenaltyRate, images, videos, primaryImageId
+   - Use React Hook Form + Zod validation
+   - Should accept initialData prop for edit mode
+   - Fields should be prefilled when editing
+   - Should NOT include plot management (plots managed separately on detail page)
+
+   Task: Make Edit Property button work on property detail page
+   File: app/(dashboard)/properties/[id]/page.tsx
+   Current: Button at line 460 just navigates to /properties/{id}/edit
+   Details: Either create edit route page or use Dialog with PropertyForm component
+
+3. PLOT MANAGEMENT FUNCTIONALITY
+
+   Task: Create Edit Plot dialog
+   Details:
+   - Small popup dialog (not full page)
+   - Fields: size, coordinate, byRoadSide, status
+   - Use Dialog component from components/ui/dialog.tsx
+   - Should be triggered from plot action menu (already created at line 63-66 in property detail page)
+   - Need state management for showing/hiding dialog and selected plot
+
+   Task: Create Delete Plot confirmation dialog
+   Details:
+   - Use AlertDialog component
+   - Show warning message
+   - Call deletePlot API function from lib/api/plots.ts
+   - Refresh plots list after deletion
+   - Triggered from plot action menu (already created at line 68-71)
+
+   Task: Wire up Edit Plot action
+   File: app/(dashboard)/properties/[id]/page.tsx
+   Current: Plot actions menu exists but onClick handlers not implemented
+   Details:
+   - Add state for editPlotDialog (boolean) and selectedPlot (Plot | null)
+   - Add onClick to Edit menu item at line 63
+   - Open dialog with selected plot data
+   - Call updatePlot API after form submission
+   - Refresh plots list after update
+
+   Task: Wire up Delete Plot action
+   File: app/(dashboard)/properties/[id]/page.tsx
+   Current: Delete menu item exists but onClick not implemented
+   Details:
+   - Add state for deletePlotDialog and plotToDelete
+   - Add onClick to Delete menu item at line 68
+   - Show confirmation dialog
+   - Call deletePlot(id) API function
+   - Refresh plots list after deletion
+
+4. ADD PLOT FUNCTIONALITY
+
+   Task: Create Add Plot form
+   Details:
+   - Can be same component as Edit Plot but without initialData
+   - Fields: size (required), coordinate (required), byRoadSide (required), status (default AVAILABLE)
+   - Use Dialog component
+   - Wire up to "Add Plots" button at line 409 and "Add Your First Plot" button at line 423
+
+   Task: Create single plot addition workflow
+   Details:
+   - Show dialog with empty form
+   - On submit call createPlot API with propertyId
+   - Refresh plots list after creation
+
+5. CSV IMPORT SYSTEM (MAJOR FEATURE)
+
+   Task: Create CSVImportTable component
+   File: components/common/csv-import-table.tsx
+   Details:
+   - Generic reusable component for CSV imports
+   - Props needed:
+     * columns: array of column definitions with field name and label
+     * onImport: callback with validated data
+     * validationSchema: Zod schema
+   - Features:
+     * File upload input
+     * Parse CSV and auto-match columns to expected fields based on column names
+     * Display editable table with all rows
+     * Each cell should be editable
+     * Missing columns show as empty cells
+     * Submit and Cancel buttons
+     * Validation on submit only (not live)
+     * Show error count: "X records have validation errors"
+     * Highlight invalid fields in red with error message below/beside
+     * Error messages from Zod validation (e.g., "Required", "Invalid email")
+     * Do not submit if any validation errors exist
+
+   Task: Add CSV validation display
+   Details:
+   - Count invalid records
+   - Display count at top: "3 records have validation errors"
+   - Highlight cells with errors in red (border-red-600)
+   - Show error text below or next to field
+   - Prevent submission until all errors resolved
+
+6. CSV IMPORT WORKFLOWS
+
+   Task: Create Import Plots CSV workflow
+   File: Should integrate into property detail page
+   Details:
+   - Add option to "Add Plots" button - dropdown with "Add One by One" and "Import from CSV"
+   - Use CSVImportTable component
+   - Expected CSV columns: size, coordinate, byRoadSide, status
+   - Map columns automatically
+   - Validate with Zod schema
+   - On successful import, call bulkCreatePlots API
+   - Refresh plots list
+
+   Task: Update leads CSV import
+   File: app/(dashboard)/leads/page.tsx
+   Current: Lines 115-194 have basic CSV import
+   Details:
+   - Replace current implementation with CSVImportTable component
+   - Expected CSV columns: firstName, lastName, email, phone, source, status, alternatePhone, sourceDetails, assignedAgentId, tags, followUpDate, interestedProperties
+   - Auto-match columns by name
+   - Use editable table approach
+   - Validate with Zod schema
+   - Show validation errors
+   - Required fields: firstName, lastName, email, phone, source
+
+   Task: Add CSV import/export for properties
+   File: app/(dashboard)/properties/page.tsx
+   Current: Import/Export buttons exist at lines 48-54 but not functional
+   Details:
+   - Wire up Import button to show CSVImportTable
+   - Expected CSV columns: name, type, subtype, status, description, state, stateId, lga, lgaId, area, areaId, latitude, longitude, nearbyLandmarks (comma-separated), regularPrice, marketPrice, discountPercentage, finalPrice, paymentDurations (comma-separated), interestRate, overduepenaltyRate
+   - Auto-match columns
+   - Exclude auto-generated fields: id, createdAt, updatedAt, createdBy, lastUpdatedBy, views, interests, enrollments, sold
+   - Wire up Export button to generate CSV from properties data
+
+7. FILTERS FUNCTIONALITY
+
+   Task: Add filters to properties page
+   File: app/(dashboard)/properties/page.tsx
+   Current: Filter button exists at line 56-59 but not functional
+   Details:
+   - Similar to leads page filters (see app/(dashboard)/leads/page.tsx lines 277-352)
+   - Use Sheet component for filter sidebar
+   - Filter options:
+     * Status: Available, Sold Out, Reserved, Disabled
+     * Type: Land, Apartment
+     * Price range slider or min/max inputs
+   - Show active filter count badge
+   - Apply filters to properties list
+   - Clear filters button
+
+8. SAMPLE CSV FILES
+
+   Task: Create sample properties CSV
+   File: public/samples/properties-sample.csv
+   Columns: name,type,subtype,status,description,state,stateId,lga,lgaId,area,areaId,regularPrice,discountPercentage,finalPrice,interestRate,overduepenaltyRate
+   Include 3-5 sample rows with realistic data
+
+   Task: Create sample leads CSV
+   File: public/samples/leads-sample.csv
+   Columns: firstName,lastName,email,phone,source,status
+   Include 3-5 sample rows with realistic data
+
+   Task: Create sample plots CSV
+   File: public/samples/plots-sample.csv
+   Columns: size,coordinate,byRoadSide,status
+   Include 5-10 sample rows with realistic data
+   Example data:
+   500 sqm,Plot A1-Block 1,true,AVAILABLE
+   600 sqm,Plot A2-Block 1,false,AVAILABLE
+   1000 sqm,Plot B1-Block 2,true,SOLD
+
+TECHNICAL NOTES
+---------------
+
+Plot Type Interface Location: types/plot.ts
+Plot Type Definition:
+  id: string
+  propertyId: string
+  size: string (e.g., "500 sqm")
+  coordinate: string (e.g., "Plot A1-Block 1")
+  byRoadSide: boolean
+  status: "AVAILABLE" | "SOLD" | "ARCHIVED"
+  createdAt: Date
+  updatedAt: Date
+
+Plot API Functions Location: lib/api/plots.ts
+Available functions:
+  getPlots(propertyId?: string)
+  getPlot(id)
+  createPlot(data: CreatePlotInput)
+  updatePlot(id, data: UpdatePlotInput)
+  deletePlot(id)
+  bulkCreatePlots(plots: CreatePlotInput[])
+
+Properties API Location: lib/api/properties.ts
+Plots are initialized on line 102: initializeMockPlots(mockProperties)
+
+Enhanced Input Component Location: components/ui/input.tsx
+New props available:
+  error?: string (shows red border and error message)
+  helperText?: string (shows helper text below)
+  icon?: LucideIcon (shows icon on left or right)
+  iconPosition?: "left" | "right"
+  showPasswordToggle?: boolean (adds eye icon for password fields)
+  variant?: "default" | "error" | "success"
+
+SearchInput Component Location: components/common/search-input.tsx
+New variant prop: "default" | "gold"
+
+MetricCard Component Location: components/common/metric-card.tsx
+New variant prop: "default" | "success" | "warning" | "danger" | "inactive" | "primary"
+Props: title, value, change?, changeLabel?, icon?
+
+Button Component Location: components/ui/button.tsx
+New variants: "success" | "warning" | "danger"
+
+Combobox Component Location: components/ui/combobox.tsx
+Searchable dropdown with debounce functionality
+
+DataTable Component Location: components/tables/data-table.tsx
+New searchVariant prop: "default" | "gold"
+
+Property Detail Page Location: app/(dashboard)/properties/[id]/page.tsx
+Key sections:
+- Metric cards at lines 169-194
+- Plot columns definition at lines 24-77
+- Plot list section at lines 492-530
+- Plots state and loading at lines 84-120
+
+CSV IMPORT IMPLEMENTATION STRATEGY
+-----------------------------------
+
+The CSVImportTable should work like this:
+
+1. User selects CSV file
+2. Component parses CSV and reads column headers
+3. Auto-matches CSV columns to expected fields by column name (case-insensitive)
+4. Displays editable table with all rows
+5. Any missing columns show as empty cells (user can fill manually)
+6. User can edit any cell
+7. On Submit click:
+   - Validate all rows with Zod schema
+   - Count errors
+   - If errors exist:
+     * Show error count at top
+     * Highlight invalid cells in red
+     * Show error message for each invalid cell
+     * Prevent submission
+   - If no errors:
+     * Call onImport callback with clean data
+     * Close dialog/clear form
+8. Cancel button clears everything
+
+Example Zod validation for plots:
+const plotSchema = z.object({
+  size: z.string().min(1, "Size is required"),
+  coordinate: z.string().min(1, "Coordinate is required"),
+  byRoadSide: z.boolean(),
+  status: z.enum(["AVAILABLE", "SOLD", "ARCHIVED"]).default("AVAILABLE")
+})
+
+PRIORITY ORDER
+--------------
+1. CSV Import System (highest priority - affects multiple features)
+2. Plot management dialogs (Edit, Delete, Add)
+3. Property filters
+4. Sample CSV files
+5. Update forms with new Input variants
+6. Edit Property form
+
+END OF NEXT STEPS

@@ -1,0 +1,5 @@
+name,type,subtype,status,description,stateId,lgaId,areaId,regularPrice,marketPrice,discountPercentage,totalPlots,interestRate,overduepenaltyRate,nearbyLandmarks
+Lekki Gardens Phase 3,Land,Residential,Available,Premium residential land in a serene environment with good road access,state-1,lga-2,area-1,50000000,55000000,10,50,5,2,School;Hospital;Shopping Mall
+Victoria Island Estate,Apartment,Luxury,Available,Luxurious apartments with modern amenities and 24/7 security,state-1,lga-1,area-2,75000000,82000000,5,30,5,2,Market;Transport Hub
+Ajah Meadows,Land,Commercial,Available,Commercial land suitable for business development,state-1,lga-2,area-1,35000000,40000000,15,40,5,2,School;Hospital
+Ikeja Heights,Land,Residential,Reserved,Residential plots in a developing area close to the airport,state-1,lga-1,area-1,28000000,32000000,12,60,5,2,Shopping Mall;School

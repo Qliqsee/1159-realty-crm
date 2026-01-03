@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Gold & Black Theme - Light Mode */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 5%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 5%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 5%;
+
+    /* Primary - Gold */
+    --primary: 45 100% 51%;
+    --primary-foreground: 0 0% 5%;
+
+    /* Secondary - Black with slight warmth */
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 45 20% 96%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 45 90% 88%;
+    --accent-foreground: 0 0% 10%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 45 100% 51%;
+
+    --radius: 0.5rem;
+
+    /* Chart Colors - Vibrant and Colorful */
+    --chart-1: 45 100% 51%; /* Gold */
+    --chart-2: 221 83% 53%; /* Blue */
+    --chart-3: 142 76% 36%; /* Green */
+    --chart-4: 280 67% 50%; /* Purple */
+    --chart-5: 346 77% 50%; /* Red/Pink */
+  }
+
+  .dark {
+    /* Dark Mode - Gold & Black Theme */
+    --background: 0 0% 8%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 95%;
+
+    /* Primary - Gold (slightly muted for dark mode) */
+    --primary: 45 95% 55%;
+    --primary-foreground: 0 0% 10%;
+
+    /* Secondary - Lighter gray for dark mode */
+    --secondary: 0 0% 18%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 45 80% 25%;
+    --accent-foreground: 0 0% 95%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 45 95% 55%;
+
+    /* Chart Colors - Adjusted for dark mode */
+    --chart-1: 45 95% 55%; /* Gold */
+    --chart-2: 221 83% 63%; /* Brighter Blue */
+    --chart-3: 142 70% 45%; /* Brighter Green */
+    --chart-4: 280 65% 60%; /* Brighter Purple */
+    --chart-5: 346 75% 60%; /* Brighter Red/Pink */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Remove default borders and use shadows instead */
+@layer utilities {
+  .card-shadow {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .card-shadow-md {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-shadow-lg {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  .card-shadow-xl {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Dark mode shadows with gold tint */
+  .dark .card-shadow {
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.05);
+  }
+
+  .dark .card-shadow-md {
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.08);
+  }
+
+  .dark .card-shadow-lg {
+    box-shadow: 0 8px 24px rgba(255, 215, 0, 0.1);
+  }
+
+  .dark .card-shadow-xl {
+    box-shadow: 0 12px 32px rgba(255, 215, 0, 0.12);
+  }
+}
+
+/* Smooth transitions for theme switching */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/30 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted-foreground/50;
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}

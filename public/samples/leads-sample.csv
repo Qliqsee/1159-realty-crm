@@ -1,0 +1,7 @@
+firstname,lastname,email,phone,alternatePhone,status,source,sourceDetails
+John,Doe,john.doe@example.com,+2348012345678,,New,Website,Contacted via contact form
+Jane,Smith,jane.smith@example.com,+2348087654321,+2348098765432,Contacted,Social Media,Facebook ad campaign
+Michael,Johnson,michael.j@example.com,+2348011112222,,Qualified,Referral,Referred by existing client
+Sarah,Williams,sarah.w@example.com,+2348033334444,,New,Walk-in,Visited office directly
+David,Brown,david.brown@example.com,+2348055556666,,Contacted,Phone Call,Inbound call
+Emily,Davis,emily.davis@example.com,+2348077778888,,Qualified,Agent,Agent referral

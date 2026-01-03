@@ -49,6 +49,12 @@ export const navigationCategories: NavCategory[] = [
         permission: "view:lead",
       },
       {
+        label: "My Leads",
+        href: "/my-leads",
+        icon: "UserCheck",
+        permission: "view:lead",
+      },
+      {
         label: "Properties",
         href: "/properties",
         icon: "Building2",

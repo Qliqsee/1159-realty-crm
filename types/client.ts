@@ -68,6 +68,8 @@ export interface ClientInterest {
   id: string;
   clientId: string;
   clientName: string;
+  clientEmail: string;
+  clientPhone: string;
   propertyId: string;
   propertyName: string;
   message?: string;

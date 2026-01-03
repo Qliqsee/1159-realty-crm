@@ -52,6 +52,19 @@ export const columns: ColumnDef<Partnership>[] = [
     },
   },
   {
+    accessorKey: "partnerEmail",
+    header: "Contact",
+    cell: ({ row }) => {
+      const partnership = row.original
+      return (
+        <div className="flex flex-col gap-0.5 min-w-[200px]">
+          <span className="text-sm">{partnership.partnerEmail}</span>
+          <span className="text-sm text-muted-foreground">{partnership.partnerPhone}</span>
+        </div>
+      )
+    },
+  },
+  {
     accessorKey: "status",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Status" />

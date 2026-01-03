@@ -2,6 +2,10 @@ export type PartnershipApplicationStatus = "Pending" | "Under Review" | "Approve
 
 export type PartnerStatus = "Active" | "Inactive" | "Suspended";
 
+export type PartnershipStatus = "Pending" | "Approved" | "Rejected" | "Suspended" | "Terminated";
+
+export type PartnershipType = "Individual" | "Corporate" | "Realtor" | "Influencer";
+
 export interface PartnershipApplication {
   id: string;
 
@@ -101,4 +105,47 @@ export interface PartnerFilters {
   dateFrom?: Date;
   dateTo?: Date;
   search?: string;
+}
+
+export interface Partnership {
+  id: string;
+  partnershipNumber: string;
+  status: PartnershipStatus;
+  type: PartnershipType;
+  clientId: string;
+  partnerName: string;
+  partnerEmail: string;
+  partnerPhone: string;
+  businessName?: string;
+  businessRegistrationNumber?: string;
+  commissionRate: number;
+  paymentTerms: string;
+  bankAccountName: string;
+  bankAccountNumber: string;
+  bankName: string;
+  totalReferrals: number;
+  successfulReferrals: number;
+  pendingReferrals: number;
+  rejectedReferrals: number;
+  conversionRate: number;
+  totalSalesValue: number;
+  totalCommissionEarned: number;
+  commissionPaid: number;
+  commissionPending: number;
+  lastReferralDate?: Date;
+  lastPaymentDate?: Date;
+  lastPaymentAmount?: number;
+  documents: any[];
+  agreementSigned: boolean;
+  agreementSignedDate?: Date;
+  notes?: string;
+  rating?: number;
+  isActive: boolean;
+  createdBy: string;
+  createdByName: string;
+  createdAt: Date;
+  updatedAt: Date;
+  approvedAt?: Date;
+  approvedBy?: string;
+  approvedByName?: string;
 }

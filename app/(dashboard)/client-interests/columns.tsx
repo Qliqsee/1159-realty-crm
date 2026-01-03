@@ -1,15 +1,13 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal, User, Building2, MessageSquare, ExternalLink } from "lucide-react"
+import { MoreHorizontal, User, Building2, MessageSquare } from "lucide-react"
 import type { ClientInterest } from "@/types"
 import { Button } from "@/components/buttons/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/overlays/dropdown-menu"
 import { StatusBadge } from "@/components/badges/status-badge"
@@ -34,11 +32,11 @@ export const columns: ColumnDef<ClientInterest>[] = [
             <Link
               href={`/clients/${interest.clientId}`}
               className="font-medium hover:underline"
-              target="_blank"
             >
               {interest.clientName}
             </Link>
-            <span className="text-xs text-muted-foreground">ID: {interest.clientId}</span>
+            <span className="text-xs text-muted-foreground">{interest.clientEmail}</span>
+            <span className="text-xs text-muted-foreground">{interest.clientPhone}</span>
           </div>
         </div>
       )
@@ -64,7 +62,6 @@ export const columns: ColumnDef<ClientInterest>[] = [
             >
               {interest.propertyName}
             </Link>
-            <span className="text-xs text-muted-foreground">ID: {interest.propertyId}</span>
           </div>
         </div>
       )
@@ -139,25 +136,6 @@ export const columns: ColumnDef<ClientInterest>[] = [
     },
   },
   {
-    accessorKey: "convertedToEnrollmentId",
-    header: "Enrollment",
-    cell: ({ row }) => {
-      const enrollmentId = row.original.convertedToEnrollmentId
-      return enrollmentId ? (
-        <Link
-          href={`/enrollments/${enrollmentId}`}
-          className="flex items-center gap-1 text-sm text-primary hover:underline"
-          target="_blank"
-        >
-          {enrollmentId}
-          <ExternalLink className="h-3 w-3" />
-        </Link>
-      ) : (
-        <span className="text-xs text-muted-foreground italic">N/A</span>
-      )
-    },
-  },
-  {
     id: "actions",
     cell: ({ row }) => {
       const interest = row.original
@@ -171,16 +149,7 @@ export const columns: ColumnDef<ClientInterest>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(interest.id)}>
-              Copy Interest ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View Client</DropdownMenuItem>
-            <DropdownMenuItem>View Property</DropdownMenuItem>
             <DropdownMenuItem>Mark as Contacted</DropdownMenuItem>
-            <DropdownMenuItem>Mark as Converted</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">Mark as Lost</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

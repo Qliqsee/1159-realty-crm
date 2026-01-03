@@ -1,15 +1,13 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal, Mail, Phone, UserCheck, DollarSign, Users, Link as LinkIcon } from "lucide-react"
+import { MoreHorizontal, UserCheck, DollarSign, Users, Link as LinkIcon } from "lucide-react"
 import type { Partner } from "@/types"
 import { Button } from "@/components/buttons/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/overlays/dropdown-menu"
 import { StatusBadge } from "@/components/badges/status-badge"
@@ -29,29 +27,21 @@ export const columns: ColumnDef<Partner>[] = [
   {
     accessorKey: "clientName",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Partner" />
+      <DataTableColumnHeader column={column} title="Partner Name" />
     ),
     cell: ({ row }) => {
       const partner = row.original
       return (
-        <div className="flex flex-col min-w-[200px]">
+        <div className="flex flex-col gap-1 min-w-[250px]">
           <Link
             href={`/clients/${partner.clientId}`}
-            className="font-medium hover:underline"
+            className="font-medium text-primary hover:underline"
             target="_blank"
           >
             {partner.clientName}
           </Link>
-          <div className="flex flex-col gap-0.5 mt-1">
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Mail className="h-3 w-3" />
-              <span>{partner.clientEmail}</span>
-            </div>
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Phone className="h-3 w-3" />
-              <span>{partner.clientPhone}</span>
-            </div>
-          </div>
+          <span className="text-sm text-muted-foreground">{partner.clientEmail}</span>
+          <span className="text-sm text-muted-foreground">{partner.clientPhone}</span>
         </div>
       )
     },
@@ -64,21 +54,11 @@ export const columns: ColumnDef<Partner>[] = [
     cell: ({ row }) => {
       const partner = row.original
       return (
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
-            <LinkIcon className="h-3 w-3 text-muted-foreground" />
-            <code className="text-sm font-mono bg-muted px-2 py-0.5 rounded">
-              {partner.referralCode}
-            </code>
-          </div>
-          <button
-            onClick={() => {
-              navigator.clipboard.writeText(partner.referralLink)
-            }}
-            className="text-xs text-primary hover:underline text-left"
-          >
-            Copy referral link
-          </button>
+        <div className="flex items-center gap-2">
+          <LinkIcon className="h-3 w-3 text-muted-foreground" />
+          <code className="text-sm font-mono bg-muted px-2 py-0.5 rounded">
+            {partner.referralCode}
+          </code>
         </div>
       )
     },
@@ -212,8 +192,18 @@ export const columns: ColumnDef<Partner>[] = [
   },
   {
     id: "actions",
+    header: "Actions",
     cell: ({ row }) => {
       const partner = row.original
+
+      const copyReferralLink = () => {
+        navigator.clipboard.writeText(partner.referralLink)
+        // Note: toast will need to be imported if you want to show success message
+      }
+
+      const suspendPartner = () => {
+        // TODO: Implement suspend partner functionality
+      }
 
       return (
         <DropdownMenu>
@@ -224,30 +214,16 @@ export const columns: ColumnDef<Partner>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(partner.referralLink)}>
+            <DropdownMenuItem onClick={copyReferralLink}>
               Copy Referral Link
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(partner.id)}>
-              Copy Partner ID
+            <DropdownMenuItem
+              onClick={suspendPartner}
+              className="text-red-600 dark:text-red-400"
+              disabled={partner.status === "Suspended"}
+            >
+              Suspend Partner
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View Details</DropdownMenuItem>
-            <DropdownMenuItem>View Referrals</DropdownMenuItem>
-            <DropdownMenuItem>View Commissions</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            {partner.status === "Active" && (
-              <>
-                <DropdownMenuItem>Deactivate</DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive">Suspend</DropdownMenuItem>
-              </>
-            )}
-            {partner.status === "Inactive" && (
-              <DropdownMenuItem>Reactivate</DropdownMenuItem>
-            )}
-            {partner.status === "Suspended" && (
-              <DropdownMenuItem>Unsuspend</DropdownMenuItem>
-            )}
           </DropdownMenuContent>
         </DropdownMenu>
       )

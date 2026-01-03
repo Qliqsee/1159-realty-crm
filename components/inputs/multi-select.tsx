@@ -67,7 +67,7 @@ export function MultiSelect({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn("w-full justify-between border border-input dark:border-primary focus:outline-none focus:border-2 focus:border-primary", className)}
+          className={cn("w-full justify-between", className)}
         >
           <div className="flex gap-1 flex-wrap">
             {safeValue.length === 0 ? (

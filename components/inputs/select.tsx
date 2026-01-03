@@ -14,11 +14,11 @@ const SelectGroup = SelectPrimitive.Group
 const SelectValue = SelectPrimitive.Value
 
 const selectTriggerVariants = cva(
-  "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 shadow-soft",
+  "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 shadow-soft",
   {
     variants: {
       variant: {
-        default: "border-input dark:border-primary focus:border-primary",
+        default: "border-input focus:border-primary",
         error: "border-red-600 focus:border-red-600",
         success: "border-green-600 focus:border-green-600",
         gold: "border-yellow-600 focus:border-yellow-600",

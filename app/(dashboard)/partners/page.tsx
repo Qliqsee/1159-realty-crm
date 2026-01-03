@@ -218,6 +218,7 @@ export default function PartnersPage() {
           data={partners}
           searchKey="clientName"
           searchPlaceholder="Search partners by name, email, or referral code..."
+          searchVariant="gold"
         />
       )}
     </div>

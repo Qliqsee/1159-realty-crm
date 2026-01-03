@@ -101,6 +101,7 @@ export default function CampaignsPage() {
           data={segments}
           searchKey="name"
           searchPlaceholder="Search segments..."
+          searchVariant="gold"
         />
       </Card>
     </div>

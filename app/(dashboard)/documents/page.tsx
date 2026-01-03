@@ -96,6 +96,7 @@ export default function DocumentsPage() {
           data={groups}
           searchKey="name"
           searchPlaceholder="Search groups..."
+          searchVariant="gold"
         />
       </Card>
     </div>

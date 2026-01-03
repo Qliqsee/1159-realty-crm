@@ -87,6 +87,7 @@ export default function LocationsPage() {
           data={states}
           searchKey="name"
           searchPlaceholder="Search locations..."
+          searchVariant="gold"
         />
       </Card>
     </div>

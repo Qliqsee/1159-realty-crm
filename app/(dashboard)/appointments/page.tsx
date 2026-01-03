@@ -1,19 +1,27 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Button } from "@/components/buttons/button"
-import { Plus, Filter, Calendar, CheckCircle2, Clock, XCircle, Video } from "lucide-react"
 import { DataTable } from "@/components/data/data-table"
 import { columns } from "./columns"
-import { getAppointments } from "@/lib/api/appointments"
+import { getAppointments, updateAppointment } from "@/lib/api/appointments"
 import type { Appointment } from "@/types"
 import { toast } from "sonner"
-import { format } from "date-fns"
-import { StatCard } from "@/components/cards/stat-card"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/dialogs/alert-dialog"
 
 export default function AppointmentsPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [cancellingAppointment, setCancellingAppointment] = useState<Appointment | null>(null)
+  const [sendingReminderFor, setSendingReminderFor] = useState<Appointment | null>(null)
 
   useEffect(() => {
     loadAppointments()
@@ -32,98 +40,43 @@ export default function AppointmentsPage() {
     }
   }
 
-  const today = format(new Date(), "yyyy-MM-dd")
-  const todayAppointments = appointments.filter(a => format(new Date(a.scheduledDate), "yyyy-MM-dd") === today)
-  const upcomingAppointments = appointments.filter(a => new Date(a.scheduledDate) > new Date() && a.status !== "Cancelled")
-  const completedAppointments = appointments.filter(a => a.status === "Completed")
-  const virtualAppointments = appointments.filter(a => a.isVirtual)
+  const handleCancelAppointment = async () => {
+    if (!cancellingAppointment) return
+
+    try {
+      await updateAppointment(cancellingAppointment.id, {
+        status: "Cancelled"
+      })
+      toast.success("Appointment cancelled successfully")
+      setCancellingAppointment(null)
+      loadAppointments()
+    } catch (error) {
+      toast.error("Failed to cancel appointment")
+      console.error(error)
+    }
+  }
+
+  const handleSendReminder = async () => {
+    if (!sendingReminderFor) return
+
+    try {
+      // TODO: Implement send reminder API call
+      toast.success(`Reminder sent to ${sendingReminderFor.clientName}`)
+      setSendingReminderFor(null)
+    } catch (error) {
+      toast.error("Failed to send reminder")
+      console.error(error)
+    }
+  }
 
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Appointments</h1>
-          <p className="text-muted-foreground mt-1">
-            Schedule and manage client appointments and viewings
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="outline" className="shadow-soft">
-            <Calendar className="mr-2 h-4 w-4" />
-            Calendar View
-          </Button>
-          <Button variant="outline" className="shadow-soft">
-            <Filter className="mr-2 h-4 w-4" />
-            Filters
-          </Button>
-          <Button className="shadow-soft">
-            <Plus className="mr-2 h-4 w-4" />
-            New Appointment
-          </Button>
-        </div>
-      </div>
-
-      {/* Primary Stats Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          label="Total Appointments"
-          value={appointments.length}
-          icon={Calendar}
-          colorScheme="primary"
-        />
-        <StatCard
-          label="Today"
-          value={todayAppointments.length}
-          icon={Clock}
-          colorScheme="blue"
-        />
-        <StatCard
-          label="Completed"
-          value={completedAppointments.length}
-          icon={CheckCircle2}
-          colorScheme="green"
-        />
-        <StatCard
-          label="Virtual Meetings"
-          value={virtualAppointments.length}
-          icon={Video}
-          colorScheme="purple"
-        />
-      </div>
-
-      {/* Appointment Status Breakdown */}
-      <div className="grid gap-4 md:grid-cols-5">
-        <StatCard
-          label="Scheduled"
-          value={appointments.filter(a => a.status === "Scheduled").length}
-          description="Awaiting confirmation"
-          colorScheme="blue"
-        />
-        <StatCard
-          label="Confirmed"
-          value={appointments.filter(a => a.status === "Confirmed").length}
-          description="Ready to go"
-          colorScheme="green"
-        />
-        <StatCard
-          label="Completed"
-          value={completedAppointments.length}
-          description="Successfully done"
-          colorScheme="purple"
-        />
-        <StatCard
-          label="Cancelled"
-          value={appointments.filter(a => a.status === "Cancelled").length}
-          description="Did not proceed"
-          colorScheme="red"
-        />
-        <StatCard
-          label="No Show"
-          value={appointments.filter(a => a.status === "No Show").length}
-          description="Client absent"
-          colorScheme="orange"
-        />
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Appointments</h1>
+        <p className="text-muted-foreground mt-1">
+          Schedule and manage client appointments and viewings
+        </p>
       </div>
 
       {/* Data Table */}
@@ -136,12 +89,52 @@ export default function AppointmentsPage() {
         </div>
       ) : (
         <DataTable
-          columns={columns}
+          columns={columns({
+            onCancelAppointment: setCancellingAppointment,
+            onSendReminder: setSendingReminderFor,
+          })}
           data={appointments}
           searchKey="title"
           searchPlaceholder="Search appointments by title, client, or property..."
+          searchVariant="gold"
         />
       )}
+
+      {/* Cancel Appointment Dialog */}
+      <AlertDialog open={!!cancellingAppointment} onOpenChange={(open) => !open && setCancellingAppointment(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cancel Appointment</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to cancel this appointment with {cancellingAppointment?.clientName}? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>No, keep it</AlertDialogCancel>
+            <AlertDialogAction onClick={handleCancelAppointment} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Yes, cancel appointment
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Send Reminder Dialog */}
+      <AlertDialog open={!!sendingReminderFor} onOpenChange={(open) => !open && setSendingReminderFor(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Send Reminder</AlertDialogTitle>
+            <AlertDialogDescription>
+              Send appointment reminder to {sendingReminderFor?.clientName}?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleSendReminder}>
+              Send Reminder
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

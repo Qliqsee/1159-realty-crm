@@ -22,7 +22,7 @@ export interface Appointment {
   interestedClients: AppointmentInterest[];
 
   // Status
-  status: "Scheduled" | "Confirmed" | "Completed" | "Cancelled" | "No Show";
+  status: "Active" | "Closed" | "Cancelled";
 
   // Metadata
   notes?: string;
@@ -52,7 +52,7 @@ export interface AppointmentInterest {
 
 export interface AppointmentFilters {
   propertyId?: string;
-  status?: ("Scheduled" | "Confirmed" | "Completed" | "Cancelled" | "No Show")[];
+  status?: ("Active" | "Closed" | "Cancelled")[];
   dateFrom?: Date;
   dateTo?: Date;
   search?: string;

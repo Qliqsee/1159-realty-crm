@@ -94,6 +94,7 @@ export default function TeamPage() {
           data={teamMembers}
           searchKey="fullName"
           searchPlaceholder="Search team members..."
+          searchVariant="gold"
         />
       </Card>
     </div>

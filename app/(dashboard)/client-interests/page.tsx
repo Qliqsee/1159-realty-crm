@@ -172,6 +172,7 @@ export default function ClientInterestsPage() {
           data={interests}
           searchKey="clientName"
           searchPlaceholder="Search by client name, property, or message..."
+          searchVariant="gold"
         />
       )}
     </div>

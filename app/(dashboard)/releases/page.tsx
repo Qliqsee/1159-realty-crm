@@ -103,6 +103,7 @@ export default function ReleasesPage() {
           data={releases}
           searchKey="recipientName"
           searchPlaceholder="Search by recipient..."
+          searchVariant="gold"
         />
       </Card>
     </div>

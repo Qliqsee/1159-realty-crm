@@ -15,6 +15,7 @@ export * from "./release";
 
 // Additional Modules
 export * from "./appointment";
+export * from "./schedule";
 export * from "./partnership";
 export * from "./document";
 export * from "./support";

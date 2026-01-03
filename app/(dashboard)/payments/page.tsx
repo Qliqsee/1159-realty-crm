@@ -104,6 +104,7 @@ export default function PaymentsPage() {
           data={payments}
           searchKey="clientName"
           searchPlaceholder="Search by client name..."
+          searchVariant="gold"
         />
       </Card>
     </div>

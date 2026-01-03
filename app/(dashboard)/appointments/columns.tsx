@@ -1,7 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal, Calendar, Clock, MapPin, Video, User, Building2, AlertCircle } from "lucide-react"
+import { MoreHorizontal, Calendar, Clock, MapPin, Video, AlertCircle } from "lucide-react"
 import type { Appointment } from "@/types"
 import { Button } from "@/components/buttons/button"
 import {
@@ -15,49 +15,38 @@ import {
 import { StatusBadge } from "@/components/badges/status-badge"
 import { DataTableColumnHeader } from "@/components/data/data-table-column-header"
 import { format } from "date-fns"
+import Link from "next/link"
 
-const getPriorityColor = (priority: string) => {
-  switch (priority) {
-    case "Urgent":
-      return "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20"
-    case "High":
-      return "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20"
-    case "Medium":
-      return "text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20"
-    case "Low":
-      return "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20"
-    default:
-      return "text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/20"
-  }
+interface ColumnsProps {
+  onCancelAppointment: (appointment: Appointment) => void
+  onSendReminder: (appointment: Appointment) => void
 }
 
-export const columns: ColumnDef<Appointment>[] = [
+export const columns = ({ onCancelAppointment, onSendReminder }: ColumnsProps): ColumnDef<Appointment>[] => [
   {
-    accessorKey: "title",
+    accessorKey: "clientName",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Appointment" />
+      <DataTableColumnHeader column={column} title="Client" />
     ),
     cell: ({ row }) => {
       const appointment = row.original
       return (
-        <div className="flex flex-col min-w-[250px]">
-          <div className="flex items-center gap-2">
-            <span className="font-medium">{appointment.title}</span>
-            {appointment.priority && (
-              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${getPriorityColor(appointment.priority)}`}>
-                {appointment.priority}
-              </span>
-            )}
-          </div>
-          <span className="text-xs text-muted-foreground mt-1">{appointment.type}</span>
-          {appointment.propertyName && (
-            <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
-              <Building2 className="h-3 w-3" />
-              <span>{appointment.propertyName}</span>
-            </div>
-          )}
-        </div>
+        <Link
+          href={`/clients/${appointment.clientId}`}
+          className="text-sm font-medium text-primary hover:underline"
+        >
+          {appointment.clientName}
+        </Link>
       )
+    },
+  },
+  {
+    accessorKey: "propertyName",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Property" />
+    ),
+    cell: ({ row }) => {
+      return <span className="text-sm">{row.getValue("propertyName")}</span>
     },
   },
   {
@@ -96,7 +85,7 @@ export const columns: ColumnDef<Appointment>[] = [
               {format(new Date(appointment.startTime), "hh:mm a")} - {format(new Date(appointment.endTime), "hh:mm a")}
             </span>
           </div>
-          {isPast && appointment.status === "Scheduled" && (
+          {isPast && appointment.status === "Active" && (
             <div className="flex items-center gap-1 text-xs text-orange-600 dark:text-orange-400 mt-1">
               <AlertCircle className="h-3 w-3" />
               <span>Past due</span>
@@ -104,30 +93,6 @@ export const columns: ColumnDef<Appointment>[] = [
           )}
         </div>
       )
-    },
-  },
-  {
-    accessorKey: "clientName",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Client" />
-    ),
-    cell: ({ row }) => {
-      const appointment = row.original
-      return (
-        <div className="flex items-center gap-2">
-          <User className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm">{appointment.clientName}</span>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: "agentName",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Agent" />
-    ),
-    cell: ({ row }) => {
-      return <span className="text-sm">{row.getValue("agentName")}</span>
     },
   },
   {
@@ -155,22 +120,6 @@ export const columns: ColumnDef<Appointment>[] = [
     },
   },
   {
-    accessorKey: "duration",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Duration" />
-    ),
-    cell: ({ row }) => {
-      const duration = row.getValue("duration") as number
-      const hours = Math.floor(duration / 60)
-      const minutes = duration % 60
-      return (
-        <span className="text-sm">
-          {hours > 0 && `${hours}h `}{minutes > 0 && `${minutes}m`}
-        </span>
-      )
-    },
-  },
-  {
     id: "actions",
     cell: ({ row }) => {
       const appointment = row.original
@@ -185,31 +134,30 @@ export const columns: ColumnDef<Appointment>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(appointment.id)}>
-              Copy appointment ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
             <DropdownMenuItem>Edit appointment</DropdownMenuItem>
             {appointment.isVirtual && appointment.meetingLink && (
               <DropdownMenuItem>Join meeting</DropdownMenuItem>
             )}
-            <DropdownMenuItem>Send reminder</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onSendReminder(appointment)}>
+              Send reminder
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            {appointment.status === "Scheduled" && (
+            {appointment.status === "Active" && (
               <>
-                <DropdownMenuItem>Confirm appointment</DropdownMenuItem>
                 <DropdownMenuItem>Reschedule</DropdownMenuItem>
+                <DropdownMenuItem>Mark as completed</DropdownMenuItem>
               </>
             )}
-            {appointment.status === "Confirmed" && (
-              <DropdownMenuItem>Mark as completed</DropdownMenuItem>
-            )}
-            {appointment.status === "Completed" && appointment.followUpRequired && (
+            {appointment.status === "Closed" && appointment.followUpRequired && (
               <DropdownMenuItem>Schedule follow-up</DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive">Cancel appointment</DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-destructive"
+              onClick={() => onCancelAppointment(appointment)}
+            >
+              Cancel appointment
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

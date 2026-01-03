@@ -116,6 +116,7 @@ export default function SupportPage() {
           data={tickets}
           searchKey="subject"
           searchPlaceholder="Search tickets..."
+          searchVariant="gold"
         />
       </Card>
     </div>

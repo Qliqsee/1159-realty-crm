@@ -100,6 +100,7 @@ export default function KYCPage() {
           data={submissions}
           searchKey="clientName"
           searchPlaceholder="Search by client name..."
+          searchVariant="gold"
         />
       </Card>
     </div>

@@ -167,6 +167,7 @@ export default function ClientsPage() {
           data={clients}
           searchKey="fullName"
           searchPlaceholder="Search clients by name, email, or phone..."
+          searchVariant="gold"
         />
       )}
     </div>

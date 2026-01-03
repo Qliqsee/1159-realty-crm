@@ -4,6 +4,7 @@ import {
   Users,
   Building2,
   Calendar,
+  CalendarClock,
   UserCheck,
   MessageSquare,
   Handshake,
@@ -57,6 +58,12 @@ export const navigationCategories: NavCategory[] = [
         label: "Appointments",
         href: "/appointments",
         icon: "Calendar",
+        permission: "view:appointment",
+      },
+      {
+        label: "Schedules",
+        href: "/schedules",
+        icon: "CalendarClock",
         permission: "view:appointment",
       },
       {

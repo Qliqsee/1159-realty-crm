@@ -189,6 +189,7 @@ export default function InvoicesPage() {
           data={invoices}
           searchKey="invoiceNumber"
           searchPlaceholder="Search by invoice number, client, or property..."
+          searchVariant="gold"
         />
       )}
     </div>

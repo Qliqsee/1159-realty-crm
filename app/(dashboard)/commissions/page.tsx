@@ -195,6 +195,7 @@ export default function CommissionsPage() {
           data={commissions}
           searchKey="commissionNumber"
           searchPlaceholder="Search by commission number, recipient, or enrollment..."
+          searchVariant="gold"
         />
       )}
     </div>

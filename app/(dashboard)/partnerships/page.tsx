@@ -188,6 +188,7 @@ export default function PartnershipsPage() {
           data={partnerships}
           searchKey="partnerName"
           searchPlaceholder="Search by partner name, number, or email..."
+          searchVariant="gold"
         />
       )}
     </div>

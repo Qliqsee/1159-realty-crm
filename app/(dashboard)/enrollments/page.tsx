@@ -189,6 +189,7 @@ export default function EnrollmentsPage() {
           data={enrollments}
           searchKey="enrollmentNumber"
           searchPlaceholder="Search by enrollment number, client, or property..."
+          searchVariant="gold"
         />
       )}
     </div>

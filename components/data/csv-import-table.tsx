@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/display/table"
 import { Badge } from "@/components/badges/badge"
 import { AlertCircle, CheckCircle2 } from "lucide-react"
@@ -156,19 +156,16 @@ export function CSVImportTable<T extends z.ZodType>({
               <Select
                 value={columnMapping[targetField] || ""}
                 onValueChange={(value) => setColumnMapping(prev => ({ ...prev, [targetField]: value }))}
-              >
-                <SelectTrigger className="h-8 text-xs">
-                  <SelectValue placeholder="Select column" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">-- Not mapped --</SelectItem>
-                  {csvHeaders.map(header => (
-                    <SelectItem key={header} value={header}>
-                      {header}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                placeholder="Select column"
+                triggerClassName="h-8 text-xs"
+                options={[
+                  { value: "", label: "-- Not mapped --" },
+                  ...csvHeaders.map(header => ({
+                    value: header,
+                    label: header
+                  }))
+                ]}
+              />
             </div>
           ))}
         </div>

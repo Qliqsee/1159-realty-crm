@@ -9,7 +9,7 @@ import { getClients } from "@/lib/api/clients"
 import type { Client } from "@/types"
 import { toast } from "sonner"
 
-export default function ClientsPage() {
+export default function MyClientsPage() {
   const [clients, setClients] = useState<Client[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -41,9 +41,9 @@ export default function ClientsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Clients</h1>
+          <h1 className="text-3xl font-bold tracking-tight">My Clients</h1>
           <p className="text-muted-foreground mt-1">
-            Manage your clients, KYC status, and partnerships
+            Manage your personal clients, KYC status, and partnerships
           </p>
         </div>
         <div className="flex flex-wrap gap-2">

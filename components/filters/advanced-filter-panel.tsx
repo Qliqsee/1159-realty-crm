@@ -5,13 +5,7 @@ import { Filter, X, Plus, Trash2 } from "lucide-react"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import {
   Sheet,
   SheetContent,
@@ -182,18 +176,13 @@ export function AdvancedFilterPanel({
                       onValueChange={(value) =>
                         updateCondition(condition.id, { field: value })
                       }
-                    >
-                      <SelectTrigger className="h-9">
-                        <SelectValue placeholder="Select field" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {fields.map((field) => (
-                          <SelectItem key={field.key} value={field.key}>
-                            {field.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      placeholder="Select field"
+                      triggerClassName="h-9"
+                      options={fields.map((field) => ({
+                        value: field.key,
+                        label: field.label
+                      }))}
+                    />
 
                     {/* Operator Selection */}
                     <Select
@@ -201,18 +190,13 @@ export function AdvancedFilterPanel({
                       onValueChange={(value) =>
                         updateCondition(condition.id, { operator: value })
                       }
-                    >
-                      <SelectTrigger className="h-9">
-                        <SelectValue placeholder="Select operator" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {operators.map((op) => (
-                          <SelectItem key={op} value={op}>
-                            {op}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      placeholder="Select operator"
+                      triggerClassName="h-9"
+                      options={operators.map((op) => ({
+                        value: op,
+                        label: op
+                      }))}
+                    />
 
                     {/* Value Input */}
                     {field.type === "select" ? (
@@ -221,21 +205,10 @@ export function AdvancedFilterPanel({
                         onValueChange={(value) =>
                           updateCondition(condition.id, { value })
                         }
-                      >
-                        <SelectTrigger className="h-9">
-                          <SelectValue placeholder="Select value" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {field.options?.map((option) => (
-                            <SelectItem
-                              key={option.value}
-                              value={option.value}
-                            >
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        placeholder="Select value"
+                        triggerClassName="h-9"
+                        options={field.options || []}
+                      />
                     ) : (
                       <Input
                         type={field.type}

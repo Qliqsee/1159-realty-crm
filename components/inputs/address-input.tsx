@@ -3,13 +3,7 @@
 import { MapPin } from "lucide-react"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { cn } from "@/lib/utils"
 
 export interface Address {
@@ -82,18 +76,12 @@ export function AddressInput({
           <Select
             value={value.state}
             onValueChange={(val) => handleChange("state", val)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select state" />
-            </SelectTrigger>
-            <SelectContent className="max-h-[200px]">
-              {nigerianStates.map((state) => (
-                <SelectItem key={state} value={state}>
-                  {state}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            placeholder="Select state"
+            options={nigerianStates.map((state) => ({
+              value: state,
+              label: state
+            }))}
+          />
         </div>
       </div>
 
@@ -112,18 +100,12 @@ export function AddressInput({
           <Select
             value={value.country}
             onValueChange={(val) => handleChange("country", val)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select country" />
-            </SelectTrigger>
-            <SelectContent>
-              {countries.map((country) => (
-                <SelectItem key={country.code} value={country.code}>
-                  {country.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            placeholder="Select country"
+            options={countries.map((country) => ({
+              value: country.code,
+              label: country.name
+            }))}
+          />
         </div>
       </div>
     </div>

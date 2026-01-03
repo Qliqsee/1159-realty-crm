@@ -6,7 +6,7 @@ import * as z from "zod"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { Textarea } from "@/components/inputs/textarea"
 import { CurrencyInput } from "@/components/inputs/currency-input"
 import type { Release, ReleaseType, ReleaseStatus } from "@/types"
@@ -67,59 +67,48 @@ export function ReleaseForm({ initialData, onSubmit, onCancel, isLoading }: Rele
         <div className="space-y-2">
           <Label htmlFor="type">Release Type *</Label>
           <Select
+            id="type"
             value={form.watch("type")}
             onValueChange={(value) => form.setValue("type", value as ReleaseType)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Commission">Commission Release</SelectItem>
-              <SelectItem value="Revocation">Revocation (Refund)</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "Commission", label: "Commission Release" },
+              { value: "Revocation", label: "Revocation (Refund)" },
+            ]}
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="recipientType">Recipient Type</Label>
           <Select
+            id="recipientType"
             value={form.watch("recipientType")}
             onValueChange={(value) => form.setValue("recipientType", value as "Agent" | "Partner" | "Client")}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select type" />
-            </SelectTrigger>
-            <SelectContent>
-              {releaseType === "Commission" ? (
-                <>
-                  <SelectItem value="Agent">Agent</SelectItem>
-                  <SelectItem value="Partner">Partner</SelectItem>
-                </>
-              ) : (
-                <SelectItem value="Client">Client</SelectItem>
-              )}
-            </SelectContent>
-          </Select>
+            placeholder="Select type"
+            options={
+              releaseType === "Commission" ? [
+                { value: "Agent", label: "Agent" },
+                { value: "Partner", label: "Partner" },
+              ] : [
+                { value: "Client", label: "Client" },
+              ]
+            }
+          />
         </div>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="recipientId">Recipient *</Label>
         <Select
+          id="recipientId"
           value={form.watch("recipientId")}
           onValueChange={(value) => form.setValue("recipientId", value)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select recipient" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="recipient-1">Sample Recipient 1</SelectItem>
-            <SelectItem value="recipient-2">Sample Recipient 2</SelectItem>
-          </SelectContent>
-        </Select>
-        {form.formState.errors.recipientId && (
-          <p className="text-sm text-destructive">{form.formState.errors.recipientId.message}</p>
-        )}
+          placeholder="Select recipient"
+          options={[
+            { value: "recipient-1", label: "Sample Recipient 1" },
+            { value: "recipient-2", label: "Sample Recipient 2" },
+          ]}
+          error={form.formState.errors.recipientId?.message}
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -137,18 +126,15 @@ export function ReleaseForm({ initialData, onSubmit, onCancel, isLoading }: Rele
         <div className="space-y-2">
           <Label htmlFor="currency">Currency</Label>
           <Select
+            id="currency"
             value={form.watch("currency")}
             onValueChange={(value) => form.setValue("currency", value)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="NGN">NGN - Nigerian Naira</SelectItem>
-              <SelectItem value="USD">USD - US Dollar</SelectItem>
-              <SelectItem value="GBP">GBP - British Pound</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "NGN", label: "NGN - Nigerian Naira" },
+              { value: "USD", label: "USD - US Dollar" },
+              { value: "GBP", label: "GBP - British Pound" },
+            ]}
+          />
         </div>
       </div>
 
@@ -210,18 +196,15 @@ export function ReleaseForm({ initialData, onSubmit, onCancel, isLoading }: Rele
       <div className="space-y-2">
         <Label htmlFor="status">Status *</Label>
         <Select
+          id="status"
           value={form.watch("status")}
           onValueChange={(value) => form.setValue("status", value as ReleaseStatus)}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Submitted">Submitted</SelectItem>
-            <SelectItem value="Pending">Pending</SelectItem>
-            <SelectItem value="Paid">Paid</SelectItem>
-          </SelectContent>
-        </Select>
+          options={[
+            { value: "Submitted", label: "Submitted" },
+            { value: "Pending", label: "Pending" },
+            { value: "Paid", label: "Paid" },
+          ]}
+        />
       </div>
 
       {status === "Paid" && (
@@ -229,18 +212,16 @@ export function ReleaseForm({ initialData, onSubmit, onCancel, isLoading }: Rele
           <div className="space-y-2">
             <Label htmlFor="paymentMethod">Payment Method</Label>
             <Select
+              id="paymentMethod"
               value={form.watch("paymentMethod")}
               onValueChange={(value) => form.setValue("paymentMethod", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select method" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
-                <SelectItem value="Cash">Cash</SelectItem>
-                <SelectItem value="Cheque">Cheque</SelectItem>
-              </SelectContent>
-            </Select>
+              placeholder="Select method"
+              options={[
+                { value: "Bank Transfer", label: "Bank Transfer" },
+                { value: "Cash", label: "Cash" },
+                { value: "Cheque", label: "Cheque" },
+              ]}
+            />
           </div>
 
           <div className="space-y-2">

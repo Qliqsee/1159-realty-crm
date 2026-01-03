@@ -242,7 +242,7 @@ export default function EnrollmentDetailPage() {
               <Button className="w-full" variant="outline">
                 Freeze Enrollment
               </Button>
-              <Button className="w-full" variant="outline" className="text-red-600">
+              <Button className="w-full text-red-600" variant="outline">
                 Cancel Enrollment
               </Button>
             </CardContent>

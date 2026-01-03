@@ -364,7 +364,7 @@ export default function PartnershipDetailPage() {
                     <CheckCircle className="h-4 w-4 mr-2" />
                     Approve Application
                   </Button>
-                  <Button className="w-full" variant="outline" className="text-red-600">
+                  <Button className="w-full text-red-600" variant="outline">
                     <XCircle className="h-4 w-4 mr-2" />
                     Reject Application
                   </Button>

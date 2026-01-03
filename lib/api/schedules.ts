@@ -32,7 +32,6 @@ export const generateMockSchedules = (count: number = 20): Schedule[] => {
       dateTime,
       location: locations[Math.floor(Math.random() * locations.length)],
       description: descriptions[Math.floor(Math.random() * descriptions.length)],
-      appointmentCount: Math.floor(Math.random() * 15), // Random number of appointments (0-14)
       createdBy: `agent-${Math.floor(Math.random() * 5) + 1}`,
       createdByName: agentNames[Math.floor(Math.random() * agentNames.length)],
       createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000),
@@ -61,7 +60,6 @@ export const createSchedule = async (schedule: Partial<Schedule>): Promise<Sched
     dateTime: schedule.dateTime || new Date(),
     location: schedule.location || "",
     description: schedule.description || "",
-    appointmentCount: 0,
     createdBy: "current-user",
     createdByName: "Current User",
     createdAt: new Date(),

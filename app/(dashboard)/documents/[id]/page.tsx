@@ -431,7 +431,7 @@ export default function DocumentDetailPage() {
                 <Download className="h-4 w-4 mr-2" />
                 Download All
               </Button>
-              <Button className="w-full" variant="outline" className="text-red-600" onClick={() => toast.error("Delete functionality...")}>
+              <Button className="w-full text-red-600" variant="outline" onClick={() => toast.error("Delete functionality...")}>
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete Group
               </Button>

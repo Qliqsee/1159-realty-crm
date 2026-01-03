@@ -3,7 +3,7 @@
 import { DollarSign } from "lucide-react"
 import { Input } from "@/components/inputs/input"
 import {
-  Select,
+  SelectRoot,
   SelectContent,
   SelectItem,
   SelectTrigger,
@@ -66,7 +66,7 @@ export function CurrencyInput({
 
   return (
     <div className={cn("flex gap-2", className)}>
-      <Select value={currency} onValueChange={onCurrencyChange}>
+      <SelectRoot value={currency} onValueChange={onCurrencyChange}>
         <SelectTrigger className="w-[160px]">
           <SelectValue />
         </SelectTrigger>
@@ -77,7 +77,7 @@ export function CurrencyInput({
             </SelectItem>
           ))}
         </SelectContent>
-      </Select>
+      </SelectRoot>
       <div className="relative flex-1">
         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">
           {selectedCurrency?.symbol}

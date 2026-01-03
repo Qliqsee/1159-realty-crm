@@ -6,7 +6,7 @@ import * as z from "zod"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { Textarea } from "@/components/inputs/textarea"
 import { Upload } from "lucide-react"
 import type { PartnershipApplication, PartnershipApplicationStatus } from "@/types"
@@ -57,38 +57,31 @@ export function PartnershipApplicationForm({
         <div className="space-y-2">
           <Label htmlFor="clientId">Client *</Label>
           <Select
+            id="clientId"
             value={form.watch("clientId")}
             onValueChange={(value) => form.setValue("clientId", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select client" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="client-1">Sample Client 1</SelectItem>
-              <SelectItem value="client-2">Sample Client 2</SelectItem>
-            </SelectContent>
-          </Select>
-          {form.formState.errors.clientId && (
-            <p className="text-sm text-destructive">{form.formState.errors.clientId.message}</p>
-          )}
+            placeholder="Select client"
+            options={[
+              { value: "client-1", label: "Sample Client 1" },
+              { value: "client-2", label: "Sample Client 2" },
+            ]}
+            error={form.formState.errors.clientId?.message}
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="status">Status *</Label>
           <Select
+            id="status"
             value={form.watch("status")}
             onValueChange={(value) => form.setValue("status", value as PartnershipApplicationStatus)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Pending">Pending</SelectItem>
-              <SelectItem value="Under Review">Under Review</SelectItem>
-              <SelectItem value="Approved">Approved</SelectItem>
-              <SelectItem value="Rejected">Rejected</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "Pending", label: "Pending" },
+              { value: "Under Review", label: "Under Review" },
+              { value: "Approved", label: "Approved" },
+              { value: "Rejected", label: "Rejected" },
+            ]}
+          />
         </div>
       </div>
 
@@ -129,17 +122,15 @@ export function PartnershipApplicationForm({
         <div className="space-y-2">
           <Label htmlFor="linkedAgentId">Assigned Agent</Label>
           <Select
+            id="linkedAgentId"
             value={form.watch("linkedAgentId")}
             onValueChange={(value) => form.setValue("linkedAgentId", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select agent" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="agent-1">Agent 1</SelectItem>
-              <SelectItem value="agent-2">Agent 2</SelectItem>
-            </SelectContent>
-          </Select>
+            placeholder="Select agent"
+            options={[
+              { value: "agent-1", label: "Agent 1" },
+              { value: "agent-2", label: "Agent 2" },
+            ]}
+          />
         </div>
       )}
 

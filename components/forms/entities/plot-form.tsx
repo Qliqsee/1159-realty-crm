@@ -6,7 +6,7 @@ import * as z from "zod"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { Checkbox } from "@/components/inputs/checkbox"
 import type { Plot, PlotStatus } from "@/types"
 
@@ -66,18 +66,15 @@ export function PlotForm({ initialData, onSubmit, onCancel, isLoading }: PlotFor
       <div className="space-y-2">
         <Label htmlFor="status">Status *</Label>
         <Select
+          id="status"
           value={form.watch("status")}
           onValueChange={(value) => form.setValue("status", value as PlotStatus)}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="AVAILABLE">Available</SelectItem>
-            <SelectItem value="SOLD">Sold</SelectItem>
-            <SelectItem value="ARCHIVED">Archived</SelectItem>
-          </SelectContent>
-        </Select>
+          options={[
+            { value: "AVAILABLE", label: "Available" },
+            { value: "SOLD", label: "Sold" },
+            { value: "ARCHIVED", label: "Archived" },
+          ]}
+        />
       </div>
 
       <div className="flex items-center space-x-2">

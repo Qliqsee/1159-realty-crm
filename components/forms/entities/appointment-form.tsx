@@ -6,7 +6,7 @@ import * as z from "zod"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { Textarea } from "@/components/inputs/textarea"
 import { Calendar } from "@/components/inputs/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/overlays/popover"
@@ -56,20 +56,16 @@ export function AppointmentForm({ initialData, onSubmit, onCancel, isLoading }: 
       <div className="space-y-2">
         <Label htmlFor="propertyId">Property *</Label>
         <Select
+          id="propertyId"
           value={form.watch("propertyId")}
           onValueChange={(value) => form.setValue("propertyId", value)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select property" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="property-1">Sample Property 1</SelectItem>
-            <SelectItem value="property-2">Sample Property 2</SelectItem>
-          </SelectContent>
-        </Select>
-        {form.formState.errors.propertyId && (
-          <p className="text-sm text-destructive">{form.formState.errors.propertyId.message}</p>
-        )}
+          placeholder="Select property"
+          options={[
+            { value: "property-1", label: "Sample Property 1" },
+            { value: "property-2", label: "Sample Property 2" },
+          ]}
+          error={form.formState.errors.propertyId?.message}
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -153,18 +149,15 @@ export function AppointmentForm({ initialData, onSubmit, onCancel, isLoading }: 
         <div className="space-y-2">
           <Label htmlFor="status">Status *</Label>
           <Select
+            id="status"
             value={form.watch("status")}
             onValueChange={(value) => form.setValue("status", value as "Scheduled" | "Completed" | "Cancelled")}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Scheduled">Scheduled</SelectItem>
-              <SelectItem value="Completed">Completed</SelectItem>
-              <SelectItem value="Cancelled">Cancelled</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "Scheduled", label: "Scheduled" },
+              { value: "Completed", label: "Completed" },
+              { value: "Cancelled", label: "Cancelled" },
+            ]}
+          />
         </div>
       </div>
 

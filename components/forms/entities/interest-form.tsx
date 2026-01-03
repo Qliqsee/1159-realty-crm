@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Button } from "@/components/buttons/button"
 import { Label } from "@/components/layout/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { Textarea } from "@/components/inputs/textarea"
 import type { ClientInterest } from "@/types"
 
@@ -42,58 +42,47 @@ export function InterestForm({ initialData, onSubmit, onCancel, isLoading }: Int
         <div className="space-y-2">
           <Label htmlFor="clientId">Client *</Label>
           <Select
+            id="clientId"
             value={form.watch("clientId")}
             onValueChange={(value) => form.setValue("clientId", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select client" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="client-1">Sample Client 1</SelectItem>
-              <SelectItem value="client-2">Sample Client 2</SelectItem>
-            </SelectContent>
-          </Select>
-          {form.formState.errors.clientId && (
-            <p className="text-sm text-destructive">{form.formState.errors.clientId.message}</p>
-          )}
+            placeholder="Select client"
+            options={[
+              { value: "client-1", label: "Sample Client 1" },
+              { value: "client-2", label: "Sample Client 2" },
+            ]}
+            error={form.formState.errors.clientId?.message}
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="propertyId">Property *</Label>
           <Select
+            id="propertyId"
             value={form.watch("propertyId")}
             onValueChange={(value) => form.setValue("propertyId", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select property" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="property-1">Sample Property 1</SelectItem>
-              <SelectItem value="property-2">Sample Property 2</SelectItem>
-            </SelectContent>
-          </Select>
-          {form.formState.errors.propertyId && (
-            <p className="text-sm text-destructive">{form.formState.errors.propertyId.message}</p>
-          )}
+            placeholder="Select property"
+            options={[
+              { value: "property-1", label: "Sample Property 1" },
+              { value: "property-2", label: "Sample Property 2" },
+            ]}
+            error={form.formState.errors.propertyId?.message}
+          />
         </div>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="status">Status *</Label>
         <Select
+          id="status"
           value={form.watch("status")}
           onValueChange={(value) => form.setValue("status", value as "New" | "Contacted" | "Converted" | "Lost")}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="New">New</SelectItem>
-            <SelectItem value="Contacted">Contacted</SelectItem>
-            <SelectItem value="Converted">Converted</SelectItem>
-            <SelectItem value="Lost">Lost</SelectItem>
-          </SelectContent>
-        </Select>
+          options={[
+            { value: "New", label: "New" },
+            { value: "Contacted", label: "Contacted" },
+            { value: "Converted", label: "Converted" },
+            { value: "Lost", label: "Lost" },
+          ]}
+        />
       </div>
 
       <div className="space-y-2">

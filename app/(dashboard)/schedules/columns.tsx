@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal, Calendar, Clock, MapPin, Trash2, Users } from "lucide-react"
+import { MoreHorizontal, Calendar, Clock, MapPin, Trash2 } from "lucide-react"
 import type { Schedule } from "@/types"
 import { Button } from "@/components/buttons/button"
 import {
@@ -71,11 +71,7 @@ function ActionsCell({ schedule, onDelete }: ActionsCellProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Schedule</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this schedule? This will cancel all{" "}
-              <span className="font-semibold text-foreground">
-                {schedule.appointmentCount || 0} appointment(s)
-              </span>{" "}
-              attached to it. This action cannot be undone.
+              Are you sure you want to delete this schedule? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -143,21 +139,6 @@ export const columns = ({ onDelete }: ColumnsProps): ColumnDef<Schedule>[] => [
     ),
     cell: ({ row }) => {
       return <span className="text-sm">{row.getValue("description")}</span>
-    },
-  },
-  {
-    accessorKey: "appointmentCount",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Appointments" />
-    ),
-    cell: ({ row }) => {
-      const count = row.getValue("appointmentCount") as number
-      return (
-        <div className="flex items-center gap-2">
-          <Users className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-medium">{count}</span>
-        </div>
-      )
     },
   },
   {

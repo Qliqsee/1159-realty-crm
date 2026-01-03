@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Phone } from "lucide-react"
 import { Input } from "@/components/inputs/input"
 import {
-  Select,
+  SelectRoot,
   SelectContent,
   SelectItem,
   SelectTrigger,
@@ -67,7 +67,7 @@ export function PhoneInput({
 
   return (
     <div className={cn("flex gap-2", className)}>
-      <Select value={selectedCode} onValueChange={handleCodeChange}>
+      <SelectRoot value={selectedCode} onValueChange={handleCodeChange}>
         <SelectTrigger className="w-[140px]">
           <SelectValue />
         </SelectTrigger>
@@ -78,7 +78,7 @@ export function PhoneInput({
             </SelectItem>
           ))}
         </SelectContent>
-      </Select>
+      </SelectRoot>
       <div className="relative flex-1">
         <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input

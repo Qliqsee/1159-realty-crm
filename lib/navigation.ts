@@ -78,6 +78,12 @@ export const navigationCategories: NavCategory[] = [
         icon: "MessageSquare",
         permission: "view:interest",
       },
+      {
+        label: "My Clients",
+        href: "/my-clients",
+        icon: "Users",
+        permission: "view:client",
+      },
     ],
   },
   {

@@ -6,7 +6,7 @@ import * as z from "zod"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { Textarea } from "@/components/inputs/textarea"
 import { Calendar } from "@/components/inputs/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/overlays/popover"
@@ -59,20 +59,16 @@ export function InvoiceForm({ initialData, onSubmit, onCancel, isLoading }: Invo
       <div className="space-y-2">
         <Label htmlFor="enrollmentId">Enrollment *</Label>
         <Select
+          id="enrollmentId"
           value={form.watch("enrollmentId")}
           onValueChange={(value) => form.setValue("enrollmentId", value)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select enrollment" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="enrollment-1">ENR-001</SelectItem>
-            <SelectItem value="enrollment-2">ENR-002</SelectItem>
-          </SelectContent>
-        </Select>
-        {form.formState.errors.enrollmentId && (
-          <p className="text-sm text-destructive">{form.formState.errors.enrollmentId.message}</p>
-        )}
+          placeholder="Select enrollment"
+          options={[
+            { value: "enrollment-1", label: "ENR-001" },
+            { value: "enrollment-2", label: "ENR-002" },
+          ]}
+          error={form.formState.errors.enrollmentId?.message}
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -154,19 +150,16 @@ export function InvoiceForm({ initialData, onSubmit, onCancel, isLoading }: Invo
         <div className="space-y-2">
           <Label htmlFor="status">Status *</Label>
           <Select
+            id="status"
             value={form.watch("status")}
             onValueChange={(value) => form.setValue("status", value as InvoiceStatus)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Pending">Pending</SelectItem>
-              <SelectItem value="Paid">Paid</SelectItem>
-              <SelectItem value="Overdue">Overdue</SelectItem>
-              <SelectItem value="Resolved">Resolved</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "Pending", label: "Pending" },
+              { value: "Paid", label: "Paid" },
+              { value: "Overdue", label: "Overdue" },
+              { value: "Resolved", label: "Resolved" },
+            ]}
+          />
         </div>
 
         <div className="space-y-2">

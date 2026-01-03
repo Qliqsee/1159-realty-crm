@@ -260,7 +260,7 @@ export default function CampaignDetailPage() {
                           <div className="flex items-center gap-2 mb-1">
                             <p className="font-medium">{contact.name}</p>
                             <Badge variant="outline" className="text-xs">{contact.type}</Badge>
-                            <Badge className={contact.status === "Active" ? "bg-green-500" : "bg-gray-500"} className="text-xs">
+                            <Badge className={`${contact.status === "Active" ? "bg-green-500" : "bg-gray-500"} text-xs`}>
                               {contact.status}
                             </Badge>
                           </div>

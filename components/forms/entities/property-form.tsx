@@ -7,7 +7,7 @@ import { useState } from "react"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { Textarea } from "@/components/inputs/textarea"
 import { CurrencyInput } from "@/components/inputs/currency-input"
 import { MultiSelect } from "@/components/inputs/multi-select"
@@ -103,17 +103,14 @@ export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: Pro
         <div className="space-y-2">
           <Label htmlFor="type">Property Type *</Label>
           <Select
+            id="type"
             value={form.watch("type")}
             onValueChange={(value) => form.setValue("type", value as PropertyType)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Land">Land</SelectItem>
-              <SelectItem value="Apartment">Apartment</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "Land", label: "Land" },
+              { value: "Apartment", label: "Apartment" },
+            ]}
+          />
         </div>
 
         <div className="space-y-2">
@@ -131,19 +128,16 @@ export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: Pro
         <div className="space-y-2">
           <Label htmlFor="status">Status *</Label>
           <Select
+            id="status"
             value={form.watch("status")}
             onValueChange={(value) => form.setValue("status", value as PropertyStatus)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Available">Available</SelectItem>
-              <SelectItem value="Sold Out">Sold Out</SelectItem>
-              <SelectItem value="Reserved">Reserved</SelectItem>
-              <SelectItem value="Disabled">Disabled</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "Available", label: "Available" },
+              { value: "Sold Out", label: "Sold Out" },
+              { value: "Reserved", label: "Reserved" },
+              { value: "Disabled", label: "Disabled" },
+            ]}
+          />
         </div>
       </div>
 
@@ -164,58 +158,46 @@ export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: Pro
         <div className="space-y-2">
           <Label htmlFor="stateId">State *</Label>
           <Select
+            id="stateId"
             value={form.watch("stateId")}
             onValueChange={(value) => form.setValue("stateId", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select state" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="state-1">Lagos</SelectItem>
-              <SelectItem value="state-2">Abuja</SelectItem>
-            </SelectContent>
-          </Select>
-          {form.formState.errors.stateId && (
-            <p className="text-sm text-destructive">{form.formState.errors.stateId.message}</p>
-          )}
+            placeholder="Select state"
+            options={[
+              { value: "state-1", label: "Lagos" },
+              { value: "state-2", label: "Abuja" },
+            ]}
+            error={form.formState.errors.stateId?.message}
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="lgaId">LGA *</Label>
           <Select
+            id="lgaId"
             value={form.watch("lgaId")}
             onValueChange={(value) => form.setValue("lgaId", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select LGA" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="lga-1">Ikeja</SelectItem>
-              <SelectItem value="lga-2">Lekki</SelectItem>
-            </SelectContent>
-          </Select>
-          {form.formState.errors.lgaId && (
-            <p className="text-sm text-destructive">{form.formState.errors.lgaId.message}</p>
-          )}
+            placeholder="Select LGA"
+            options={[
+              { value: "lga-1", label: "Ikeja" },
+              { value: "lga-2", label: "Lekki" },
+            ]}
+            error={form.formState.errors.lgaId?.message}
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="areaId">Area *</Label>
           <Select
+            id="areaId"
             value={form.watch("areaId")}
             onValueChange={(value) => form.setValue("areaId", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select area" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="area-1">Phase 1</SelectItem>
-              <SelectItem value="area-2">Phase 2</SelectItem>
-            </SelectContent>
-          </Select>
-          {form.formState.errors.areaId && (
-            <p className="text-sm text-destructive">{form.formState.errors.areaId.message}</p>
-          )}
+            placeholder="Select area"
+            options={[
+              { value: "area-1", label: "Phase 1" },
+              { value: "area-2", label: "Phase 2" },
+            ]}
+            error={form.formState.errors.areaId?.message}
+          />
         </div>
       </div>
 

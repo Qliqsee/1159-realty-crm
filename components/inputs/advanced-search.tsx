@@ -5,13 +5,7 @@ import { Search, X, Filter } from "lucide-react"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import {
   Popover,
   PopoverContent,
@@ -144,20 +138,10 @@ export function AdvancedSearch({
                       onValueChange={(value) =>
                         handleFilterChange(field.key, value)
                       }
-                    >
-                      <SelectTrigger className="h-9">
-                        <SelectValue
-                          placeholder={field.placeholder || `Select ${field.label}`}
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {field.options?.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      placeholder={field.placeholder || `Select ${field.label}`}
+                      triggerClassName="h-9"
+                      options={field.options || []}
+                    />
                   ) : (
                     <Input
                       type={field.type}

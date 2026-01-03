@@ -6,7 +6,7 @@ import * as z from "zod"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { CurrencyInput } from "@/components/inputs/currency-input"
 import type { Enrollment, EnrollmentStatus, PaymentType, EnrollmentType } from "@/types"
 
@@ -63,39 +63,31 @@ export function EnrollmentForm({ initialData, onSubmit, onCancel, isLoading }: E
         <div className="space-y-2">
           <Label htmlFor="clientId">Client *</Label>
           <Select
+            id="clientId"
             value={form.watch("clientId")}
             onValueChange={(value) => form.setValue("clientId", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select client" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="client-1">Sample Client 1</SelectItem>
-              <SelectItem value="client-2">Sample Client 2</SelectItem>
-            </SelectContent>
-          </Select>
-          {form.formState.errors.clientId && (
-            <p className="text-sm text-destructive">{form.formState.errors.clientId.message}</p>
-          )}
+            placeholder="Select client"
+            options={[
+              { value: "client-1", label: "Sample Client 1" },
+              { value: "client-2", label: "Sample Client 2" },
+            ]}
+            error={form.formState.errors.clientId?.message}
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="propertyId">Property *</Label>
           <Select
+            id="propertyId"
             value={form.watch("propertyId")}
             onValueChange={(value) => form.setValue("propertyId", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select property" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="property-1">Sample Property 1</SelectItem>
-              <SelectItem value="property-2">Sample Property 2</SelectItem>
-            </SelectContent>
-          </Select>
-          {form.formState.errors.propertyId && (
-            <p className="text-sm text-destructive">{form.formState.errors.propertyId.message}</p>
-          )}
+            placeholder="Select property"
+            options={[
+              { value: "property-1", label: "Sample Property 1" },
+              { value: "property-2", label: "Sample Property 2" },
+            ]}
+            error={form.formState.errors.propertyId?.message}
+          />
         </div>
       </div>
 
@@ -103,36 +95,29 @@ export function EnrollmentForm({ initialData, onSubmit, onCancel, isLoading }: E
         <div className="space-y-2">
           <Label htmlFor="agentId">Agent *</Label>
           <Select
+            id="agentId"
             value={form.watch("agentId")}
             onValueChange={(value) => form.setValue("agentId", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select agent" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="agent-1">Sample Agent 1</SelectItem>
-              <SelectItem value="agent-2">Sample Agent 2</SelectItem>
-            </SelectContent>
-          </Select>
-          {form.formState.errors.agentId && (
-            <p className="text-sm text-destructive">{form.formState.errors.agentId.message}</p>
-          )}
+            placeholder="Select agent"
+            options={[
+              { value: "agent-1", label: "Sample Agent 1" },
+              { value: "agent-2", label: "Sample Agent 2" },
+            ]}
+            error={form.formState.errors.agentId?.message}
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="enrollmentType">Enrollment Type *</Label>
           <Select
+            id="enrollmentType"
             value={form.watch("enrollmentType")}
             onValueChange={(value) => form.setValue("enrollmentType", value as EnrollmentType)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Company Lead">Company Lead</SelectItem>
-              <SelectItem value="Private Lead">Private Lead</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "Company Lead", label: "Company Lead" },
+              { value: "Private Lead", label: "Private Lead" },
+            ]}
+          />
         </div>
       </div>
 
@@ -140,17 +125,14 @@ export function EnrollmentForm({ initialData, onSubmit, onCancel, isLoading }: E
         <div className="space-y-2">
           <Label htmlFor="paymentType">Payment Type *</Label>
           <Select
+            id="paymentType"
             value={form.watch("paymentType")}
             onValueChange={(value) => form.setValue("paymentType", value as PaymentType)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Outright">Outright</SelectItem>
-              <SelectItem value="Installment">Installment</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "Outright", label: "Outright" },
+              { value: "Installment", label: "Installment" },
+            ]}
+          />
         </div>
 
         {paymentType === "Installment" && (
@@ -215,19 +197,16 @@ export function EnrollmentForm({ initialData, onSubmit, onCancel, isLoading }: E
       <div className="space-y-2">
         <Label htmlFor="status">Status *</Label>
         <Select
+          id="status"
           value={form.watch("status")}
           onValueChange={(value) => form.setValue("status", value as EnrollmentStatus)}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Ongoing">Ongoing</SelectItem>
-            <SelectItem value="Completed">Completed</SelectItem>
-            <SelectItem value="Cancelled">Cancelled</SelectItem>
-            <SelectItem value="Frozen">Frozen</SelectItem>
-          </SelectContent>
-        </Select>
+          options={[
+            { value: "Ongoing", label: "Ongoing" },
+            { value: "Completed", label: "Completed" },
+            { value: "Cancelled", label: "Cancelled" },
+            { value: "Frozen", label: "Frozen" },
+          ]}
+        />
       </div>
 
       <div className="flex justify-end gap-3">

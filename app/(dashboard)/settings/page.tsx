@@ -8,13 +8,7 @@ import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
 import { Switch } from "@/components/inputs/switch"
 import { Textarea } from "@/components/inputs/textarea"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import {
   Settings,
   CreditCard,
@@ -115,42 +109,42 @@ export default function SettingsPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="timezone">Timezone</Label>
-                  <Select defaultValue="africa-lagos">
-                    <SelectTrigger className="shadow-soft">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="africa-lagos">Africa/Lagos (WAT)</SelectItem>
-                      <SelectItem value="utc">UTC</SelectItem>
-                      <SelectItem value="africa-cairo">Africa/Cairo (EET)</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Select
+                    value="africa-lagos"
+                    onValueChange={() => {}}
+                    triggerClassName="shadow-soft"
+                    options={[
+                      { value: "africa-lagos", label: "Africa/Lagos (WAT)" },
+                      { value: "utc", label: "UTC" },
+                      { value: "africa-cairo", label: "Africa/Cairo (EET)" }
+                    ]}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="currency">Default Currency</Label>
-                  <Select defaultValue="ngn">
-                    <SelectTrigger className="shadow-soft">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ngn">Nigerian Naira (₦)</SelectItem>
-                      <SelectItem value="usd">US Dollar ($)</SelectItem>
-                      <SelectItem value="gbp">British Pound (£)</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Select
+                    value="ngn"
+                    onValueChange={() => {}}
+                    triggerClassName="shadow-soft"
+                    options={[
+                      { value: "ngn", label: "Nigerian Naira (₦)" },
+                      { value: "usd", label: "US Dollar ($)" },
+                      { value: "gbp", label: "British Pound (£)" }
+                    ]}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="date-format">Date Format</Label>
-                  <Select defaultValue="dd-mm-yyyy">
-                    <SelectTrigger className="shadow-soft">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="dd-mm-yyyy">DD/MM/YYYY</SelectItem>
-                      <SelectItem value="mm-dd-yyyy">MM/DD/YYYY</SelectItem>
-                      <SelectItem value="yyyy-mm-dd">YYYY-MM-DD</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Select
+                    value="dd-mm-yyyy"
+                    onValueChange={() => {}}
+                    triggerClassName="shadow-soft"
+                    options={[
+                      { value: "dd-mm-yyyy", label: "DD/MM/YYYY" },
+                      { value: "mm-dd-yyyy", label: "MM/DD/YYYY" },
+                      { value: "yyyy-mm-dd", label: "YYYY-MM-DD" }
+                    ]}
+                  />
                 </div>
               </div>
 
@@ -196,16 +190,16 @@ export default function SettingsPage() {
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="payment-provider">Payment Provider</Label>
-                <Select defaultValue="paystack">
-                  <SelectTrigger className="shadow-soft">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="paystack">Paystack</SelectItem>
-                    <SelectItem value="flutterwave">Flutterwave</SelectItem>
-                    <SelectItem value="stripe">Stripe</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Select
+                  value="paystack"
+                  onValueChange={() => {}}
+                  triggerClassName="shadow-soft"
+                  options={[
+                    { value: "paystack", label: "Paystack" },
+                    { value: "flutterwave", label: "Flutterwave" },
+                    { value: "stripe", label: "Stripe" }
+                  ]}
+                />
               </div>
 
               <div className="space-y-2">
@@ -361,16 +355,16 @@ export default function SettingsPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="farming-due-day">Payment Due Day</Label>
-                  <Select defaultValue="1">
-                    <SelectTrigger className="shadow-soft">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">1st of every month</SelectItem>
-                      <SelectItem value="15">15th of every month</SelectItem>
-                      <SelectItem value="custom">Custom schedule</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Select
+                    value="1"
+                    onValueChange={() => {}}
+                    triggerClassName="shadow-soft"
+                    options={[
+                      { value: "1", label: "1st of every month" },
+                      { value: "15", label: "15th of every month" },
+                      { value: "custom", label: "Custom schedule" }
+                    ]}
+                  />
                 </div>
               </div>
 
@@ -406,19 +400,19 @@ export default function SettingsPage() {
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="email-template">Template Type</Label>
-                <Select defaultValue="welcome">
-                  <SelectTrigger className="shadow-soft">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="welcome">Welcome Email</SelectItem>
-                    <SelectItem value="payment-reminder">Payment Reminder</SelectItem>
-                    <SelectItem value="payment-confirmation">Payment Confirmation</SelectItem>
-                    <SelectItem value="kyc-approval">KYC Approval</SelectItem>
-                    <SelectItem value="kyc-rejection">KYC Rejection</SelectItem>
-                    <SelectItem value="enrollment">Enrollment Confirmation</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Select
+                  value="welcome"
+                  onValueChange={() => {}}
+                  triggerClassName="shadow-soft"
+                  options={[
+                    { value: "welcome", label: "Welcome Email" },
+                    { value: "payment-reminder", label: "Payment Reminder" },
+                    { value: "payment-confirmation", label: "Payment Confirmation" },
+                    { value: "kyc-approval", label: "KYC Approval" },
+                    { value: "kyc-rejection", label: "KYC Rejection" },
+                    { value: "enrollment", label: "Enrollment Confirmation" }
+                  ]}
+                />
               </div>
 
               <div className="space-y-2">
@@ -472,17 +466,17 @@ The 1159 Realty Team`}
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="sms-template">Template Type</Label>
-                <Select defaultValue="payment-reminder">
-                  <SelectTrigger className="shadow-soft">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="payment-reminder">Payment Reminder</SelectItem>
-                    <SelectItem value="payment-confirmation">Payment Confirmation</SelectItem>
-                    <SelectItem value="appointment">Appointment Reminder</SelectItem>
-                    <SelectItem value="overdue">Overdue Notice</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Select
+                  value="payment-reminder"
+                  onValueChange={() => {}}
+                  triggerClassName="shadow-soft"
+                  options={[
+                    { value: "payment-reminder", label: "Payment Reminder" },
+                    { value: "payment-confirmation", label: "Payment Confirmation" },
+                    { value: "appointment", label: "Appointment Reminder" },
+                    { value: "overdue", label: "Overdue Notice" }
+                  ]}
+                />
               </div>
 
               <div className="space-y-2">
@@ -577,19 +571,19 @@ The 1159 Realty Team`}
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="role-select">Select Role</Label>
-                <Select defaultValue="agent">
-                  <SelectTrigger className="shadow-soft">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="manager">Manager</SelectItem>
-                    <SelectItem value="agent">Agent</SelectItem>
-                    <SelectItem value="cst">CST</SelectItem>
-                    <SelectItem value="accounting">Accounting</SelectItem>
-                    <SelectItem value="hr">HR</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Select
+                  value="agent"
+                  onValueChange={() => {}}
+                  triggerClassName="shadow-soft"
+                  options={[
+                    { value: "admin", label: "Admin" },
+                    { value: "manager", label: "Manager" },
+                    { value: "agent", label: "Agent" },
+                    { value: "cst", label: "CST" },
+                    { value: "accounting", label: "Accounting" },
+                    { value: "hr", label: "HR" }
+                  ]}
+                />
               </div>
 
               <div className="space-y-3">
@@ -634,16 +628,16 @@ The 1159 Realty Team`}
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="release-mode">Release Mode</Label>
-                <Select defaultValue="auto-all">
-                  <SelectTrigger className="shadow-soft">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="auto-all">Auto-release for all except specified users</SelectItem>
-                    <SelectItem value="auto-specific">Auto-release only for specified users</SelectItem>
-                    <SelectItem value="manual">Manual approval required for all</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Select
+                  value="auto-all"
+                  onValueChange={() => {}}
+                  triggerClassName="shadow-soft"
+                  options={[
+                    { value: "auto-all", label: "Auto-release for all except specified users" },
+                    { value: "auto-specific", label: "Auto-release only for specified users" },
+                    { value: "manual", label: "Manual approval required for all" }
+                  ]}
+                />
               </div>
 
               <div className="space-y-2">

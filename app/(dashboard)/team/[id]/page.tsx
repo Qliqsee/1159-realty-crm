@@ -175,7 +175,7 @@ export default function TeamMemberDetailPage() {
                 <div>
                   <h3 className="text-xl font-bold">{member.fullName}</h3>
                   <p className="text-muted-foreground">{member.role}</p>
-                  <Badge className={statusColors[member.status]} className="mt-1">
+                  <Badge className={`${statusColors[member.status]} mt-1`}>
                     {member.status}
                   </Badge>
                 </div>
@@ -342,7 +342,7 @@ export default function TeamMemberDetailPage() {
                     {activityLog.map((log) => (
                       <div key={log.id} className="flex gap-3 p-3 bg-muted/30 rounded-lg">
                         <div className="flex-shrink-0">
-                          <Badge className={actionTypeColors[log.type]} className="text-xs">
+                          <Badge className={`${actionTypeColors[log.type]} text-xs`}>
                             {log.type}
                           </Badge>
                         </div>
@@ -411,13 +411,13 @@ export default function TeamMemberDetailPage() {
                 Send Email
               </Button>
               {member.status === "Active" && (
-                <Button className="w-full" variant="outline" className="text-red-600" onClick={() => toast.error("Deactivating user...")}>
+                <Button className="w-full text-red-600" variant="outline" onClick={() => toast.error("Deactivating user...")}>
                   <UserX className="h-4 w-4 mr-2" />
                   Deactivate Account
                 </Button>
               )}
               {member.status === "Inactive" && (
-                <Button className="w-full" variant="outline" className="text-green-600" onClick={() => toast.success("Activating user...")}>
+                <Button className="w-full text-green-600" variant="outline" onClick={() => toast.success("Activating user...")}>
                   <UserCheck className="h-4 w-4 mr-2" />
                   Activate Account
                 </Button>

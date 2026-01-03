@@ -6,7 +6,7 @@ import * as z from "zod"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import type { State, LGA, Area, LocationStatus } from "@/types"
 
 const locationSchema = z.object({
@@ -48,18 +48,15 @@ export function LocationForm({ initialData, locationType = "State", onSubmit, on
       <div className="space-y-2">
         <Label htmlFor="locationType">Location Type *</Label>
         <Select
+          id="locationType"
           value={form.watch("locationType")}
           onValueChange={(value) => form.setValue("locationType", value as "State" | "LGA" | "Area")}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="State">State</SelectItem>
-            <SelectItem value="LGA">LGA (Local Government Area)</SelectItem>
-            <SelectItem value="Area">Area</SelectItem>
-          </SelectContent>
-        </Select>
+          options={[
+            { value: "State", label: "State" },
+            { value: "LGA", label: "LGA (Local Government Area)" },
+            { value: "Area", label: "Area" },
+          ]}
+        />
       </div>
 
       <div className="space-y-2">
@@ -93,18 +90,16 @@ export function LocationForm({ initialData, locationType = "State", onSubmit, on
         <div className="space-y-2">
           <Label htmlFor="stateId">State *</Label>
           <Select
+            id="stateId"
             value={form.watch("stateId")}
             onValueChange={(value) => form.setValue("stateId", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select state" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="state-1">Lagos</SelectItem>
-              <SelectItem value="state-2">Abuja</SelectItem>
-              <SelectItem value="state-3">Rivers</SelectItem>
-            </SelectContent>
-          </Select>
+            placeholder="Select state"
+            options={[
+              { value: "state-1", label: "Lagos" },
+              { value: "state-2", label: "Abuja" },
+              { value: "state-3", label: "Rivers" },
+            ]}
+          />
         </div>
       )}
 
@@ -112,35 +107,30 @@ export function LocationForm({ initialData, locationType = "State", onSubmit, on
         <div className="space-y-2">
           <Label htmlFor="lgaId">LGA *</Label>
           <Select
+            id="lgaId"
             value={form.watch("lgaId")}
             onValueChange={(value) => form.setValue("lgaId", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select LGA" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="lga-1">Ikeja</SelectItem>
-              <SelectItem value="lga-2">Lekki</SelectItem>
-              <SelectItem value="lga-3">Victoria Island</SelectItem>
-            </SelectContent>
-          </Select>
+            placeholder="Select LGA"
+            options={[
+              { value: "lga-1", label: "Ikeja" },
+              { value: "lga-2", label: "Lekki" },
+              { value: "lga-3", label: "Victoria Island" },
+            ]}
+          />
         </div>
       )}
 
       <div className="space-y-2">
         <Label htmlFor="status">Status *</Label>
         <Select
+          id="status"
           value={form.watch("status")}
           onValueChange={(value) => form.setValue("status", value as LocationStatus)}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Active">Active</SelectItem>
-            <SelectItem value="Inactive">Inactive</SelectItem>
-          </SelectContent>
-        </Select>
+          options={[
+            { value: "Active", label: "Active" },
+            { value: "Inactive", label: "Inactive" },
+          ]}
+        />
       </div>
 
       <div className="flex justify-end gap-3">

@@ -6,7 +6,7 @@ import * as z from "zod"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { Textarea } from "@/components/inputs/textarea"
 import { Upload } from "lucide-react"
 import type { DocumentGroup, DocumentGroupType } from "@/types"
@@ -69,35 +69,30 @@ export function DocumentForm({ initialData, onSubmit, onCancel, isLoading }: Doc
       <div className="space-y-2">
         <Label htmlFor="type">Group Type *</Label>
         <Select
+          id="type"
           value={form.watch("type")}
           onValueChange={(value) => form.setValue("type", value as DocumentGroupType)}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="General">General</SelectItem>
-            <SelectItem value="Property">Property-Specific</SelectItem>
-            <SelectItem value="Client">Client-Specific</SelectItem>
-          </SelectContent>
-        </Select>
+          options={[
+            { value: "General", label: "General" },
+            { value: "Property", label: "Property-Specific" },
+            { value: "Client", label: "Client-Specific" },
+          ]}
+        />
       </div>
 
       {documentType === "Property" && (
         <div className="space-y-2">
           <Label htmlFor="propertyId">Property</Label>
           <Select
+            id="propertyId"
             value={form.watch("propertyId")}
             onValueChange={(value) => form.setValue("propertyId", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select property" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="property-1">Sample Property 1</SelectItem>
-              <SelectItem value="property-2">Sample Property 2</SelectItem>
-            </SelectContent>
-          </Select>
+            placeholder="Select property"
+            options={[
+              { value: "property-1", label: "Sample Property 1" },
+              { value: "property-2", label: "Sample Property 2" },
+            ]}
+          />
         </div>
       )}
 
@@ -105,17 +100,15 @@ export function DocumentForm({ initialData, onSubmit, onCancel, isLoading }: Doc
         <div className="space-y-2">
           <Label htmlFor="clientId">Client</Label>
           <Select
+            id="clientId"
             value={form.watch("clientId")}
             onValueChange={(value) => form.setValue("clientId", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select client" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="client-1">Sample Client 1</SelectItem>
-              <SelectItem value="client-2">Sample Client 2</SelectItem>
-            </SelectContent>
-          </Select>
+            placeholder="Select client"
+            options={[
+              { value: "client-1", label: "Sample Client 1" },
+              { value: "client-2", label: "Sample Client 2" },
+            ]}
+          />
         </div>
       )}
 

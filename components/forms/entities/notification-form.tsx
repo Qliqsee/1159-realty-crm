@@ -6,7 +6,7 @@ import * as z from "zod"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { Textarea } from "@/components/inputs/textarea"
 import { Checkbox } from "@/components/inputs/checkbox"
 import { Calendar } from "@/components/inputs/calendar"
@@ -94,19 +94,16 @@ export function NotificationForm({ initialData, onSubmit, onCancel, isLoading }:
       <div className="space-y-2">
         <Label htmlFor="type">Type *</Label>
         <Select
+          id="type"
           value={form.watch("type")}
           onValueChange={(value) => form.setValue("type", value as NotificationType)}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Info">Info</SelectItem>
-            <SelectItem value="Success">Success</SelectItem>
-            <SelectItem value="Warning">Warning</SelectItem>
-            <SelectItem value="Error">Error</SelectItem>
-          </SelectContent>
-        </Select>
+          options={[
+            { value: "Info", label: "Info" },
+            { value: "Success", label: "Success" },
+            { value: "Warning", label: "Warning" },
+            { value: "Error", label: "Error" },
+          ]}
+        />
       </div>
 
       <div className="space-y-2">
@@ -133,52 +130,46 @@ export function NotificationForm({ initialData, onSubmit, onCancel, isLoading }:
       <div className="space-y-2">
         <Label htmlFor="recipientType">Recipients *</Label>
         <Select
+          id="recipientType"
           value={form.watch("recipientType")}
           onValueChange={(value) => form.setValue("recipientType", value as any)}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="All">All Users</SelectItem>
-            <SelectItem value="Roles">Specific Roles</SelectItem>
-            <SelectItem value="Users">Specific Users</SelectItem>
-            <SelectItem value="Segment">Contact Segment</SelectItem>
-          </SelectContent>
-        </Select>
+          options={[
+            { value: "All", label: "All Users" },
+            { value: "Roles", label: "Specific Roles" },
+            { value: "Users", label: "Specific Users" },
+            { value: "Segment", label: "Contact Segment" },
+          ]}
+        />
       </div>
 
       {recipientType === "Roles" && (
         <div className="space-y-2">
-          <Label>Select Roles</Label>
-          <Select>
-            <SelectTrigger>
-              <SelectValue placeholder="Select roles" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Agent">Agent</SelectItem>
-              <SelectItem value="Manager">Manager</SelectItem>
-              <SelectItem value="Admin">Admin</SelectItem>
-            </SelectContent>
-          </Select>
+          <Label htmlFor="recipientRoles">Select Roles</Label>
+          <Select
+            id="recipientRoles"
+            placeholder="Select roles"
+            options={[
+              { value: "Agent", label: "Agent" },
+              { value: "Manager", label: "Manager" },
+              { value: "Admin", label: "Admin" },
+            ]}
+          />
         </div>
       )}
 
       {recipientType === "Segment" && (
         <div className="space-y-2">
-          <Label>Select Segment</Label>
+          <Label htmlFor="recipientSegmentId">Select Segment</Label>
           <Select
+            id="recipientSegmentId"
             value={form.watch("recipientSegmentId")}
             onValueChange={(value) => form.setValue("recipientSegmentId", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select segment" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="segment-1">High Value Clients</SelectItem>
-              <SelectItem value="segment-2">New Leads</SelectItem>
-            </SelectContent>
-          </Select>
+            placeholder="Select segment"
+            options={[
+              { value: "segment-1", label: "High Value Clients" },
+              { value: "segment-2", label: "New Leads" },
+            ]}
+          />
         </div>
       )}
 

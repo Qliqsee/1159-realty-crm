@@ -7,10 +7,9 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
-const Select = SelectPrimitive.Root
-
+// Internal primitive components
+const SelectRoot = SelectPrimitive.Root
 const SelectGroup = SelectPrimitive.Group
-
 const SelectValue = SelectPrimitive.Value
 
 const selectTriggerVariants = cva(
@@ -30,7 +29,7 @@ const selectTriggerVariants = cva(
   }
 )
 
-export interface SelectTriggerProps
+interface SelectTriggerProps
   extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>,
     VariantProps<typeof selectTriggerVariants> {}
 
@@ -172,8 +171,80 @@ const SelectSeparator = React.forwardRef<
 ))
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName
 
+// Composed Select Component
+export interface SelectOption {
+  value: string
+  label: string
+  id?: string
+}
+
+export interface SelectProps {
+  options: SelectOption[]
+  value?: string
+  onValueChange: (value: string) => void
+  placeholder?: string
+  disabled?: boolean
+  error?: string
+  className?: string
+  triggerClassName?: string
+  id?: string
+  variant?: "default" | "error" | "success" | "gold"
+}
+
+export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
+  (
+    {
+      options,
+      value,
+      onValueChange,
+      placeholder,
+      disabled = false,
+      error,
+      className,
+      triggerClassName,
+      id,
+      variant,
+    },
+    ref
+  ) => {
+    // Auto-determine variant based on error prop
+    const effectiveVariant = error ? "error" : variant || "default"
+
+    return (
+      <div className={cn("w-full", className)}>
+        <SelectRoot value={value} onValueChange={onValueChange} disabled={disabled}>
+          <SelectTrigger
+            ref={ref}
+            id={id}
+            variant={effectiveVariant}
+            className={triggerClassName}
+          >
+            <SelectValue placeholder={placeholder} />
+          </SelectTrigger>
+          <SelectContent>
+            {options.map((option) => (
+              <SelectItem
+                key={option.id || option.value}
+                value={option.value}
+              >
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </SelectRoot>
+        {error && (
+          <p className="text-sm text-destructive mt-1">{error}</p>
+        )}
+      </div>
+    )
+  }
+)
+
+Select.displayName = "Select"
+
+// Export internal components for advanced use cases (like phone-input, currency-input)
 export {
-  Select,
+  SelectRoot,
   SelectGroup,
   SelectValue,
   SelectTrigger,

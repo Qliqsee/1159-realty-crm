@@ -6,7 +6,7 @@ import * as z from "zod"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { PhoneInput } from "@/components/inputs/phone-input"
 import type { User, UserRole, UserStatus } from "@/types"
 
@@ -101,44 +101,38 @@ export function TeamMemberForm({ initialData, onSubmit, onCancel, isLoading }: T
         <div className="space-y-2">
           <Label htmlFor="role">Role *</Label>
           <Select
+            id="role"
             value={form.watch("role")}
             onValueChange={(value) => form.setValue("role", value as UserRole)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Admin">Admin</SelectItem>
-              <SelectItem value="Manager">Manager</SelectItem>
-              <SelectItem value="Agent">Agent</SelectItem>
-              <SelectItem value="CST">CST (Customer Service)</SelectItem>
-              <SelectItem value="CST Manager">CST Manager</SelectItem>
-              <SelectItem value="Accounting">Accounting</SelectItem>
-              <SelectItem value="Accounting Manager">Accounting Manager</SelectItem>
-              <SelectItem value="HR">HR</SelectItem>
-              <SelectItem value="Sales">Sales</SelectItem>
-              <SelectItem value="Sales Manager">Sales Manager</SelectItem>
-              <SelectItem value="Operations Manager">Operations Manager</SelectItem>
-              <SelectItem value="Media Manager">Media Manager</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "Admin", label: "Admin" },
+              { value: "Manager", label: "Manager" },
+              { value: "Agent", label: "Agent" },
+              { value: "CST", label: "CST (Customer Service)" },
+              { value: "CST Manager", label: "CST Manager" },
+              { value: "Accounting", label: "Accounting" },
+              { value: "Accounting Manager", label: "Accounting Manager" },
+              { value: "HR", label: "HR" },
+              { value: "Sales", label: "Sales" },
+              { value: "Sales Manager", label: "Sales Manager" },
+              { value: "Operations Manager", label: "Operations Manager" },
+              { value: "Media Manager", label: "Media Manager" },
+            ]}
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="status">Status *</Label>
           <Select
+            id="status"
             value={form.watch("status")}
             onValueChange={(value) => form.setValue("status", value as UserStatus)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Active">Active</SelectItem>
-              <SelectItem value="Inactive">Inactive</SelectItem>
-              <SelectItem value="Suspended">Suspended</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "Active", label: "Active" },
+              { value: "Inactive", label: "Inactive" },
+              { value: "Suspended", label: "Suspended" },
+            ]}
+          />
         </div>
       </div>
 

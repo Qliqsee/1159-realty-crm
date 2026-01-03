@@ -6,7 +6,7 @@ import * as z from "zod"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { Textarea } from "@/components/inputs/textarea"
 import { PhoneInput } from "@/components/inputs/phone-input"
 import { MultiSelect } from "@/components/inputs/multi-select"
@@ -120,45 +120,39 @@ export function LeadForm({ initialData, onSubmit, onCancel, isLoading }: LeadFor
         <div className="space-y-2">
           <Label htmlFor="status">Status *</Label>
           <Select
+            id="status"
             value={form.watch("status")}
             onValueChange={(value) => form.setValue("status", value as LeadStatus)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="New">New</SelectItem>
-              <SelectItem value="Contacted">Contacted</SelectItem>
-              <SelectItem value="Qualified">Qualified</SelectItem>
-              <SelectItem value="Converted">Converted</SelectItem>
-              <SelectItem value="Lost">Lost</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "New", label: "New" },
+              { value: "Contacted", label: "Contacted" },
+              { value: "Qualified", label: "Qualified" },
+              { value: "Converted", label: "Converted" },
+              { value: "Lost", label: "Lost" },
+            ]}
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="source">Source *</Label>
           <Select
+            id="source"
             value={form.watch("source")}
             onValueChange={(value) => form.setValue("source", value as LeadSource)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Website">Website</SelectItem>
-              <SelectItem value="Social Media">Social Media</SelectItem>
-              <SelectItem value="Referral">Referral</SelectItem>
-              <SelectItem value="Agent">Agent</SelectItem>
-              <SelectItem value="Partner">Partner</SelectItem>
-              <SelectItem value="Walk-in">Walk-in</SelectItem>
-              <SelectItem value="Phone Call">Phone Call</SelectItem>
-              <SelectItem value="Email">Email</SelectItem>
-              <SelectItem value="Advertisement">Advertisement</SelectItem>
-              <SelectItem value="Event">Event</SelectItem>
-              <SelectItem value="Other">Other</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "Website", label: "Website" },
+              { value: "Social Media", label: "Social Media" },
+              { value: "Referral", label: "Referral" },
+              { value: "Agent", label: "Agent" },
+              { value: "Partner", label: "Partner" },
+              { value: "Walk-in", label: "Walk-in" },
+              { value: "Phone Call", label: "Phone Call" },
+              { value: "Email", label: "Email" },
+              { value: "Advertisement", label: "Advertisement" },
+              { value: "Event", label: "Event" },
+              { value: "Other", label: "Other" },
+            ]}
+          />
         </div>
       </div>
 

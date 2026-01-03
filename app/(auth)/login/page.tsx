@@ -7,13 +7,7 @@ import { Button } from "@/components/buttons/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/cards/card"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { ThemeToggle } from "@/components/layout/theme-toggle"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { validateLogin, QUICK_LOGIN } from "@/lib/data/mock-users"
@@ -100,25 +94,26 @@ export default function LoginPage() {
             {/* Quick Role Selection */}
             <div className="space-y-2">
               <Label htmlFor="role">Quick Login (Testing)</Label>
-              <Select value={selectedRole} onValueChange={handleRoleSelect}>
-                <SelectTrigger id="role">
-                  <SelectValue placeholder="Select a role to auto-fill credentials" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="manager">Manager</SelectItem>
-                  <SelectItem value="agent">Agent</SelectItem>
-                  <SelectItem value="cst">CST (Customer Service)</SelectItem>
-                  <SelectItem value="cstManager">CST Manager</SelectItem>
-                  <SelectItem value="accounting">Accounting</SelectItem>
-                  <SelectItem value="accountingManager">Accounting Manager</SelectItem>
-                  <SelectItem value="hr">HR</SelectItem>
-                  <SelectItem value="sales">Sales</SelectItem>
-                  <SelectItem value="salesManager">Sales Manager</SelectItem>
-                  <SelectItem value="operations">Operations Manager</SelectItem>
-                  <SelectItem value="media">Media Manager</SelectItem>
-                </SelectContent>
-              </Select>
+              <Select
+                id="role"
+                value={selectedRole}
+                onValueChange={handleRoleSelect}
+                placeholder="Select a role to auto-fill credentials"
+                options={[
+                  { value: "admin", label: "Admin" },
+                  { value: "manager", label: "Manager" },
+                  { value: "agent", label: "Agent" },
+                  { value: "cst", label: "CST (Customer Service)" },
+                  { value: "cstManager", label: "CST Manager" },
+                  { value: "accounting", label: "Accounting" },
+                  { value: "accountingManager", label: "Accounting Manager" },
+                  { value: "hr", label: "HR" },
+                  { value: "sales", label: "Sales" },
+                  { value: "salesManager", label: "Sales Manager" },
+                  { value: "operations", label: "Operations Manager" },
+                  { value: "media", label: "Media Manager" },
+                ]}
+              />
             </div>
 
             {/* Email */}

@@ -6,7 +6,7 @@ import * as z from "zod"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { Textarea } from "@/components/inputs/textarea"
 import { Upload } from "lucide-react"
 import type { SupportTicket, TicketCategory, TicketPriority, TicketStatus } from "@/types"
@@ -49,20 +49,16 @@ export function SupportTicketForm({ initialData, onSubmit, onCancel, isLoading }
       <div className="space-y-2">
         <Label htmlFor="clientId">Client *</Label>
         <Select
+          id="clientId"
           value={form.watch("clientId")}
           onValueChange={(value) => form.setValue("clientId", value)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select client" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="client-1">Sample Client 1</SelectItem>
-            <SelectItem value="client-2">Sample Client 2</SelectItem>
-          </SelectContent>
-        </Select>
-        {form.formState.errors.clientId && (
-          <p className="text-sm text-destructive">{form.formState.errors.clientId.message}</p>
-        )}
+          placeholder="Select client"
+          options={[
+            { value: "client-1", label: "Sample Client 1" },
+            { value: "client-2", label: "Sample Client 2" },
+          ]}
+          error={form.formState.errors.clientId?.message}
+        />
       </div>
 
       <div className="space-y-2">
@@ -94,40 +90,34 @@ export function SupportTicketForm({ initialData, onSubmit, onCancel, isLoading }
         <div className="space-y-2">
           <Label htmlFor="category">Category *</Label>
           <Select
+            id="category"
             value={form.watch("category")}
             onValueChange={(value) => form.setValue("category", value as TicketCategory)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Technical">Technical</SelectItem>
-              <SelectItem value="Billing">Billing</SelectItem>
-              <SelectItem value="General">General</SelectItem>
-              <SelectItem value="Property">Property</SelectItem>
-              <SelectItem value="Payment">Payment</SelectItem>
-              <SelectItem value="Account">Account</SelectItem>
-              <SelectItem value="Other">Other</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "Technical", label: "Technical" },
+              { value: "Billing", label: "Billing" },
+              { value: "General", label: "General" },
+              { value: "Property", label: "Property" },
+              { value: "Payment", label: "Payment" },
+              { value: "Account", label: "Account" },
+              { value: "Other", label: "Other" },
+            ]}
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="priority">Priority *</Label>
           <Select
+            id="priority"
             value={form.watch("priority")}
             onValueChange={(value) => form.setValue("priority", value as TicketPriority)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Low">Low</SelectItem>
-              <SelectItem value="Medium">Medium</SelectItem>
-              <SelectItem value="High">High</SelectItem>
-              <SelectItem value="Urgent">Urgent</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "Low", label: "Low" },
+              { value: "Medium", label: "Medium" },
+              { value: "High", label: "High" },
+              { value: "Urgent", label: "Urgent" },
+            ]}
+          />
         </div>
       </div>
 
@@ -135,35 +125,30 @@ export function SupportTicketForm({ initialData, onSubmit, onCancel, isLoading }
         <div className="space-y-2">
           <Label htmlFor="status">Status *</Label>
           <Select
+            id="status"
             value={form.watch("status")}
             onValueChange={(value) => form.setValue("status", value as TicketStatus)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Open">Open</SelectItem>
-              <SelectItem value="In Progress">In Progress</SelectItem>
-              <SelectItem value="Resolved">Resolved</SelectItem>
-              <SelectItem value="Closed">Closed</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "Open", label: "Open" },
+              { value: "In Progress", label: "In Progress" },
+              { value: "Resolved", label: "Resolved" },
+              { value: "Closed", label: "Closed" },
+            ]}
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="assignedTo">Assigned To</Label>
           <Select
+            id="assignedTo"
             value={form.watch("assignedTo")}
             onValueChange={(value) => form.setValue("assignedTo", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Unassigned" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="support-1">Support Agent 1</SelectItem>
-              <SelectItem value="support-2">Support Agent 2</SelectItem>
-            </SelectContent>
-          </Select>
+            placeholder="Unassigned"
+            options={[
+              { value: "support-1", label: "Support Agent 1" },
+              { value: "support-2", label: "Support Agent 2" },
+            ]}
+          />
         </div>
       </div>
 

@@ -6,7 +6,7 @@ import * as z from "zod"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { PhoneInput } from "@/components/inputs/phone-input"
 import { AddressInput } from "@/components/inputs/address-input"
 import type { Client, ClientStatus, Gender } from "@/types"
@@ -124,19 +124,17 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading }: Clien
         <div className="space-y-2">
           <Label htmlFor="gender">Gender</Label>
           <Select
+            id="gender"
             value={form.watch("gender")}
             onValueChange={(value) => form.setValue("gender", value as Gender)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select gender" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Male">Male</SelectItem>
-              <SelectItem value="Female">Female</SelectItem>
-              <SelectItem value="Other">Other</SelectItem>
-              <SelectItem value="Prefer not to say">Prefer not to say</SelectItem>
-            </SelectContent>
-          </Select>
+            placeholder="Select gender"
+            options={[
+              { value: "Male", label: "Male" },
+              { value: "Female", label: "Female" },
+              { value: "Other", label: "Other" },
+              { value: "Prefer not to say", label: "Prefer not to say" },
+            ]}
+          />
         </div>
       </div>
 
@@ -144,18 +142,16 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading }: Clien
         <div className="space-y-2">
           <Label htmlFor="status">Status *</Label>
           <Select
+            id="status"
             value={form.watch("status")}
             onValueChange={(value) => form.setValue("status", value as ClientStatus)}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Active">Active</SelectItem>
-              <SelectItem value="Inactive">Inactive</SelectItem>
-              <SelectItem value="Suspended">Suspended</SelectItem>
-            </SelectContent>
-          </Select>
+            options={[
+              { value: "Active", label: "Active" },
+              { value: "Inactive", label: "Inactive" },
+              { value: "Suspended", label: "Suspended" },
+            ]}
+            error={form.formState.errors.status?.message}
+          />
         </div>
 
         <div className="space-y-2">

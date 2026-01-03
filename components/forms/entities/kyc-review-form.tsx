@@ -6,7 +6,7 @@ import * as z from "zod"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { Select } from "@/components/inputs/select"
 import { Textarea } from "@/components/inputs/textarea"
 import { CurrencyInput } from "@/components/inputs/currency-input"
 import type { KYCSubmission } from "@/types"
@@ -81,20 +81,16 @@ export function KYCReviewForm({ initialData, onSubmit, onCancel, isLoading }: KY
       <div className="space-y-2">
         <Label htmlFor="clientId">Client *</Label>
         <Select
+          id="clientId"
           value={form.watch("clientId")}
           onValueChange={(value) => form.setValue("clientId", value)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select client" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="client-1">Sample Client 1</SelectItem>
-            <SelectItem value="client-2">Sample Client 2</SelectItem>
-          </SelectContent>
-        </Select>
-        {form.formState.errors.clientId && (
-          <p className="text-sm text-destructive">{form.formState.errors.clientId.message}</p>
-        )}
+          placeholder="Select client"
+          options={[
+            { value: "client-1", label: "Sample Client 1" },
+            { value: "client-2", label: "Sample Client 2" },
+          ]}
+          error={form.formState.errors.clientId?.message}
+        />
       </div>
 
       {/* Identity Documents Section */}
@@ -104,19 +100,17 @@ export function KYCReviewForm({ initialData, onSubmit, onCancel, isLoading }: KY
           <div className="space-y-2">
             <Label htmlFor="identityDocumentType">Document Type</Label>
             <Select
+              id="identityDocumentType"
               value={form.watch("identityDocumentType")}
               onValueChange={(value) => form.setValue("identityDocumentType", value as any)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Passport">Passport</SelectItem>
-                <SelectItem value="National ID">National ID</SelectItem>
-                <SelectItem value="Driver's License">Driver's License</SelectItem>
-                <SelectItem value="Voter's Card">Voter's Card</SelectItem>
-              </SelectContent>
-            </Select>
+              placeholder="Select type"
+              options={[
+                { value: "Passport", label: "Passport" },
+                { value: "National ID", label: "National ID" },
+                { value: "Driver's License", label: "Driver's License" },
+                { value: "Voter's Card", label: "Voter's Card" },
+              ]}
+            />
           </div>
 
           <div className="space-y-2">
@@ -131,19 +125,16 @@ export function KYCReviewForm({ initialData, onSubmit, onCancel, isLoading }: KY
           <div className="space-y-2">
             <Label htmlFor="identityDocumentStatus">Status</Label>
             <Select
+              id="identityDocumentStatus"
               value={form.watch("identityDocumentStatus")}
               onValueChange={(value) => form.setValue("identityDocumentStatus", value as any)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Pending">Pending</SelectItem>
-                <SelectItem value="Approved">Approved</SelectItem>
-                <SelectItem value="Rejected">Rejected</SelectItem>
-                <SelectItem value="Not Submitted">Not Submitted</SelectItem>
-              </SelectContent>
-            </Select>
+              options={[
+                { value: "Pending", label: "Pending" },
+                { value: "Approved", label: "Approved" },
+                { value: "Rejected", label: "Rejected" },
+                { value: "Not Submitted", label: "Not Submitted" },
+              ]}
+            />
           </div>
 
           <div className="space-y-2">
@@ -192,19 +183,16 @@ export function KYCReviewForm({ initialData, onSubmit, onCancel, isLoading }: KY
           <div className="space-y-2">
             <Label htmlFor="bankDetailsStatus">Status</Label>
             <Select
+              id="bankDetailsStatus"
               value={form.watch("bankDetailsStatus")}
               onValueChange={(value) => form.setValue("bankDetailsStatus", value as any)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Pending">Pending</SelectItem>
-                <SelectItem value="Approved">Approved</SelectItem>
-                <SelectItem value="Rejected">Rejected</SelectItem>
-                <SelectItem value="Not Submitted">Not Submitted</SelectItem>
-              </SelectContent>
-            </Select>
+              options={[
+                { value: "Pending", label: "Pending" },
+                { value: "Approved", label: "Approved" },
+                { value: "Rejected", label: "Rejected" },
+                { value: "Not Submitted", label: "Not Submitted" },
+              ]}
+            />
           </div>
         </div>
       </div>
@@ -213,19 +201,16 @@ export function KYCReviewForm({ initialData, onSubmit, onCancel, isLoading }: KY
       <div className="space-y-2">
         <Label htmlFor="overallStatus">Overall KYC Status *</Label>
         <Select
+          id="overallStatus"
           value={form.watch("overallStatus")}
           onValueChange={(value) => form.setValue("overallStatus", value as any)}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Pending">Pending</SelectItem>
-            <SelectItem value="Approved">Approved</SelectItem>
-            <SelectItem value="Rejected">Rejected</SelectItem>
-            <SelectItem value="Incomplete">Incomplete</SelectItem>
-          </SelectContent>
-        </Select>
+          options={[
+            { value: "Pending", label: "Pending" },
+            { value: "Approved", label: "Approved" },
+            { value: "Rejected", label: "Rejected" },
+            { value: "Incomplete", label: "Incomplete" },
+          ]}
+        />
       </div>
 
       <div className="flex justify-end gap-3">

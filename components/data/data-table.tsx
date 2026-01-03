@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ChevronDown, Search } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 
 import { Button } from "@/components/buttons/button"
 import {
@@ -22,7 +22,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/overlays/dropdown-menu"
-import { Input } from "@/components/inputs/input"
+import { SearchInput } from "@/components/inputs/search-input"
 import {
   Table,
   TableBody,
@@ -79,17 +79,13 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center justify-between gap-2">
         {/* Search */}
         {searchKey && (
-          <div className="relative flex-1 max-w-sm">
-            <Search className={`absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 ${searchVariant === "gold" ? "text-yellow-600" : "text-muted-foreground"}`} />
-            <Input
-              placeholder={searchPlaceholder}
-              value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
-              onChange={(event) =>
-                table.getColumn(searchKey)?.setFilterValue(event.target.value)
-              }
-              className={`pl-9 bg-background shadow-soft transition-all duration-200 ${searchVariant === "gold" ? "border-2 border-yellow-600 focus-visible:border-[3px] focus-visible:ring-0 focus-visible:ring-offset-0" : "border-2"}`}
-            />
-          </div>
+          <SearchInput
+            value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
+            onChange={(value) => table.getColumn(searchKey)?.setFilterValue(value)}
+            placeholder={searchPlaceholder}
+            variant={searchVariant}
+            className="flex-1 max-w-sm"
+          />
         )}
 
         {/* Column Visibility */}

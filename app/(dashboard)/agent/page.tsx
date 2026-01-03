@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/cards/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/navigation/tabs"
 import { Button } from "@/components/buttons/button"
-import { Input } from "@/components/inputs/input"
+import { SearchInput } from "@/components/inputs/search-input"
 import { Badge } from "@/components/badges/badge"
 import {
   Users,
@@ -12,7 +12,6 @@ import {
   TrendingUp,
   UserCheck,
   Link2,
-  Search,
   Filter,
   Download,
   Eye,
@@ -266,15 +265,12 @@ export default function AgentDashboardPage() {
         <TabsContent value="clients" className="space-y-4">
           {/* Search and Filters */}
           <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search clients by name, email, or property..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 shadow-soft"
-              />
-            </div>
+            <SearchInput
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder="Search clients by name, email, or property..."
+              className="flex-1"
+            />
             <Button variant="outline" className="shadow-soft">
               <Filter className="mr-2 h-4 w-4" />
               Filters

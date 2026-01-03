@@ -3,12 +3,12 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { PhoneInput } from "@/components/forms/phone-input"
-import { AddressInput } from "@/components/forms/address-input"
+import { Button } from "@/components/buttons/button"
+import { Input } from "@/components/inputs/input"
+import { Label } from "@/components/layout/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { PhoneInput } from "@/components/inputs/phone-input"
+import { AddressInput } from "@/components/inputs/address-input"
 import type { Client, ClientStatus, Gender } from "@/types"
 
 const clientSchema = z.object({

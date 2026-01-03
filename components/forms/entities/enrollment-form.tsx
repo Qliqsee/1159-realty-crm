@@ -3,11 +3,11 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CurrencyInput } from "@/components/forms/currency-input"
+import { Button } from "@/components/buttons/button"
+import { Input } from "@/components/inputs/input"
+import { Label } from "@/components/layout/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/inputs/select"
+import { CurrencyInput } from "@/components/inputs/currency-input"
 import type { Enrollment, EnrollmentStatus, PaymentType, EnrollmentType } from "@/types"
 
 const enrollmentSchema = z.object({

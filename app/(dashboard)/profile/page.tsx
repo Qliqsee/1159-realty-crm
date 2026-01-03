@@ -2,12 +2,12 @@
 
 import { useState } from "react"
 import { useAuthStore } from "@/lib/store/auth-store"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { StatusBadge } from "@/components/common/status-badge"
+import { Button } from "@/components/buttons/button"
+import { Input } from "@/components/inputs/input"
+import { Label } from "@/components/layout/label"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/cards/card"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/display/avatar"
+import { StatusBadge } from "@/components/badges/status-badge"
 import {
   User,
   Mail,

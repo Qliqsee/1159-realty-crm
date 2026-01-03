@@ -1,8 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/cards/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/navigation/tabs"
 import { useAuthStore } from "@/lib/store/auth-store"
 import {
   Users,
@@ -18,7 +18,7 @@ import {
   Wallet,
   ShoppingBag,
 } from "lucide-react"
-import { MetricCard } from "@/components/common/metric-card"
+import { MetricCard } from "@/components/cards/metric-card"
 import {
   RevenueForecastChart,
   SalesAnalyticsChart,

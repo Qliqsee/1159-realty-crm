@@ -1,9 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/buttons/button"
 import { Download, Filter, MessageSquare, Users, CheckCircle2, TrendingUp, XCircle } from "lucide-react"
-import { DataTable } from "@/components/tables/data-table"
+import { DataTable } from "@/components/data/data-table"
 import { columns } from "./columns"
 import { getClientInterests } from "@/lib/api/client-interests"
 import type { ClientInterest } from "@/types"

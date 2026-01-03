@@ -1,7 +1,7 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/cards/card"
+import { Progress } from "@/components/feedback/progress"
 import { CheckCircle2, Clock, AlertCircle } from "lucide-react"
 
 const collectionData = {

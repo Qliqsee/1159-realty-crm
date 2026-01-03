@@ -2,12 +2,12 @@
 
 import { useState } from "react"
 import { Plus, Send, Users } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { PageHeader } from "@/components/common/page-header"
-import { DataTable } from "@/components/common/data-table"
-import { ActionMenu } from "@/components/common/action-menu"
+import { Button } from "@/components/buttons/button"
+import { Card } from "@/components/cards/card"
+import { Badge } from "@/components/badges/badge"
+import { PageHeader } from "@/components/layout/page-header"
+import { DataTable } from "@/components/data/data-table"
+import { ActionMenu } from "@/components/overlays/action-menu"
 import { format } from "date-fns"
 import type { ContactSegment } from "@/types"
 

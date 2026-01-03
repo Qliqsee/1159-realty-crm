@@ -4,8 +4,8 @@ import { ReactNode, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { usePermissions } from "@/lib/hooks/use-permissions"
 import type { UserRole } from "@/types"
-import { LoadingSkeleton } from "@/components/common/loading-skeleton"
-import { EmptyState } from "@/components/common/empty-state"
+import { LoadingSkeleton } from "@/components/feedback/loading-skeleton"
+import { EmptyState } from "@/components/feedback/empty-state"
 import { ShieldAlert } from "lucide-react"
 
 interface RequireRoleProps {

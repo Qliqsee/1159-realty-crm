@@ -1,9 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/buttons/button"
 import { Plus, Upload, Download, Filter, Handshake, TrendingUp, DollarSign, Users } from "lucide-react"
-import { DataTable } from "@/components/tables/data-table"
+import { DataTable } from "@/components/data/data-table"
 import { columns } from "./columns"
 import { getPartnerships } from "@/lib/api/partnerships"
 import type { Partnership } from "@/types"

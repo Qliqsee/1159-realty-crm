@@ -3,11 +3,11 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff, CheckCircle2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ThemeToggle } from "@/components/common/theme-toggle"
+import { Button } from "@/components/buttons/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/cards/card"
+import { Input } from "@/components/inputs/input"
+import { Label } from "@/components/layout/label"
+import { ThemeToggle } from "@/components/layout/theme-toggle"
 import { toast } from "sonner"
 
 export default function ResetPasswordPage() {

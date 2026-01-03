@@ -2,11 +2,11 @@
 
 import { useParams, useRouter } from "next/navigation"
 import { ArrowLeft, Edit, Mail, Phone, Tag, Calendar, UserCheck } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { PageHeader } from "@/components/common/page-header"
+import { Button } from "@/components/buttons/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/cards/card"
+import { Badge } from "@/components/badges/badge"
+import { Separator } from "@/components/display/separator"
+import { PageHeader } from "@/components/layout/page-header"
 import { format } from "date-fns"
 
 export default function LeadDetailPage() {

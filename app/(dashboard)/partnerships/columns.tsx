@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tantml:react-table"
 import { MoreHorizontal, Handshake, TrendingUp, DollarSign, Users, Star } from "lucide-react"
 import type { Partnership } from "@/types"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/buttons/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,9 +11,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { StatusBadge } from "@/components/common/status-badge"
-import { DataTableColumnHeader } from "@/components/tables/data-table-column-header"
+} from "@/components/overlays/dropdown-menu"
+import { StatusBadge } from "@/components/badges/status-badge"
+import { DataTableColumnHeader } from "@/components/data/data-table-column-header"
 import { format } from "date-fns"
 
 const formatCurrency = (amount: number) => {

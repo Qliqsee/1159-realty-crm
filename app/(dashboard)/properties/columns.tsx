@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, MapPin, Edit, Trash2 } from "lucide-react";
 import Link from "next/link";
 import type { Property } from "@/types";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/buttons/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +13,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/overlays/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,9 +23,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { StatusBadge } from "@/components/common/status-badge";
-import { DataTableColumnHeader } from "@/components/tables/data-table-column-header";
+} from "@/components/dialogs/alert-dialog";
+import { StatusBadge } from "@/components/badges/status-badge";
+import { DataTableColumnHeader } from "@/components/data/data-table-column-header";
 import { format } from "date-fns";
 
 interface ColumnsProps {

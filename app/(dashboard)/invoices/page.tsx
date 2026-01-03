@@ -1,9 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/buttons/button"
 import { Plus, Upload, Download, Filter, FileText, DollarSign, AlertCircle, CheckCircle2 } from "lucide-react"
-import { DataTable } from "@/components/tables/data-table"
+import { DataTable } from "@/components/data/data-table"
 import { columns } from "./columns"
 import { getInvoices } from "@/lib/api/invoices"
 import type { Invoice } from "@/types"

@@ -1,16 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/buttons/button";
 import { Plus, Filter, Building2, MapPin, DollarSign, Home, TrendingUp, X } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { DataTable } from "@/components/tables/data-table";
-import { MetricCard } from "@/components/common/metric-card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/dialogs/dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/dialogs/sheet";
+import { Badge } from "@/components/badges/badge";
+import { Checkbox } from "@/components/inputs/checkbox";
+import { Input } from "@/components/inputs/input";
+import { Label } from "@/components/layout/label";
+import { DataTable } from "@/components/data/data-table";
+import { MetricCard } from "@/components/cards/metric-card";
 import { PropertyForm } from "@/components/forms/entities/property-form";
 import { columns } from "./columns";
 import { getProperties, createProperty, updateProperty, deleteProperty } from "@/lib/api/properties";

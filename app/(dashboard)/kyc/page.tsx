@@ -2,13 +2,13 @@
 
 import { useState } from "react"
 import { Plus, FileCheck, Eye } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { PageHeader } from "@/components/common/page-header"
-import { DataTable } from "@/components/common/data-table"
-import { ActionMenu } from "@/components/common/action-menu"
+import { Button } from "@/components/buttons/button"
+import { Card } from "@/components/cards/card"
+import { Badge } from "@/components/badges/badge"
+import { Progress } from "@/components/feedback/progress"
+import { PageHeader } from "@/components/layout/page-header"
+import { DataTable } from "@/components/data/data-table"
+import { ActionMenu } from "@/components/overlays/action-menu"
 import type { KYCSubmission } from "@/types"
 
 export default function KYCPage() {

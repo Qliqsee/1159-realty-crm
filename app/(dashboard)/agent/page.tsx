@@ -1,11 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/cards/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/navigation/tabs"
+import { Button } from "@/components/buttons/button"
+import { Input } from "@/components/inputs/input"
+import { Badge } from "@/components/badges/badge"
 import {
   Users,
   DollarSign,

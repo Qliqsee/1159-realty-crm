@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, Calendar, Clock, MapPin, Video, User, Building2, AlertCircle } from "lucide-react"
 import type { Appointment } from "@/types"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/buttons/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,9 +11,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { StatusBadge } from "@/components/common/status-badge"
-import { DataTableColumnHeader } from "@/components/tables/data-table-column-header"
+} from "@/components/overlays/dropdown-menu"
+import { StatusBadge } from "@/components/badges/status-badge"
+import { DataTableColumnHeader } from "@/components/data/data-table-column-header"
 import { format } from "date-fns"
 
 const getPriorityColor = (priority: string) => {

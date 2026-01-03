@@ -3,11 +3,11 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { MultiSelect } from "@/components/forms/multi-select"
+import { Button } from "@/components/buttons/button"
+import { Input } from "@/components/inputs/input"
+import { Label } from "@/components/layout/label"
+import { Textarea } from "@/components/inputs/textarea"
+import { MultiSelect } from "@/components/inputs/multi-select"
 import type { ContactSegment } from "@/types"
 
 const campaignSchema = z.object({

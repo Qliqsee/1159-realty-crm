@@ -5,7 +5,7 @@ import { MoreHorizontal, Mail, Phone, Calendar, Copy, ExternalLink, Edit, UserPl
 import { useState } from "react"
 import Link from "next/link"
 import type { Lead } from "@/types"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/buttons/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,7 +13,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/overlays/dropdown-menu"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,16 +23,16 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+} from "@/components/dialogs/alert-dialog"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { StatusBadge } from "@/components/common/status-badge"
-import { DataTableColumnHeader } from "@/components/tables/data-table-column-header"
-import { AgentSelect } from "@/components/forms/agent-select"
+} from "@/components/dialogs/dialog"
+import { StatusBadge } from "@/components/badges/status-badge"
+import { DataTableColumnHeader } from "@/components/data/data-table-column-header"
+import { AgentSelect } from "@/components/inputs/agent-select"
 import { usePermissions } from "@/lib/hooks/use-permissions"
 import { updateLead } from "@/lib/api/leads"
 import { format } from "date-fns"

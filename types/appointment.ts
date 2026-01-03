@@ -7,9 +7,11 @@ export interface Appointment {
 
   // Schedule
   inspectionDate: Date;
+  scheduledDate: Date;
   inspectionTime: string;
   location: string;
   propertyAddress: string;
+  isVirtual: boolean;
 
   // Capacity
   maxCapacity: number;
@@ -20,7 +22,7 @@ export interface Appointment {
   interestedClients: AppointmentInterest[];
 
   // Status
-  status: "Scheduled" | "Completed" | "Cancelled";
+  status: "Scheduled" | "Confirmed" | "Completed" | "Cancelled" | "No Show";
 
   // Metadata
   notes?: string;
@@ -50,7 +52,7 @@ export interface AppointmentInterest {
 
 export interface AppointmentFilters {
   propertyId?: string;
-  status?: ("Scheduled" | "Completed" | "Cancelled")[];
+  status?: ("Scheduled" | "Confirmed" | "Completed" | "Cancelled" | "No Show")[];
   dateFrom?: Date;
   dateTo?: Date;
   search?: string;

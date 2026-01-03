@@ -108,6 +108,13 @@ export const navigationCategories: NavCategory[] = [
         permission: "view:partner",
       },
       {
+        label: "My Partners",
+        href: "/my-partners",
+        icon: "Handshake",
+        permission: "view:partner",
+        roles: ["Agent", "Manager", "Admin"],
+      },
+      {
         label: "Agent Dashboard",
         href: "/agent",
         icon: "BarChart3",

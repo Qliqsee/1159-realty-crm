@@ -100,4 +100,57 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 )
 Input.displayName = "Input"
 
-export { Input, inputVariants }
+export interface InputWithAddonProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'prefix'>,
+    VariantProps<typeof inputVariants> {
+  error?: string
+  helperText?: string
+  prefix?: string
+  suffix?: string
+}
+
+const InputWithAddon = React.forwardRef<HTMLInputElement, InputWithAddonProps>(
+  ({ className, type, variant, error, helperText, prefix, suffix, ...props }, ref) => {
+    const hasError = !!error
+    const finalVariant = hasError ? "error" : variant
+
+    return (
+      <div className="w-full">
+        <div className="relative">
+          {prefix && (
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
+              {prefix}
+            </span>
+          )}
+          <input
+            type={type}
+            className={cn(
+              inputVariants({ variant: finalVariant }),
+              prefix && "pl-10",
+              suffix && "pr-16",
+              className
+            )}
+            ref={ref}
+            {...props}
+          />
+          {suffix && (
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
+              {suffix}
+            </span>
+          )}
+        </div>
+        {(error || helperText) && (
+          <p className={cn(
+            "text-xs mt-1.5",
+            hasError ? "text-red-600 dark:text-red-400" : "text-muted-foreground"
+          )}>
+            {error || helperText}
+          </p>
+        )}
+      </div>
+    )
+  }
+)
+InputWithAddon.displayName = "InputWithAddon"
+
+export { Input, InputWithAddon, inputVariants }

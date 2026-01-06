@@ -1,61 +1,160 @@
-export type PropertyType = "Land" | "Apartment";
+// Property Type Constants
+export const PROPERTY_TYPES = ["Land", "Apartment"] as const;
+export type PropertyType = (typeof PROPERTY_TYPES)[number];
 
-export type PropertyStatus = "Available" | "Sold Out" | "Reserved" | "Disabled";
+// Property Status Constants
+export const PROPERTY_STATUS = ["Available", "Pre-launch", "Sold Out", "Reserved", "Disabled"] as const;
+export type PropertyStatus = (typeof PROPERTY_STATUS)[number];
+
+// Land Subtype Constants
+export const LAND_SUBTYPES = ["Industrial", "Commercial", "Residential", "Farmland", "Mixed"] as const;
+export type LandSubtype = (typeof LAND_SUBTYPES)[number];
+
+// Country Constants
+export const COUNTRIES = ["Nigeria", "Others"] as const;
+export type Country = (typeof COUNTRIES)[number];
+
+// Property Feature Icons - Curated list for real estate
+export const PROPERTY_FEATURE_ICONS = [
+  // Buildings & Property
+  { value: "Home", label: "Home" },
+  { value: "Building", label: "Building" },
+  { value: "Building2", label: "Building 2" },
+  { value: "Warehouse", label: "Warehouse" },
+  { value: "Hotel", label: "Hotel" },
+  { value: "Store", label: "Store/Shop" },
+
+  // Amenities
+  { value: "Wifi", label: "WiFi" },
+  { value: "Car", label: "Parking" },
+  { value: "Droplets", label: "Pool/Water" },
+  { value: "Dumbbell", label: "Gym" },
+  { value: "Bath", label: "Bathroom" },
+  { value: "Bed", label: "Bedroom" },
+
+  // Security & Access
+  { value: "Shield", label: "Security" },
+  { value: "ShieldCheck", label: "Secure" },
+  { value: "Camera", label: "CCTV" },
+  { value: "Lock", label: "Lock" },
+  { value: "Key", label: "Key Access" },
+  { value: "DoorOpen", label: "Door" },
+
+  // Outdoor & Nature
+  { value: "Trees", label: "Trees/Garden" },
+  { value: "TreePine", label: "Pine Trees" },
+  { value: "Flower", label: "Flowers" },
+  { value: "Waves", label: "Water/River" },
+  { value: "Mountain", label: "Mountain View" },
+  { value: "Sun", label: "Sunlight" },
+
+  // Utilities & Services
+  { value: "Zap", label: "Power/Electric" },
+  { value: "Wind", label: "AC/Ventilation" },
+  { value: "Flame", label: "Heating/Gas" },
+  { value: "Lightbulb", label: "Lighting" },
+  { value: "Radio", label: "Internet" },
+  { value: "Tv", label: "TV/Cable" },
+
+  // Facilities
+  { value: "Users", label: "Personnel/Staff" },
+  { value: "Utensils", label: "Kitchen" },
+  { value: "ShoppingCart", label: "Convenience Store" },
+  { value: "GraduationCap", label: "School Nearby" },
+  { value: "Heart", label: "Hospital Nearby" },
+  { value: "Plane", label: "Airport Nearby" },
+
+  // Features
+  { value: "Fence", label: "Fence/Gate" },
+  { value: "Sofa", label: "Furnished" },
+  { value: "Armchair", label: "Seating Area" },
+  { value: "Fan", label: "Ceiling Fan" },
+  { value: "Bell", label: "Doorbell" },
+  { value: "Accessibility", label: "Accessible" },
+] as const;
 
 export interface Property {
   id: string;
+
+  // Basic Information
   name: string;
   type: PropertyType;
   subtype: string;
   status: PropertyStatus;
   description: string;
 
+  // Conditional Fields
+  agriculturalFee?: {
+    amount: number;
+    isActive: boolean;
+  };
+  requiredDocuments: string[];
+
   // Location
-  state: string;
-  stateId: string;
-  lga: string;
-  lgaId: string;
-  area: string;
-  areaId: string;
-  latitude?: number;
-  longitude?: number;
-  nearbyLandmarks: string[];
+  country: Country;
+  state?: string;
+  address: string;
+  nearbyLandmark: string;
 
-  // Pricing
-  regularPrice: number; // Always visible
-  marketPrice?: number; // Visible only after payment completion
-  discountPercentage?: number;
-  finalPrice: number; // After discount
+  // Features
+  features: PropertyFeature[];
 
-  // Sizes (for land properties)
-  availableSizes: PropertySize[];
+  // Unit Pricing
+  unitPricing: PropertyUnitPricing[];
 
-  // Payment options
-  paymentDurations: number[]; // In months, e.g., [6, 12, 18, 24]
-  interestRate: number; // Percentage
-  overduepenaltyRate: number; // Percentage
+  // Discount
+  salesDiscount?: {
+    percentage: number;
+    isActive: boolean;
+  };
+
+  // Payment Terms
+  overdueInterestRate: number;
+  paymentCycle: number; // In days
+
+  // Payment Plans
+  paymentPlans: PropertyPaymentPlan[];
+
+  // Map Configuration
+  mapConfig?: {
+    src: string;
+    width: string;
+    height: string;
+  };
 
   // Media
-  images: PropertyMedia[];
-  videos: PropertyMedia[];
-  primaryImageId: string;
+  media: PropertyMedia[];
 
-  // Plots
-  totalPlots: number;
-  availablePlots: number;
-  allocatedPlots: number;
-
-  // Stats
-  views: number;
-  interests: number;
-  enrollments: number;
-  sold: number;
+  // Stats (not part of form)
+  views?: number;
+  interests?: number;
+  enrollments?: number;
+  sold?: number;
 
   // Metadata
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
   lastUpdatedBy: string;
+}
+
+export interface PropertyUnitPricing {
+  id?: string;
+  unit: string;
+  regularPrice: number;
+  prelaunchPrice: number;
+}
+
+export interface PropertyPaymentPlan {
+  id?: string;
+  durationMonths: number;
+  interestRate: number;
+}
+
+export interface PropertyFeature {
+  id?: string;
+  name: string;
+  icon: string;
 }
 
 export interface PropertySize {

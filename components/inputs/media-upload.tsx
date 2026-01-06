@@ -34,6 +34,8 @@ interface MediaUploadProps {
   acceptLinks?: boolean
   variant?: "default" | "gold"
   className?: string
+  error?: string
+  helperText?: string
 }
 
 export function MediaUpload({
@@ -45,6 +47,8 @@ export function MediaUpload({
   acceptLinks = true,
   variant = "gold",
   className,
+  error,
+  helperText,
 }: MediaUploadProps) {
   const [showDialog, setShowDialog] = useState(false)
   const [youtubeLink, setYoutubeLink] = useState("")
@@ -100,13 +104,15 @@ export function MediaUpload({
     onChange(value.filter((item) => item.id !== id))
   }
 
-  const borderColor = variant === "gold" ? "border-yellow-600" : "border-input"
-  const iconColor = variant === "gold" ? "text-yellow-600 dark:text-yellow-500" : "text-muted-foreground"
+  const hasError = !!error
+  const borderColor = hasError ? "border-red-600" : variant === "gold" ? "border-yellow-600" : "border-input"
+  const iconColor = hasError ? "text-red-600" : variant === "gold" ? "text-yellow-600 dark:text-yellow-500" : "text-muted-foreground"
 
   return (
-    <div className={cn("space-y-3", className)}>
-      {/* Upload Button */}
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+    <div className={cn("w-full", className)}>
+      <div className="space-y-3">
+        {/* Upload Button */}
+        <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogTrigger asChild>
           <Button
             type="button"
@@ -319,6 +325,17 @@ export function MediaUpload({
             </div>
           ))}
         </div>
+      )}
+      </div>
+
+      {/* Error/Helper Text */}
+      {(error || helperText) && (
+        <p className={cn(
+          "text-xs mt-1.5",
+          hasError ? "text-red-600 dark:text-red-400" : "text-muted-foreground"
+        )}>
+          {error || helperText}
+        </p>
       )}
     </div>
   )

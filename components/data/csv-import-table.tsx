@@ -185,7 +185,11 @@ export function CSVImportTable<T extends z.ZodType>({
                       {rowIndex + 1}
                     </TableCell>
                     {fieldMappings.map(({ targetField }) => {
-                      const csvColumn = columnMapping[targetField]
+                      // Find matching CSV column for this field
+                      const csvColumn = csvHeaders.find(
+                        h => h.toLowerCase() === targetField.toLowerCase() ||
+                             h.toLowerCase().replace(/\s+/g, '') === targetField.toLowerCase().replace(/\s+/g, '')
+                      )
                       const value = csvColumn ? row[csvColumn] : ""
                       const error = hasErrors?.[targetField]
                       const isEditing = editingCell?.row === rowIndex && editingCell?.field === targetField

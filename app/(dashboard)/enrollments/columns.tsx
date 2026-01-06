@@ -1,20 +1,19 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal, User, Building2, TrendingUp, AlertTriangle, Calendar } from "lucide-react"
+import { MoreHorizontal, User, Building2, AlertTriangle, Calendar } from "lucide-react"
 import type { Enrollment } from "@/types"
 import { Button } from "@/components/buttons/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/overlays/dropdown-menu"
 import { StatusBadge } from "@/components/badges/status-badge"
 import { DataTableColumnHeader } from "@/components/data/data-table-column-header"
 import { format } from "date-fns"
+import Link from "next/link"
 
 const formatCurrency = (amount: number) => {
   return new Intl.NumberFormat("en-NG", {
@@ -24,7 +23,11 @@ const formatCurrency = (amount: number) => {
   }).format(amount)
 }
 
-export const columns: ColumnDef<Enrollment>[] = [
+interface ColumnsProps {
+  onEdit: (enrollment: Enrollment) => void
+}
+
+export const columns = ({ onEdit }: ColumnsProps): ColumnDef<Enrollment>[] => [
   {
     accessorKey: "enrollmentNumber",
     header: ({ column }) => (
@@ -34,11 +37,19 @@ export const columns: ColumnDef<Enrollment>[] = [
       const enrollment = row.original
       return (
         <div className="flex flex-col min-w-[180px]">
-          <span className="font-medium">{enrollment.enrollmentNumber}</span>
-          <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+          <Link
+            href={`/enrollments/${enrollment.id}`}
+            className="font-medium hover:text-primary hover:underline transition-colors"
+          >
+            {enrollment.enrollmentNumber}
+          </Link>
+          <Link
+            href={`/clients/${enrollment.clientId}`}
+            className="flex items-center gap-1 text-xs text-muted-foreground mt-1 hover:text-primary transition-colors"
+          >
             <User className="h-3 w-3" />
             <span>{enrollment.clientName}</span>
-          </div>
+          </Link>
         </div>
       )
     },
@@ -52,10 +63,13 @@ export const columns: ColumnDef<Enrollment>[] = [
       const enrollment = row.original
       return (
         <div className="flex flex-col min-w-[200px]">
-          <div className="flex items-center gap-1.5">
+          <Link
+            href={`/properties/${enrollment.propertyId}`}
+            className="flex items-center gap-1.5 text-sm font-medium hover:text-primary transition-colors"
+          >
             <Building2 className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="text-sm font-medium">{enrollment.propertyName}</span>
-          </div>
+            <span>{enrollment.propertyName}</span>
+          </Link>
           {enrollment.plotNumber && (
             <span className="text-xs text-muted-foreground mt-1">Plot: {enrollment.plotNumber}</span>
           )}
@@ -178,7 +192,15 @@ export const columns: ColumnDef<Enrollment>[] = [
       <DataTableColumnHeader column={column} title="Agent" />
     ),
     cell: ({ row }) => {
-      return <span className="text-sm">{row.getValue("agentName")}</span>
+      const enrollment = row.original
+      return (
+        <Link
+          href={`/users/${enrollment.agentId}`}
+          className="text-sm hover:text-primary hover:underline transition-colors"
+        >
+          {row.getValue("agentName")}
+        </Link>
+      )
     },
   },
   {
@@ -195,31 +217,9 @@ export const columns: ColumnDef<Enrollment>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(enrollment.id)}>
-              Copy enrollment ID
+            <DropdownMenuItem onClick={() => onEdit(enrollment)}>
+              Edit Enrollment
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
-            <DropdownMenuItem>Edit enrollment</DropdownMenuItem>
-            <DropdownMenuItem>View client profile</DropdownMenuItem>
-            <DropdownMenuItem>View property</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View payment history</DropdownMenuItem>
-            <DropdownMenuItem>Record payment</DropdownMenuItem>
-            <DropdownMenuItem>Generate invoice</DropdownMenuItem>
-            <DropdownMenuItem>Send reminder</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            {enrollment.status === "Active" && (
-              <>
-                <DropdownMenuItem>Suspend enrollment</DropdownMenuItem>
-                <DropdownMenuItem>Mark as completed</DropdownMenuItem>
-              </>
-            )}
-            {enrollment.status === "Suspended" && (
-              <DropdownMenuItem>Reactivate enrollment</DropdownMenuItem>
-            )}
-            <DropdownMenuItem className="text-destructive">Cancel enrollment</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )

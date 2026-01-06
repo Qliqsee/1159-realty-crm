@@ -1,4 +1,4 @@
-import type { Enrollment, EnrollmentStatus, PaymentMethod } from "@/types"
+import type { Enrollment, EnrollmentStatus, PaymentMethod, EnrollmentPaymentSchedule } from "@/types"
 
 // Mock data generator for enrollments
 export const generateMockEnrollments = (count: number = 60): Enrollment[] => {
@@ -171,4 +171,155 @@ export const deleteEnrollment = async (id: string): Promise<void> => {
   if (index !== -1) {
     mockEnrollments.splice(index, 1)
   }
+}
+
+// Payment Schedule Mock Data Storage
+const mockPaymentSchedules: Map<string, EnrollmentPaymentSchedule[]> = new Map()
+
+// Generate payment schedule for an enrollment
+export const generatePaymentSchedule = (enrollment: Enrollment): EnrollmentPaymentSchedule[] => {
+  const schedule: EnrollmentPaymentSchedule[] = []
+  const monthlyAmount = enrollment.monthlyPayment
+  const totalInstallments = enrollment.paymentDuration
+  const startDate = new Date(enrollment.startDate)
+
+  for (let i = 0; i < totalInstallments; i++) {
+    const dueDate = new Date(startDate)
+    dueDate.setMonth(dueDate.getMonth() + i + 1)
+
+    const isPaid = i < enrollment.paymentsCount
+    const isOverdue = !isPaid && dueDate < new Date()
+    const daysOverdue = isOverdue ? Math.floor((Date.now() - dueDate.getTime()) / (1000 * 60 * 60 * 24)) : 0
+    const penaltyAmount = isOverdue ? (monthlyAmount * (enrollment.overduepenaltyRate || 2) * Math.floor(daysOverdue / 30)) / 100 : 0
+
+    schedule.push({
+      id: `payment-${enrollment.id}-${i + 1}`,
+      enrollmentId: enrollment.id,
+      installmentNumber: i + 1,
+      dueDate,
+      amount: monthlyAmount,
+      isPaid,
+      paidDate: isPaid ? new Date(dueDate.getTime() - Math.floor(Math.random() * 5) * 24 * 60 * 60 * 1000) : undefined,
+      paidAmount: isPaid ? monthlyAmount : undefined,
+      isOverdue,
+      penaltyAmount,
+      invoiceId: Math.random() > 0.3 ? `inv-${Math.floor(Math.random() * 80) + 1}` : undefined,
+    })
+  }
+
+  return schedule
+}
+
+// Get payment schedule for an enrollment
+export const getPaymentSchedule = async (enrollmentId: string): Promise<EnrollmentPaymentSchedule[]> => {
+  await new Promise((resolve) => setTimeout(resolve, 200))
+
+  // Check if we already have a schedule for this enrollment
+  if (mockPaymentSchedules.has(enrollmentId)) {
+    return mockPaymentSchedules.get(enrollmentId)!
+  }
+
+  // Otherwise, generate a new one
+  const enrollment = mockEnrollments.find((e) => e.id === enrollmentId)
+  if (!enrollment) {
+    throw new Error("Enrollment not found")
+  }
+
+  const schedule = generatePaymentSchedule(enrollment)
+  mockPaymentSchedules.set(enrollmentId, schedule)
+  return schedule
+}
+
+// Resolve a payment installment (mark as paid)
+export const resolvePaymentInstallment = async (
+  enrollmentId: string,
+  installmentId: string,
+  paidAmount: number,
+  paidDate: Date = new Date()
+): Promise<EnrollmentPaymentSchedule> => {
+  await new Promise((resolve) => setTimeout(resolve, 300))
+
+  const schedule = await getPaymentSchedule(enrollmentId)
+  const installment = schedule.find((s) => s.id === installmentId)
+
+  if (!installment) {
+    throw new Error("Payment installment not found")
+  }
+
+  installment.isPaid = true
+  installment.paidDate = paidDate
+  installment.paidAmount = paidAmount
+  installment.isOverdue = false
+
+  // Update enrollment totalPaid and related fields
+  const enrollment = mockEnrollments.find((e) => e.id === enrollmentId)
+  if (enrollment) {
+    enrollment.totalPaid += paidAmount
+    enrollment.outstandingBalance = enrollment.propertyPrice - enrollment.totalPaid
+    enrollment.completionPercentage = Math.round((enrollment.totalPaid / enrollment.propertyPrice) * 100)
+    enrollment.paymentsCount = schedule.filter((s) => s.isPaid).length
+    enrollment.updatedAt = new Date()
+  }
+
+  return installment
+}
+
+// Unresolve a payment installment (mark as unpaid)
+export const unresolvePaymentInstallment = async (
+  enrollmentId: string,
+  installmentId: string
+): Promise<EnrollmentPaymentSchedule> => {
+  await new Promise((resolve) => setTimeout(resolve, 300))
+
+  const schedule = await getPaymentSchedule(enrollmentId)
+  const installment = schedule.find((s) => s.id === installmentId)
+
+  if (!installment) {
+    throw new Error("Payment installment not found")
+  }
+
+  const paidAmount = installment.paidAmount || 0
+
+  installment.isPaid = false
+  installment.paidDate = undefined
+  installment.paidAmount = undefined
+
+  // Recalculate if it's overdue
+  const daysOverdue = Math.floor((Date.now() - installment.dueDate.getTime()) / (1000 * 60 * 60 * 24))
+  installment.isOverdue = daysOverdue > 0
+  installment.penaltyAmount = installment.isOverdue
+    ? (installment.amount * 2 * Math.floor(daysOverdue / 30)) / 100
+    : 0
+
+  // Update enrollment totalPaid and related fields
+  const enrollment = mockEnrollments.find((e) => e.id === enrollmentId)
+  if (enrollment && paidAmount > 0) {
+    enrollment.totalPaid -= paidAmount
+    enrollment.outstandingBalance = enrollment.propertyPrice - enrollment.totalPaid
+    enrollment.completionPercentage = Math.round((enrollment.totalPaid / enrollment.propertyPrice) * 100)
+    enrollment.paymentsCount = schedule.filter((s) => s.isPaid).length
+    enrollment.updatedAt = new Date()
+  }
+
+  return installment
+}
+
+// Cancel enrollment
+export const cancelEnrollment = async (
+  enrollmentId: string,
+  reason: string
+): Promise<Enrollment> => {
+  await new Promise((resolve) => setTimeout(resolve, 500))
+
+  const enrollment = mockEnrollments.find((e) => e.id === enrollmentId)
+  if (!enrollment) {
+    throw new Error("Enrollment not found")
+  }
+
+  enrollment.status = "Cancelled"
+  enrollment.cancelledDate = new Date()
+  enrollment.cancellationReason = reason
+  enrollment.updatedAt = new Date()
+
+  return enrollment
 }

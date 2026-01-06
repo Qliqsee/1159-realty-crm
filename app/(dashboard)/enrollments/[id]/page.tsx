@@ -1,81 +1,402 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { ArrowLeft, Edit, FileText, DollarSign, Calendar, User, Home, Download } from "lucide-react"
+import Link from "next/link"
+import {
+  ArrowLeft,
+  Edit,
+  FileText,
+  DollarSign,
+  Calendar,
+  User,
+  Home,
+  Download,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  Ban,
+  MoreHorizontal,
+} from "lucide-react"
 import { Button } from "@/components/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/cards/card"
 import { Badge } from "@/components/badges/badge"
 import { Separator } from "@/components/display/separator"
 import { Progress } from "@/components/feedback/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/navigation/tabs"
 import { PageHeader } from "@/components/layout/page-header"
-import { generateOfferLetter, generatePaymentReceipt, generateAllocationLetter } from "@/lib/pdf/enrollment-pdfs"
+import { Input } from "@/components/inputs/input"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/dialogs/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/overlays/dropdown-menu"
+import { Label } from "@/components/layout/label"
+import { Textarea } from "@/components/inputs/textarea"
+import { DataTable } from "@/components/data/data-table"
+import { StatusBadge } from "@/components/badges/status-badge"
+import {
+  getEnrollment,
+  getPaymentSchedule,
+  resolvePaymentInstallment,
+  unresolvePaymentInstallment,
+  cancelEnrollment,
+  updateEnrollment,
+} from "@/lib/api/enrollments"
+import { createInvoice } from "@/lib/api/invoices"
+import { generatePaymentReceipt, generateAllocationLetter } from "@/lib/pdf/enrollment-pdfs"
+import type { Enrollment, EnrollmentPaymentSchedule } from "@/types"
+import { ColumnDef } from "@tanstack/react-table"
+import { DataTableColumnHeader } from "@/components/data/data-table-column-header"
 import { format } from "date-fns"
+import { toast } from "sonner"
+
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+    minimumFractionDigits: 0,
+  }).format(amount)
+}
 
 export default function EnrollmentDetailPage() {
   const params = useParams()
   const router = useRouter()
   const enrollmentId = params.id as string
 
-  // Mock data - will be replaced with API call
-  const enrollment = {
-    id: enrollmentId,
-    enrollmentNumber: "ENR-001",
-    clientId: "client-1",
-    clientName: "Sarah Johnson",
-    propertyId: "property-1",
-    propertyName: "Lekki Gardens Phase 2",
-    propertyType: "Land",
-    agentId: "agent-1",
-    agentName: "Michael Chen",
-    enrollmentType: "Company Lead" as const,
-    totalAmount: 5000000,
-    amountPaid: 2000000,
-    amountPending: 3000000,
-    interestAmount: 0,
-    penaltyAmount: 0,
-    discountAmount: 500000,
-    finalAmount: 4500000,
-    progressPercentage: 40,
-    status: "Ongoing" as const,
-    paymentType: "Installment" as const,
-    installmentDuration: 12,
-    installmentMonthlyAmount: 375000,
-    interestRate: 5,
-    overduepenaltyRate: 2,
-    startDate: new Date("2024-01-15"),
-    expectedCompletionDate: new Date("2025-01-15"),
-    plotNumber: "A-101",
-    selectedSizeId: "size-1",
-    selectedSize: 500,
-    selectedSizeUnit: "sqm",
-    notes: [],
-    createdAt: new Date("2024-01-15"),
-    updatedAt: new Date("2024-01-20"),
-    createdBy: "user-1",
+  const [enrollment, setEnrollment] = useState<Enrollment | null>(null)
+  const [paymentSchedule, setPaymentSchedule] = useState<EnrollmentPaymentSchedule[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [isProcessing, setIsProcessing] = useState(false)
+
+  // Dialog states
+  const [showPlotDialog, setShowPlotDialog] = useState(false)
+  const [showResolveDialog, setShowResolveDialog] = useState(false)
+  const [showCancelDialog, setShowCancelDialog] = useState(false)
+  const [selectedInstallment, setSelectedInstallment] = useState<EnrollmentPaymentSchedule | null>(null)
+
+  // Form states
+  const [plotId, setPlotId] = useState("")
+  const [paidAmount, setPaidAmount] = useState("")
+  const [paidDate, setPaidDate] = useState(format(new Date(), "yyyy-MM-dd"))
+  const [cancellationReason, setCancellationReason] = useState("")
+
+  useEffect(() => {
+    loadEnrollmentData()
+  }, [enrollmentId])
+
+  const loadEnrollmentData = async () => {
+    try {
+      setIsLoading(true)
+      const enrollmentData = await getEnrollment(enrollmentId)
+      if (enrollmentData) {
+        setEnrollment(enrollmentData)
+        setPlotId(enrollmentData.plotNumber || "")
+
+        const schedule = await getPaymentSchedule(enrollmentId)
+        setPaymentSchedule(schedule)
+      }
+    } catch (error) {
+      toast.error("Failed to load enrollment details")
+      console.error(error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  const statusColors: Record<string, string> = {
-    Ongoing: "bg-blue-500",
-    Completed: "bg-green-500",
-    Cancelled: "bg-red-500",
-    Frozen: "bg-gray-500",
+  const handleSavePlotId = async () => {
+    if (!enrollment) return
+
+    try {
+      setIsProcessing(true)
+      await updateEnrollment(enrollmentId, { plotNumber: plotId })
+      toast.success("Plot ID updated successfully")
+      setShowPlotDialog(false)
+      loadEnrollmentData()
+    } catch (error) {
+      toast.error("Failed to update plot ID")
+      console.error(error)
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const handleResolvePayment = async () => {
+    if (!selectedInstallment) return
+
+    try {
+      setIsProcessing(true)
+      await resolvePaymentInstallment(
+        enrollmentId,
+        selectedInstallment.id,
+        parseFloat(paidAmount),
+        new Date(paidDate)
+      )
+      toast.success("Payment marked as paid")
+      setShowResolveDialog(false)
+      setSelectedInstallment(null)
+      loadEnrollmentData()
+    } catch (error) {
+      toast.error("Failed to resolve payment")
+      console.error(error)
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const handleUnresolvePayment = async (installment: EnrollmentPaymentSchedule) => {
+    try {
+      setIsProcessing(true)
+      await unresolvePaymentInstallment(enrollmentId, installment.id)
+      toast.success("Payment marked as unpaid")
+      loadEnrollmentData()
+    } catch (error) {
+      toast.error("Failed to unresolve payment")
+      console.error(error)
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const handleCancelEnrollment = async () => {
+    if (!enrollment) return
+
+    try {
+      setIsProcessing(true)
+      await cancelEnrollment(enrollmentId, cancellationReason)
+      toast.success("Enrollment cancelled successfully")
+      setShowCancelDialog(false)
+      loadEnrollmentData()
+    } catch (error) {
+      toast.error("Failed to cancel enrollment")
+      console.error(error)
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const handleGenerateInvoice = async (installment: EnrollmentPaymentSchedule) => {
+    if (!enrollment) return
+
+    try {
+      setIsProcessing(true)
+      await createInvoice({
+        type: "Monthly Payment",
+        clientId: enrollment.clientId,
+        clientName: enrollment.clientName,
+        clientEmail: `${enrollment.clientId}@example.com`,
+        enrollmentId: enrollment.id,
+        enrollmentNumber: enrollment.enrollmentNumber,
+        propertyId: enrollment.propertyId,
+        propertyName: enrollment.propertyName,
+        amount: installment.amount,
+        items: [
+          {
+            id: `item-${installment.id}`,
+            description: `Payment installment #${installment.installmentNumber} for ${enrollment.propertyName}`,
+            quantity: 1,
+            unitPrice: installment.amount,
+            total: installment.amount,
+          },
+        ],
+      })
+      toast.success("Invoice generated successfully")
+      loadEnrollmentData()
+    } catch (error) {
+      toast.error("Failed to generate invoice")
+      console.error(error)
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  const handleGenerateReceipt = (installment: EnrollmentPaymentSchedule) => {
+    if (!enrollment) return
+
+    generatePaymentReceipt(
+      enrollment,
+      installment.paidAmount || 0,
+      installment.paidDate || new Date(),
+      enrollment.paymentMethod,
+      `RCT-${enrollment.enrollmentNumber}-${installment.installmentNumber}`
+    )
+    toast.success("Receipt generated successfully")
+  }
+
+  const paymentColumns: ColumnDef<EnrollmentPaymentSchedule>[] = [
+    {
+      accessorKey: "installmentNumber",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Installment" />,
+      cell: ({ row }) => (
+        <span className="font-medium">#{row.getValue("installmentNumber")}</span>
+      ),
+    },
+    {
+      accessorKey: "amount",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Amount" />,
+      cell: ({ row }) => (
+        <span className="font-medium">{formatCurrency(row.getValue("amount"))}</span>
+      ),
+    },
+    {
+      accessorKey: "dueDate",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Due Date" />,
+      cell: ({ row }) => {
+        const dueDate: Date = row.getValue("dueDate")
+        return <span>{format(new Date(dueDate), "MMM dd, yyyy")}</span>
+      },
+    },
+    {
+      accessorKey: "paidDate",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Payment Date" />,
+      cell: ({ row }) => {
+        const paidDate = row.getValue("paidDate") as Date | undefined
+        return paidDate ? <span>{format(new Date(paidDate), "MMM dd, yyyy")}</span> : <span className="text-muted-foreground">-</span>
+      },
+    },
+    {
+      id: "overdueDays",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Overdue Days" />,
+      cell: ({ row }) => {
+        const installment = row.original
+        if (installment.isPaid || !installment.isOverdue) {
+          return <span className="text-muted-foreground">-</span>
+        }
+        const daysOverdue = Math.floor((Date.now() - new Date(installment.dueDate).getTime()) / (1000 * 60 * 60 * 24))
+        return <span className="text-red-600 font-medium">{daysOverdue} days</span>
+      },
+    },
+    {
+      accessorKey: "penaltyAmount",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Overdue Charge" />,
+      cell: ({ row }) => {
+        const penalty = row.getValue("penaltyAmount") as number
+        return penalty > 0 ? (
+          <span className="text-red-600 font-medium">{formatCurrency(penalty)}</span>
+        ) : (
+          <span className="text-muted-foreground">-</span>
+        )
+      },
+    },
+    {
+      accessorKey: "isPaid",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+      cell: ({ row }) => {
+        const isPaid = row.getValue("isPaid") as boolean
+        const isOverdue = row.original.isOverdue
+
+        if (isPaid) {
+          return <Badge variant="success">Paid</Badge>
+        } else if (isOverdue) {
+          return <Badge variant="destructive">Overdue</Badge>
+        } else {
+          return <Badge variant="warning">Pending</Badge>
+        }
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const installment = row.original
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {!installment.isPaid ? (
+                <>
+                  <DropdownMenuItem
+                    onClick={() => handleGenerateInvoice(installment)}
+                    disabled={isProcessing}
+                  >
+                    Generate Invoice
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setSelectedInstallment(installment)
+                      setPaidAmount(installment.amount.toString())
+                      setShowResolveDialog(true)
+                    }}
+                    disabled={isProcessing}
+                  >
+                    Mark as Paid
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem onClick={() => handleGenerateReceipt(installment)}>
+                    Generate Receipt
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => handleUnresolvePayment(installment)}
+                    disabled={isProcessing}
+                  >
+                    Mark as Unpaid
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )
+      },
+    },
+  ]
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="text-center">
+          <div className="w-12 h-12 mx-auto rounded-full bg-gradient-to-br from-primary to-yellow-600 animate-pulse mb-4" />
+          <p className="text-sm text-muted-foreground">Loading enrollment details...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!enrollment) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="text-center">
+          <AlertCircle className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+          <p className="text-lg font-medium">Enrollment not found</p>
+          <Button variant="outline" className="mt-4" onClick={() => router.back()}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Go Back
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="space-y-6">
       <PageHeader
         title={enrollment.enrollmentNumber}
-        description={`${enrollment.clientName} - ${enrollment.propertyName}`}
+        description={
+          <div className="flex items-center gap-2 flex-wrap">
+            <Link href={`/clients/${enrollment.clientId}`} className="hover:text-primary transition-colors">
+              {enrollment.clientName}
+            </Link>
+            <span>-</span>
+            <Link href={`/properties/${enrollment.propertyId}`} className="hover:text-primary transition-colors">
+              {enrollment.propertyName}
+            </Link>
+          </div>
+        }
         actions={
           <div className="flex gap-3">
             <Button variant="outline" size="sm" onClick={() => router.back()}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back
-            </Button>
-            <Button size="sm">
-              <Edit className="h-4 w-4 mr-2" />
-              Edit
             </Button>
           </div>
         }
@@ -93,7 +414,12 @@ export default function EnrollmentDetailPage() {
                   <User className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="text-sm text-muted-foreground">Client</p>
-                    <p className="font-medium">{enrollment.clientName}</p>
+                    <Link
+                      href={`/clients/${enrollment.clientId}`}
+                      className="font-medium hover:text-primary hover:underline transition-colors"
+                    >
+                      {enrollment.clientName}
+                    </Link>
                   </div>
                 </div>
 
@@ -101,7 +427,12 @@ export default function EnrollmentDetailPage() {
                   <Home className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="text-sm text-muted-foreground">Property</p>
-                    <p className="font-medium">{enrollment.propertyName}</p>
+                    <Link
+                      href={`/properties/${enrollment.propertyId}`}
+                      className="font-medium hover:text-primary hover:underline transition-colors"
+                    >
+                      {enrollment.propertyName}
+                    </Link>
                   </div>
                 </div>
 
@@ -109,7 +440,17 @@ export default function EnrollmentDetailPage() {
                   <FileText className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="text-sm text-muted-foreground">Plot Number</p>
-                    <p className="font-medium">{enrollment.plotNumber}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium">{enrollment.plotNumber || "Not assigned"}</p>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-2"
+                        onClick={() => setShowPlotDialog(true)}
+                      >
+                        <Edit className="h-3 w-3" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
 
@@ -117,7 +458,12 @@ export default function EnrollmentDetailPage() {
                   <User className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="text-sm text-muted-foreground">Agent</p>
-                    <p className="font-medium">{enrollment.agentName}</p>
+                    <Link
+                      href={`/users/${enrollment.agentId}`}
+                      className="font-medium hover:text-primary hover:underline transition-colors"
+                    >
+                      {enrollment.agentName}
+                    </Link>
                   </div>
                 </div>
 
@@ -125,7 +471,7 @@ export default function EnrollmentDetailPage() {
                   <Calendar className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="text-sm text-muted-foreground">Start Date</p>
-                    <p className="font-medium">{format(enrollment.startDate, "PPP")}</p>
+                    <p className="font-medium">{format(new Date(enrollment.startDate), "PPP")}</p>
                   </div>
                 </div>
 
@@ -133,7 +479,7 @@ export default function EnrollmentDetailPage() {
                   <Calendar className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="text-sm text-muted-foreground">Expected Completion</p>
-                    <p className="font-medium">{format(enrollment.expectedCompletionDate, "PPP")}</p>
+                    <p className="font-medium">{format(new Date(enrollment.expectedCompletionDate), "PPP")}</p>
                   </div>
                 </div>
               </div>
@@ -148,9 +494,9 @@ export default function EnrollmentDetailPage() {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-sm">Payment Progress</span>
-                  <span className="text-sm font-medium">{enrollment.progressPercentage}%</span>
+                  <span className="text-sm font-medium">{enrollment.completionPercentage}%</span>
                 </div>
-                <Progress value={enrollment.progressPercentage} />
+                <Progress value={enrollment.completionPercentage} />
               </div>
 
               <Separator />
@@ -158,60 +504,34 @@ export default function EnrollmentDetailPage() {
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground">Total Amount</p>
-                  <p className="text-xl font-bold">₦{enrollment.totalAmount.toLocaleString()}</p>
+                  <p className="text-xl font-bold">{formatCurrency(enrollment.propertyPrice)}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Amount Paid</p>
-                  <p className="text-xl font-bold text-green-600">₦{enrollment.amountPaid.toLocaleString()}</p>
+                  <p className="text-xl font-bold text-green-600">{formatCurrency(enrollment.totalPaid)}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Amount Pending</p>
-                  <p className="text-xl font-bold text-orange-600">₦{enrollment.amountPending.toLocaleString()}</p>
+                  <p className="text-xl font-bold text-orange-600">{formatCurrency(enrollment.outstandingBalance)}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Tabs defaultValue="payments">
-            <TabsList>
-              <TabsTrigger value="payments">Payment Schedule</TabsTrigger>
-              <TabsTrigger value="invoices">Invoices</TabsTrigger>
-              <TabsTrigger value="timeline">Timeline</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="payments">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Installment Schedule</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">Payment schedule details will appear here</p>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="invoices">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Invoices</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">Invoice list will appear here</p>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="timeline">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Activity Timeline</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">Timeline events will appear here</p>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+          <Card>
+            <CardHeader>
+              <CardTitle>Payment Installments</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DataTable
+                columns={paymentColumns}
+                data={paymentSchedule}
+                searchKey="installmentNumber"
+                searchPlaceholder="Search installments..."
+                searchVariant="gold"
+              />
+            </CardContent>
+          </Card>
         </div>
 
         <div className="space-y-6">
@@ -220,9 +540,7 @@ export default function EnrollmentDetailPage() {
               <CardTitle>Status</CardTitle>
             </CardHeader>
             <CardContent>
-              <Badge className={statusColors[enrollment.status]}>
-                {enrollment.status}
-              </Badge>
+              <StatusBadge status={enrollment.status} />
             </CardContent>
           </Card>
 
@@ -231,18 +549,13 @@ export default function EnrollmentDetailPage() {
               <CardTitle>Quick Actions</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <Button className="w-full" variant="outline">
-                <DollarSign className="h-4 w-4 mr-2" />
-                Record Payment
-              </Button>
-              <Button className="w-full" variant="outline">
-                <FileText className="h-4 w-4 mr-2" />
-                Generate Invoice
-              </Button>
-              <Button className="w-full" variant="outline">
-                Freeze Enrollment
-              </Button>
-              <Button className="w-full text-red-600" variant="outline">
+              <Button
+                className="w-full"
+                variant="outline"
+                onClick={() => setShowCancelDialog(true)}
+                disabled={enrollment.status === "Cancelled"}
+              >
+                <Ban className="h-4 w-4 mr-2" />
                 Cancel Enrollment
               </Button>
             </CardContent>
@@ -256,28 +569,6 @@ export default function EnrollmentDetailPage() {
               <Button
                 className="w-full"
                 variant="outline"
-                onClick={() => generateOfferLetter(enrollment)}
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Download Offer Letter
-              </Button>
-              <Button
-                className="w-full"
-                variant="outline"
-                onClick={() => generatePaymentReceipt(
-                  enrollment,
-                  enrollment.amountPaid,
-                  new Date(),
-                  "Bank Transfer",
-                  `RCT-${enrollment.enrollmentNumber}`
-                )}
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Download Payment Receipt
-              </Button>
-              <Button
-                className="w-full"
-                variant="outline"
                 onClick={() => generateAllocationLetter(enrollment)}
                 disabled={!enrollment.plotNumber}
               >
@@ -288,6 +579,114 @@ export default function EnrollmentDetailPage() {
           </Card>
         </div>
       </div>
+
+      {/* Plot ID Dialog */}
+      <Dialog open={showPlotDialog} onOpenChange={setShowPlotDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Set/Edit Plot ID</DialogTitle>
+            <DialogDescription>
+              Enter the plot number for this enrollment
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="plotId">Plot Number</Label>
+              <Input
+                id="plotId"
+                value={plotId}
+                onChange={(e) => setPlotId(e.target.value)}
+                placeholder="e.g., A-101"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowPlotDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSavePlotId} disabled={isProcessing}>
+              {isProcessing ? "Saving..." : "Save"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Resolve Payment Dialog */}
+      <Dialog open={showResolveDialog} onOpenChange={setShowResolveDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Mark Payment as Paid</DialogTitle>
+            <DialogDescription>
+              Enter payment details for installment #{selectedInstallment?.installmentNumber}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="paidAmount">Amount Paid</Label>
+              <Input
+                id="paidAmount"
+                type="number"
+                value={paidAmount}
+                onChange={(e) => setPaidAmount(e.target.value)}
+                placeholder="Enter amount"
+              />
+            </div>
+            <div>
+              <Label htmlFor="paidDate">Payment Date</Label>
+              <Input
+                id="paidDate"
+                type="date"
+                value={paidDate}
+                onChange={(e) => setPaidDate(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowResolveDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleResolvePayment} disabled={isProcessing}>
+              {isProcessing ? "Processing..." : "Mark as Paid"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Cancel Enrollment Dialog */}
+      <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cancel Enrollment</DialogTitle>
+            <DialogDescription>
+              This action will cancel the enrollment. Please provide a reason.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="cancellationReason">Cancellation Reason</Label>
+              <Textarea
+                id="cancellationReason"
+                value={cancellationReason}
+                onChange={(e) => setCancellationReason(e.target.value)}
+                placeholder="Enter reason for cancellation..."
+                rows={4}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCancelDialog(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleCancelEnrollment}
+              disabled={isProcessing || !cancellationReason.trim()}
+            >
+              {isProcessing ? "Cancelling..." : "Cancel Enrollment"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

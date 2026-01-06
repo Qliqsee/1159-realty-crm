@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useAuthStore } from "@/lib/store/auth-store";
 import { PermissionManager } from "@/lib/permissions/permission-manager";
 import type { Permission, Action, Resource } from "@/lib/permissions/types";
@@ -19,90 +20,105 @@ import type { UserRole } from "@/types";
 export const usePermissions = () => {
   const user = useAuthStore((state) => state.user);
 
-  return {
-    /**
-     * Direct permission check
-     */
-    hasPermission: (permission: Permission): boolean =>
-      PermissionManager.hasPermission(user, permission),
+  // Memoize permissions and permission level to prevent recalculation on every render
+  const permissions = useMemo(
+    () => PermissionManager.getUserPermissions(user),
+    [user]
+  );
 
-    /**
-     * Check if user has ANY of the permissions
-     */
-    hasAnyPermission: (permissions: Permission[]): boolean =>
-      PermissionManager.hasAnyPermission(user, permissions),
+  const permissionLevel = useMemo(
+    () => PermissionManager.getPermissionLevel(user),
+    [user]
+  );
 
-    /**
-     * Check if user has ALL of the permissions
-     */
-    hasAllPermissions: (permissions: Permission[]): boolean =>
-      PermissionManager.hasAllPermissions(user, permissions),
+  // Memoize the entire return object to prevent new references on every render
+  return useMemo(
+    () => ({
+      /**
+       * Direct permission check
+       */
+      hasPermission: (permission: Permission): boolean =>
+        PermissionManager.hasPermission(user, permission),
 
-    /**
-     * Convenience methods for common actions
-     */
-    canView: (resource: Resource): boolean =>
-      PermissionManager.can(user, "view", resource),
+      /**
+       * Check if user has ANY of the permissions
+       */
+      hasAnyPermission: (permissions: Permission[]): boolean =>
+        PermissionManager.hasAnyPermission(user, permissions),
 
-    canCreate: (resource: Resource): boolean =>
-      PermissionManager.can(user, "create", resource),
+      /**
+       * Check if user has ALL of the permissions
+       */
+      hasAllPermissions: (permissions: Permission[]): boolean =>
+        PermissionManager.hasAllPermissions(user, permissions),
 
-    canUpdate: (resource: Resource): boolean =>
-      PermissionManager.can(user, "update", resource),
+      /**
+       * Convenience methods for common actions
+       */
+      canView: (resource: Resource): boolean =>
+        PermissionManager.can(user, "view", resource),
 
-    canDelete: (resource: Resource): boolean =>
-      PermissionManager.can(user, "delete", resource),
+      canCreate: (resource: Resource): boolean =>
+        PermissionManager.can(user, "create", resource),
 
-    canApprove: (resource: Resource): boolean =>
-      PermissionManager.can(user, "approve", resource),
+      canUpdate: (resource: Resource): boolean =>
+        PermissionManager.can(user, "update", resource),
 
-    canReject: (resource: Resource): boolean =>
-      PermissionManager.can(user, "reject", resource),
+      canDelete: (resource: Resource): boolean =>
+        PermissionManager.can(user, "delete", resource),
 
-    canAssign: (resource: Resource): boolean =>
-      PermissionManager.can(user, "assign", resource),
+      canApprove: (resource: Resource): boolean =>
+        PermissionManager.can(user, "approve", resource),
 
-    canExport: (resource: Resource): boolean =>
-      PermissionManager.can(user, "export", resource),
+      canReject: (resource: Resource): boolean =>
+        PermissionManager.can(user, "reject", resource),
 
-    canDownload: (resource: Resource): boolean =>
-      PermissionManager.can(user, "download", resource),
+      canAssign: (resource: Resource): boolean =>
+        PermissionManager.can(user, "assign", resource),
 
-    /**
-     * Get all allowed actions for a resource
-     */
-    getAllowedActions: (resource: Resource): Action[] =>
-      PermissionManager.getAllowedActions(user, resource),
+      canExport: (resource: Resource): boolean =>
+        PermissionManager.can(user, "export", resource),
 
-    /**
-     * Role checks
-     */
-    hasRole: (roles: UserRole | UserRole[]): boolean =>
-      PermissionManager.hasRole(user, roles),
+      canDownload: (resource: Resource): boolean =>
+        PermissionManager.can(user, "download", resource),
 
-    isAdmin: (): boolean => PermissionManager.isAdmin(user),
+      /**
+       * Get all allowed actions for a resource
+       */
+      getAllowedActions: (resource: Resource): Action[] =>
+        PermissionManager.getAllowedActions(user, resource),
 
-    isManagerOrHigher: (): boolean => PermissionManager.isManagerOrHigher(user),
+      /**
+       * Role checks
+       */
+      hasRole: (roles: UserRole | UserRole[]): boolean =>
+        PermissionManager.hasRole(user, roles),
 
-    /**
-     * Generic action check
-     */
-    can: (action: Action, resource: Resource): boolean =>
-      PermissionManager.can(user, action, resource),
+      isAdmin: (): boolean => PermissionManager.isAdmin(user),
 
-    /**
-     * Get current user
-     */
-    user,
+      isManagerOrHigher: (): boolean => PermissionManager.isManagerOrHigher(user),
 
-    /**
-     * Get all user permissions
-     */
-    permissions: PermissionManager.getUserPermissions(user),
+      /**
+       * Generic action check
+       */
+      can: (action: Action, resource: Resource): boolean =>
+        PermissionManager.can(user, action, resource),
 
-    /**
-     * Get permission level description
-     */
-    permissionLevel: PermissionManager.getPermissionLevel(user),
-  };
+      /**
+       * Get current user
+       */
+      user,
+
+      /**
+       * Get all user permissions
+       */
+      permissions,
+
+      /**
+       * Get permission level description
+       */
+      permissionLevel,
+    }),
+    [user, permissions, permissionLevel]
+  );
 };

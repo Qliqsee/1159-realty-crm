@@ -1,11 +1,30 @@
-import pdfMake from "pdfmake/build/pdfmake"
-import pdfFonts from "pdfmake/build/vfs_fonts"
-import { TDocumentDefinitions } from "pdfmake/interfaces"
 import { format } from "date-fns"
 import type { Enrollment } from "@/types"
 
-// Initialize pdfMake with fonts
-pdfMake.vfs = pdfFonts.pdfMake.vfs
+// Dynamic imports for pdfMake (to handle client-side rendering)
+let pdfMake: any = null
+let pdfMakeInitialized = false
+
+async function initializePdfMake() {
+  if (pdfMakeInitialized && pdfMake) return pdfMake
+
+  try {
+    const pdfMakeModule = await import("pdfmake/build/pdfmake")
+    const pdfFontsModule = await import("pdfmake/build/vfs_fonts")
+
+    pdfMake = pdfMakeModule.default || pdfMakeModule
+    const pdfFonts = pdfFontsModule.default || pdfFontsModule
+
+    if (pdfMake && pdfFonts?.pdfMake?.vfs) {
+      pdfMake.vfs = pdfFonts.pdfMake.vfs
+      pdfMakeInitialized = true
+    }
+  } catch (error) {
+    console.error("Failed to initialize pdfMake:", error)
+  }
+
+  return pdfMake
+}
 
 // Company branding
 const COMPANY_NAME = "1159 REALTY"
@@ -16,8 +35,14 @@ const COMPANY_EMAIL = "info@1159realty.com"
 /**
  * Generate Offer Letter PDF
  */
-export function generateOfferLetter(enrollment: Enrollment) {
-  const docDefinition: TDocumentDefinitions = {
+export async function generateOfferLetter(enrollment: Enrollment) {
+  const pdf = await initializePdfMake()
+  if (!pdf) {
+    console.error("pdfMake not initialized")
+    return
+  }
+
+  const docDefinition: any = {
     pageSize: "A4",
     pageMargins: [40, 60, 40, 60],
     content: [
@@ -257,20 +282,26 @@ export function generateOfferLetter(enrollment: Enrollment) {
     },
   }
 
-  pdfMake.createPdf(docDefinition).download(`Offer-Letter-${enrollment.enrollmentNumber}.pdf`)
+  pdf.createPdf(docDefinition).download(`Offer-Letter-${enrollment.enrollmentNumber}.pdf`)
 }
 
 /**
  * Generate Payment Receipt PDF
  */
-export function generatePaymentReceipt(
+export async function generatePaymentReceipt(
   enrollment: Enrollment,
   paymentAmount: number,
   paymentDate: Date,
   paymentMethod: string,
   receiptNumber: string
 ) {
-  const docDefinition: TDocumentDefinitions = {
+  const pdf = await initializePdfMake()
+  if (!pdf) {
+    console.error("pdfMake not initialized")
+    return
+  }
+
+  const docDefinition: any = {
     pageSize: "A4",
     pageMargins: [40, 60, 40, 60],
     content: [
@@ -455,14 +486,20 @@ export function generatePaymentReceipt(
     },
   }
 
-  pdfMake.createPdf(docDefinition).download(`Receipt-${receiptNumber}.pdf`)
+  pdf.createPdf(docDefinition).download(`Receipt-${receiptNumber}.pdf`)
 }
 
 /**
  * Generate Allocation Letter PDF
  */
-export function generateAllocationLetter(enrollment: Enrollment) {
-  const docDefinition: TDocumentDefinitions = {
+export async function generateAllocationLetter(enrollment: Enrollment) {
+  const pdf = await initializePdfMake()
+  if (!pdf) {
+    console.error("pdfMake not initialized")
+    return
+  }
+
+  const docDefinition: any = {
     pageSize: "A4",
     pageMargins: [40, 60, 40, 60],
     content: [
@@ -615,7 +652,7 @@ export function generateAllocationLetter(enrollment: Enrollment) {
     },
   }
 
-  pdfMake.createPdf(docDefinition).download(`Plot-Allocation-${enrollment.enrollmentNumber}.pdf`)
+  pdf.createPdf(docDefinition).download(`Plot-Allocation-${enrollment.enrollmentNumber}.pdf`)
 }
 
 /**

@@ -93,7 +93,7 @@ export function Header({ onMenuClick }: HeaderProps) {
                 )}
               >
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={user?.profileImage} alt={user?.fullName} />
+                  <AvatarImage src={user?.avatar} alt={user?.fullName} />
                   <AvatarFallback className="bg-primary text-primary-foreground">
                     {user ? getInitials(user.fullName) : "??"}
                   </AvatarFallback>

@@ -1,6 +1,8 @@
-export type EnrollmentStatus = "Ongoing" | "Completed" | "Cancelled" | "Frozen";
+export type EnrollmentStatus = "Pending" | "Active" | "Completed" | "Suspended" | "Cancelled" | "Frozen";
 
 export type PaymentType = "Outright" | "Installment";
+
+export type PaymentMethod = "Bank Transfer" | "Cash" | "Card" | "Cheque" | "Mobile Money";
 
 export type EnrollmentType = "Company Lead" | "Private Lead";
 
@@ -13,7 +15,7 @@ export interface Enrollment {
   clientName: string;
   propertyId: string;
   propertyName: string;
-  propertyType: string;
+  propertyType?: string;
 
   // Land size selection (if property is land)
   selectedSizeId?: string;
@@ -27,43 +29,78 @@ export interface Enrollment {
   // Agent & Assignment
   agentId: string;
   agentName: string;
-  enrollmentType: EnrollmentType;
+  enrollmentType?: EnrollmentType;
 
   // Pricing
-  totalAmount: number;
-  amountPaid: number;
-  amountPending: number;
-  interestAmount: number;
+  propertyPrice: number;
+  downPayment: number;
+  downPaymentPercentage: number;
+  balance: number;
+  totalPaid: number;
+  outstandingBalance: number;
+  totalAmount?: number;
+  amountPaid?: number;
+  amountPending?: number;
+  interestAmount?: number;
   penaltyAmount: number;
-  discountAmount: number;
-  finalAmount: number;
+  discountAmount?: number;
+  finalAmount?: number;
 
   // Payment
-  paymentType: PaymentType;
+  paymentType?: PaymentType;
+  paymentDuration: number; // In months
+  monthlyPayment: number;
   installmentDuration?: number; // In months
   installmentMonthlyAmount?: number;
   interestRate: number; // Percentage
-  overduepenaltyRate: number; // Percentage
+  totalInterest: number;
+  totalPayable: number;
+  overduepenaltyRate?: number; // Percentage
+  paymentMethod: PaymentMethod;
+  paymentFrequency: string;
+  nextPaymentDue?: Date;
+  nextPaymentAmount?: number;
+  lastPaymentDate?: Date;
+  lastPaymentAmount?: number;
+  paymentsCount: number;
+  missedPayments: number;
+  daysOverdue: number;
 
   // Progress
   status: EnrollmentStatus;
-  progressPercentage: number;
+  progressPercentage?: number;
+  completionPercentage: number;
   startDate: Date;
-  expectedCompletionDate?: Date;
+  expectedCompletionDate: Date;
   completionDate?: Date;
+  actualCompletionDate?: Date;
   cancelledDate?: Date;
   cancellationReason?: string;
   frozenDate?: Date;
   frozenReason?: string;
 
+  // Additional Details
+  notes?: string;
+  documents: any[];
+  isCoOwnership: boolean;
+  coOwners?: Array<{
+    id: string;
+    name: string;
+    relationship: string;
+    percentage: number;
+  }>;
+  hasInsurance: boolean;
+  insuranceProvider?: string;
+  insurancePolicyNumber?: string;
+
   // Interest linkage
   linkedInterestId?: string; // If created from a property interest
 
   // Metadata
-  notes: EnrollmentNote[];
   createdAt: Date;
   updatedAt: Date;
   createdBy: string;
+  createdByName: string;
   lastModifiedBy?: string;
 }
 

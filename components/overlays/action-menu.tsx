@@ -51,7 +51,12 @@ interface ActionMenuProps {
  * <ActionMenu items={actions} />
  */
 export function ActionMenu({ items, align = "end" }: ActionMenuProps) {
-  const { hasPermission } = usePermissions()
+  const { hasPermission, user } = usePermissions()
+
+  // Don't render menu while user is loading to prevent flicker
+  if (user === null) {
+    return null
+  }
 
   // Filter items based on permissions
   const visibleItems = items.filter((item) => {

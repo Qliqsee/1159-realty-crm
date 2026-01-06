@@ -14,6 +14,7 @@
 The **1159 Realty CRM** is a comprehensive, feature-complete Customer Relationship Management system built specifically for real estate businesses. The application provides end-to-end management of leads, clients, properties, enrollments, payments, and analytics with a robust permission system and professional document generation.
 
 **Key Highlights:**
+
 - ✅ 100% Complete & Production Ready
 - ✅ 18 Entity Forms with Full Validation
 - ✅ 7 Interactive Analytics Charts with Predictive Insights
@@ -27,6 +28,7 @@ The **1159 Realty CRM** is a comprehensive, feature-complete Customer Relationsh
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Node.js 20.x or later
 - npm or yarn package manager
 
@@ -62,6 +64,7 @@ CST:       cst1@1159realty.com
 ## ✨ Features
 
 ### 🔐 Authentication & Authorization
+
 - Role-based access control (RBAC) with 12 roles
 - 200+ granular permissions
 - Secure login/logout flows
@@ -69,6 +72,7 @@ CST:       cst1@1159realty.com
 - Session management
 
 ### 📊 Analytics Dashboard
+
 - **Revenue Forecasting** - Predictive revenue analysis with trend projections
 - **Sales Analytics** - Outright vs. installment sales breakdown
 - **Agent Performance** - Top performers with target comparisons
@@ -78,7 +82,9 @@ CST:       cst1@1159realty.com
 - **Payment Collection** - On-time/pending/overdue monitoring
 
 ### 📝 Entity Management
+
 Complete CRUD operations for:
+
 - **Leads** - Capture and track prospects
 - **Clients** - Manage client relationships
 - **Properties** - Property listings and details
@@ -95,12 +101,15 @@ Complete CRUD operations for:
 - And more...
 
 ### 📄 PDF Generation
+
 Professional documents with company branding:
+
 - **Offer Letters** - Property offers with terms
 - **Payment Receipts** - Official payment acknowledgments
 - **Allocation Letters** - Plot allocation confirmations
 
 ### 🎨 Design System
+
 - Shadow-based elevation (NO BORDERS)
 - Gold (#FFD700) premium theme
 - Fully responsive (mobile to desktop)
@@ -140,17 +149,17 @@ Professional documents with company branding:
 
 ## 🛠️ Tech Stack
 
-| Category | Technology |
-|----------|-----------|
-| **Framework** | Next.js 15.1.3 (App Router) |
-| **Language** | TypeScript (strict mode) |
-| **UI Library** | shadcn/ui (Radix UI) |
-| **Styling** | Tailwind CSS |
-| **Forms** | React Hook Form + Zod |
-| **State** | Zustand |
-| **Charts** | Recharts |
-| **PDF** | pdfmake |
-| **Tables** | TanStack Table |
+| Category       | Technology                  |
+| -------------- | --------------------------- |
+| **Framework**  | Next.js 15.1.3 (App Router) |
+| **Language**   | TypeScript (strict mode)    |
+| **UI Library** | shadcn/ui (Radix UI)        |
+| **Styling**    | Tailwind CSS                |
+| **Forms**      | React Hook Form + Zod       |
+| **State**      | Zustand                     |
+| **Charts**     | Recharts                    |
+| **PDF**        | pdfmake                     |
+| **Tables**     | TanStack Table              |
 
 ---
 
@@ -170,6 +179,7 @@ Comprehensive documentation is available:
 ## 🧪 Testing
 
 ### Manual Testing
+
 ```bash
 # Login as different roles
 Admin:     Full access to all features
@@ -179,6 +189,7 @@ Accounting: Financial features
 ```
 
 ### Automated Testing (Future)
+
 ```bash
 # Unit tests
 npm run test
@@ -194,12 +205,14 @@ See [TESTING_GUIDE.md](./TESTING_GUIDE.md) for comprehensive testing procedures.
 ## 🚀 Deployment
 
 ### Vercel (Recommended)
+
 ```bash
 # Deploy to production
 vercel --prod
 ```
 
 ### AWS / Docker
+
 See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed instructions.
 
 ---
@@ -236,21 +249,25 @@ See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed instructions.
 ## 🔄 Development Workflow
 
 ### Build
+
 ```bash
 npm run build
 ```
 
 ### Lint
+
 ```bash
 npm run lint
 ```
 
 ### Type Check
+
 ```bash
 npx tsc --noEmit
 ```
 
 ### Start Production Server
+
 ```bash
 npm run start
 ```
@@ -260,6 +277,7 @@ npm run start
 ## 🐛 Issue Reporting
 
 For bugs or feature requests:
+
 1. Check existing issues
 2. Create detailed bug report with:
    - Steps to reproduce
@@ -296,6 +314,7 @@ For bugs or feature requests:
 ## 🌟 Acknowledgments
 
 Built with powerful open-source technologies:
+
 - [Next.js](https://nextjs.org/) - React framework
 - [shadcn/ui](https://ui.shadcn.com/) - UI components
 - [Recharts](https://recharts.org/) - Charting library
@@ -307,6 +326,7 @@ Built with powerful open-source technologies:
 ## 🎯 Roadmap
 
 ### Phase 1: ✅ Core Features (Complete)
+
 - Authentication & authorization
 - Entity management (CRUD)
 - Analytics dashboard
@@ -314,6 +334,7 @@ Built with powerful open-source technologies:
 - Responsive design
 
 ### Phase 2: Backend Integration (Next)
+
 - Real API endpoints
 - Database integration
 - File storage (AWS S3)
@@ -321,6 +342,7 @@ Built with powerful open-source technologies:
 - Payment gateway
 
 ### Phase 3: Advanced Features (Future)
+
 - Real-time notifications
 - Mobile app
 - Advanced reporting
@@ -331,4 +353,4 @@ Built with powerful open-source technologies:
 
 **Status:** ✅ **100% Complete - Production Ready**
 
-*Built with ❤️ for 1159 Realty*
+_Built with ❤️ for 1159 Realty_

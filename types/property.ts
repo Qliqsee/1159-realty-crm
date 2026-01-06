@@ -181,33 +181,6 @@ export interface PropertyMedia {
   createdAt: Date;
 }
 
-export interface Plot {
-  id: string;
-  plotId: string; // Unique plot identifier (e.g., "A-101")
-  propertyId: string;
-  propertyName: string;
-  status: "Available" | "Allocated" | "Reserved";
-  latitude?: number;
-  longitude?: number;
-  allocatedTo?: string; // Client ID
-  allocatedToName?: string;
-  enrollmentId?: string;
-  allocatedAt?: Date;
-  createdAt: Date;
-}
-
-export interface PlotAllocationHistory {
-  id: string;
-  plotId: string;
-  propertyId: string;
-  clientId: string;
-  clientName: string;
-  enrollmentId: string;
-  allocatedAt: Date;
-  deallocatedAt?: Date;
-  reason?: string;
-}
-
 export interface PropertyFilters {
   type?: PropertyType[];
   status?: PropertyStatus[];

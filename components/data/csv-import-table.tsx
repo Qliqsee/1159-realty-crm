@@ -3,15 +3,12 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
-import { Label } from "@/components/layout/label"
-import { Select } from "@/components/inputs/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/display/table"
 import { Badge } from "@/components/badges/badge"
 import { AlertCircle, CheckCircle2 } from "lucide-react"
 import { z } from "zod"
 
-export interface CSVColumnMapping {
-  csvColumn: string
+export interface CSVFieldMapping {
   targetField: string
   label: string
   required?: boolean
@@ -20,7 +17,7 @@ export interface CSVColumnMapping {
 export interface CSVImportTableProps<T extends z.ZodType> {
   csvData: string[][] // Parsed CSV data (rows of columns)
   schema: T // Zod schema for validation
-  fieldMappings: CSVColumnMapping[] // Expected fields with labels
+  fieldMappings: CSVFieldMapping[] // Expected fields with labels
   onSubmit: (validatedData: z.infer<T>[]) => void | Promise<void>
   onCancel: () => void
   isLoading?: boolean
@@ -35,31 +32,16 @@ export function CSVImportTable<T extends z.ZodType>({
   isLoading = false,
 }: CSVImportTableProps<T>) {
   const [csvHeaders, setCsvHeaders] = useState<string[]>([])
-  const [columnMapping, setColumnMapping] = useState<Record<string, string>>({})
   const [tableData, setTableData] = useState<Record<string, any>[]>([])
   const [validationErrors, setValidationErrors] = useState<Record<number, Record<string, string>>>({})
   const [editingCell, setEditingCell] = useState<{ row: number; field: string } | null>(null)
 
-  // Initialize: Extract headers and auto-match columns
+  // Initialize: Extract headers and convert CSV to table data
   useEffect(() => {
     if (csvData.length === 0) return
 
     const headers = csvData[0].map(h => h.trim())
     setCsvHeaders(headers)
-
-    // Auto-match columns based on field names
-    const autoMapping: Record<string, string> = {}
-    fieldMappings.forEach(({ targetField, label }) => {
-      const matchedHeader = headers.find(
-        h => h.toLowerCase() === targetField.toLowerCase() ||
-             h.toLowerCase() === label.toLowerCase() ||
-             h.toLowerCase().replace(/\s+/g, '') === targetField.toLowerCase().replace(/\s+/g, '')
-      )
-      if (matchedHeader) {
-        autoMapping[targetField] = matchedHeader
-      }
-    })
-    setColumnMapping(autoMapping)
 
     // Convert CSV rows to objects
     const rows = csvData.slice(1).map((row, index) => {
@@ -75,42 +57,17 @@ export function CSVImportTable<T extends z.ZodType>({
     })
 
     setTableData(rows)
+    // Clear any previous validation errors when new data is loaded
+    setValidationErrors({})
   }, [csvData, fieldMappings])
 
-  // Validate all rows whenever data or mapping changes
-  useEffect(() => {
-    validateAllRows()
-  }, [tableData, columnMapping])
-
-  const validateAllRows = () => {
-    const errors: Record<number, Record<string, string>> = {}
-
-    tableData.forEach((row, rowIndex) => {
-      const mappedRow: Record<string, any> = {}
-
-      // Map CSV columns to target fields
-      fieldMappings.forEach(({ targetField }) => {
-        const csvColumn = columnMapping[targetField]
-        mappedRow[targetField] = csvColumn ? row[csvColumn] : ""
-      })
-
-      // Validate with Zod schema
-      const result = schema.safeParse(mappedRow)
-      if (!result.success) {
-        const rowErrors: Record<string, string> = {}
-        result.error.errors.forEach(err => {
-          const field = err.path[0] as string
-          rowErrors[field] = err.message
-        })
-        errors[rowIndex] = rowErrors
-      }
-    })
-
-    setValidationErrors(errors)
-  }
-
   const handleCellEdit = (rowIndex: number, field: string, value: string) => {
-    const csvColumn = columnMapping[field]
+    // Find the matching CSV column for this field
+    const csvColumn = csvHeaders.find(
+      h => h.toLowerCase() === field.toLowerCase() ||
+           h.toLowerCase().replace(/\s+/g, '') === field.toLowerCase().replace(/\s+/g, '')
+    )
+
     if (!csvColumn) return
 
     const newData = [...tableData]
@@ -119,24 +76,48 @@ export function CSVImportTable<T extends z.ZodType>({
   }
 
   const handleSubmit = () => {
-    // Check if there are any validation errors
-    if (Object.keys(validationErrors).length > 0) {
-      return // Don't submit if there are errors
-    }
+    const errors: Record<number, Record<string, string>> = {}
 
     // Map and validate all data
-    const mappedData = tableData.map(row => {
+    const mappedData = tableData.map((row, rowIndex) => {
       const mappedRow: Record<string, any> = {}
+
+      // Map CSV columns to target fields by matching column names
       fieldMappings.forEach(({ targetField }) => {
-        const csvColumn = columnMapping[targetField]
+        const csvColumn = csvHeaders.find(
+          h => h.toLowerCase() === targetField.toLowerCase() ||
+               h.toLowerCase().replace(/\s+/g, '') === targetField.toLowerCase().replace(/\s+/g, '')
+        )
         mappedRow[targetField] = csvColumn ? row[csvColumn] : ""
       })
+
+      // Validate with Zod schema
+      const result = schema.safeParse(mappedRow)
+      if (!result.success) {
+        const rowErrors: Record<string, string> = {}
+        result.error.issues.forEach((err) => {
+          const field = err.path[0] as string
+          rowErrors[field] = err.message
+        })
+        errors[rowIndex] = rowErrors
+      }
+
       return mappedRow
     })
 
-    // Parse with schema (should all be valid at this point)
-    const validatedData = mappedData.map(row => schema.parse(row))
-    onSubmit(validatedData)
+    // If there are validation errors, show them and don't submit
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors)
+      return
+    }
+
+    // All valid - parse and submit
+    try {
+      const validatedData = mappedData.map(row => schema.parse(row))
+      onSubmit(validatedData)
+    } catch (error) {
+      console.error("Unexpected validation error during submit:", error)
+    }
   }
 
   const invalidCount = Object.keys(validationErrors).length
@@ -144,49 +125,39 @@ export function CSVImportTable<T extends z.ZodType>({
 
   return (
     <div className="space-y-4">
-      {/* Column Mapping Section */}
+      {/* Expected Columns Info */}
       <div className="border rounded-lg p-4 bg-muted/30">
-        <h3 className="font-medium mb-3">Map CSV Columns to Fields</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <h3 className="font-medium mb-2">Expected CSV Columns</h3>
+        <p className="text-sm text-muted-foreground mb-3">
+          Your CSV file should contain the following columns (case-insensitive):
+        </p>
+        <div className="flex flex-wrap gap-2">
           {fieldMappings.map(({ targetField, label, required }) => (
-            <div key={targetField} className="space-y-1.5">
-              <Label className="text-xs">
-                {label} {required && <span className="text-destructive">*</span>}
-              </Label>
-              <Select
-                value={columnMapping[targetField] || ""}
-                onValueChange={(value) => setColumnMapping(prev => ({ ...prev, [targetField]: value }))}
-                placeholder="Select column"
-                triggerClassName="h-8 text-xs"
-                options={[
-                  { value: "", label: "-- Not mapped --" },
-                  ...csvHeaders.map(header => ({
-                    value: header,
-                    label: header
-                  }))
-                ]}
-              />
-            </div>
+            <Badge key={targetField} variant={required ? "default" : "secondary"}>
+              {label} {required && "*"}
+            </Badge>
           ))}
         </div>
       </div>
 
-      {/* Validation Summary */}
-      <div className="flex items-center justify-between p-3 border rounded-lg">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 text-sm">
-            <CheckCircle2 className="h-4 w-4 text-green-600" />
-            <span className="font-medium">{validCount} valid</span>
+      {/* Validation Summary - only show after validation attempt */}
+      {invalidCount > 0 && (
+        <div className="flex items-center justify-between p-3 border rounded-lg">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-sm">
+              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              <span className="font-medium">{validCount} valid</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <AlertCircle className="h-4 w-4 text-destructive" />
+              <span className="font-medium">{invalidCount} invalid</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2 text-sm">
-            <AlertCircle className="h-4 w-4 text-destructive" />
-            <span className="font-medium">{invalidCount} invalid</span>
-          </div>
+          <Badge variant="destructive">
+            {tableData.length} total records
+          </Badge>
         </div>
-        <Badge variant={invalidCount === 0 ? "default" : "destructive"}>
-          {tableData.length} total records
-        </Badge>
-      </div>
+      )}
 
       {/* Editable Table */}
       <div className="border rounded-lg overflow-hidden">
@@ -261,10 +232,10 @@ export function CSVImportTable<T extends z.ZodType>({
             <AlertCircle className="h-4 w-4 text-destructive mt-0.5" />
             <div className="space-y-1 text-sm">
               <p className="font-medium text-destructive">
-                Please fix all validation errors before importing
+                Validation failed - {invalidCount} row{invalidCount !== 1 ? "s have" : " has"} errors
               </p>
               <p className="text-muted-foreground text-xs">
-                Rows with errors are highlighted in red. Click any cell to edit it.
+                Rows with errors are highlighted in red. Click any cell to edit it, then click Import again to revalidate.
               </p>
             </div>
           </div>
@@ -278,9 +249,9 @@ export function CSVImportTable<T extends z.ZodType>({
         </Button>
         <Button
           onClick={handleSubmit}
-          disabled={isLoading || invalidCount > 0}
+          disabled={isLoading}
         >
-          {isLoading ? "Importing..." : `Import ${validCount} Record${validCount !== 1 ? "s" : ""}`}
+          {isLoading ? "Importing..." : `Import ${tableData.length} Record${tableData.length !== 1 ? "s" : ""}`}
         </Button>
       </div>
     </div>

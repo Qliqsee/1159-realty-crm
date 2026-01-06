@@ -1,6 +1,7 @@
 "use client"
 
 import { useParams, useRouter } from "next/navigation"
+import { useRef } from "react"
 import { ArrowLeft, Edit, MapPin, Home, DollarSign, TrendingUp, Users, Eye, Plus, MoreHorizontal, Trash2, Upload, ChevronDown } from "lucide-react"
 import { Button } from "@/components/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/cards/card"
@@ -29,14 +30,12 @@ import { DataTableColumnHeader } from "@/components/data/data-table-column-heade
 
 // Plot CSV schema for validation
 const plotCSVSchema = z.object({
-  coordinate: z.string().min(1, "Plot ID/Coordinate is required"),
-  size: z.string().min(1, "Size is required"),
-  byRoadSide: z.string().transform(val => {
-    const lower = val.toLowerCase().trim()
-    return lower === "yes" || lower === "true" || lower === "1"
-  }),
-  status: z.enum(["AVAILABLE", "SOLD", "ARCHIVED"], {
-    errorMap: () => ({ message: "Status must be AVAILABLE, SOLD, or ARCHIVED" })
+  plotId: z.string().min(1, "Plot ID is required"),
+  unit: z.string().min(1, "Unit is required"),
+  coordinate: z.string().min(1, "Coordinate is required"),
+  feature: z.string().optional(),
+  status: z.enum(["AVAILABLE", "SOLD", "RESERVED", "ARCHIVED"], {
+    errorMap: () => ({ message: "Status must be AVAILABLE, SOLD, RESERVED, or ARCHIVED" })
   }).default("AVAILABLE"),
 })
 
@@ -46,22 +45,22 @@ const createPlotColumns = (
   onDelete: (plot: Plot) => void
 ): ColumnDef<Plot>[] => [
   {
-    accessorKey: "coordinate",
+    accessorKey: "plotId",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Plot ID" />,
-    cell: ({ row }) => <span className="font-medium">{row.getValue("coordinate")}</span>,
+    cell: ({ row }) => <span className="font-medium">{row.getValue("plotId")}</span>,
   },
   {
-    accessorKey: "size",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Size" />,
+    accessorKey: "unit",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Unit" />,
   },
   {
-    accessorKey: "byRoadSide",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="By Road Side" />,
-    cell: ({ row }) => (
-      <Badge variant={row.getValue("byRoadSide") ? "default" : "secondary"}>
-        {row.getValue("byRoadSide") ? "Yes" : "No"}
-      </Badge>
-    ),
+    accessorKey: "coordinate",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Coordinate" />,
+  },
+  {
+    accessorKey: "feature",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Feature" />,
+    cell: ({ row }) => row.getValue("feature") || "-",
   },
   {
     accessorKey: "status",
@@ -118,6 +117,7 @@ export default function PropertyDetailPage() {
   const [isSavingPlot, setIsSavingPlot] = useState(false)
   const [csvData, setCSVData] = useState<string[][]>([])
   const [isImporting, setIsImporting] = useState(false)
+  const csvFileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     loadProperty()
@@ -190,9 +190,10 @@ export default function PropertyDetailPage() {
       setIsSavingPlot(true)
       await createPlot({
         propertyId,
+        plotId: data.plotId,
+        unit: data.unit,
         coordinate: data.coordinate,
-        size: data.size,
-        byRoadSide: data.byRoadSide,
+        feature: data.feature,
         status: data.status,
       })
       toast.success("Plot added successfully")
@@ -212,9 +213,10 @@ export default function PropertyDetailPage() {
     try {
       setIsSavingPlot(true)
       await updatePlot(selectedPlot.id, {
+        plotId: data.plotId,
+        unit: data.unit,
         coordinate: data.coordinate,
-        size: data.size,
-        byRoadSide: data.byRoadSide,
+        feature: data.feature,
         status: data.status,
       })
       toast.success("Plot updated successfully")
@@ -258,14 +260,35 @@ export default function PropertyDetailPage() {
     const file = event.target.files?.[0]
     if (!file) return
 
+    // Validate file type
+    if (!file.name.endsWith('.csv')) {
+      toast.error("Please select a CSV file")
+      event.target.value = ""
+      return
+    }
+
     try {
       const text = await file.text()
+
+      if (!text || text.trim().length === 0) {
+        toast.error("CSV file is empty")
+        event.target.value = ""
+        return
+      }
+
       const rows = text.split("\n").map(row => row.split(",").map(cell => cell.trim()))
+
+      if (rows.length < 2) {
+        toast.error("CSV file must have at least a header row and one data row")
+        event.target.value = ""
+        return
+      }
+
       setCSVData(rows)
       setShowImportCSVDialog(true)
     } catch (error) {
-      toast.error("Failed to read CSV file")
-      console.error(error)
+      toast.error("Failed to read CSV file. Make sure it's a valid CSV.")
+      console.error("CSV parse error:", error)
     } finally {
       // Reset file input
       event.target.value = ""
@@ -277,9 +300,10 @@ export default function PropertyDetailPage() {
       setIsImporting(true)
       await bulkCreatePlots(validatedData.map(data => ({
         propertyId,
+        plotId: data.plotId,
+        unit: data.unit,
         coordinate: data.coordinate,
-        size: data.size,
-        byRoadSide: data.byRoadSide,
+        feature: data.feature,
         status: data.status,
       })))
       toast.success(`Successfully imported ${validatedData.length} plots`)
@@ -690,21 +714,20 @@ export default function PropertyDetailPage() {
                   <Plus className="h-4 w-4 mr-2" />
                   Add One by One
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <label htmlFor="csv-upload-plots" className="cursor-pointer">
-                    <Upload className="h-4 w-4 mr-2" />
-                    Import from CSV
-                    <input
-                      id="csv-upload-plots"
-                      type="file"
-                      accept=".csv"
-                      className="hidden"
-                      onChange={handleCSVFileUpload}
-                    />
-                  </label>
+                <DropdownMenuItem onClick={() => csvFileInputRef.current?.click()}>
+                  <Upload className="h-4 w-4 mr-2" />
+                  Import from CSV
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            {/* Hidden file input */}
+            <input
+              ref={csvFileInputRef}
+              type="file"
+              accept=".csv"
+              className="hidden"
+              onChange={handleCSVFileUpload}
+            />
           </div>
         </CardHeader>
         <CardContent>
@@ -724,8 +747,8 @@ export default function PropertyDetailPage() {
             <DataTable
               columns={plotColumns}
               data={plots}
-              searchKey="coordinate"
-              searchPlaceholder="Search plots by ID or location..."
+              searchKey="plotId"
+              searchPlaceholder="Search plots by ID..."
             />
           )}
         </CardContent>
@@ -790,7 +813,7 @@ export default function PropertyDetailPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Plot</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete plot <strong>{selectedPlot?.coordinate}</strong>? This action cannot be undone.
+              Are you sure you want to delete plot <strong>{selectedPlot?.plotId}</strong>? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -811,14 +834,15 @@ export default function PropertyDetailPage() {
               Map CSV columns to plot fields and review data before importing
             </DialogDescription>
           </DialogHeader>
-          {csvData.length > 0 && (
+          {csvData.length > 0 ? (
             <CSVImportTable
               csvData={csvData}
               schema={plotCSVSchema}
               fieldMappings={[
-                { targetField: "coordinate", label: "Plot ID / Coordinate", required: true },
-                { targetField: "size", label: "Size", required: true },
-                { targetField: "byRoadSide", label: "By Road Side", required: true },
+                { targetField: "plotId", label: "Plot ID", required: true },
+                { targetField: "unit", label: "Unit", required: true },
+                { targetField: "coordinate", label: "Coordinate", required: true },
+                { targetField: "feature", label: "Feature" },
                 { targetField: "status", label: "Status" },
               ]}
               onSubmit={handleBulkImportPlots}
@@ -828,6 +852,10 @@ export default function PropertyDetailPage() {
               }}
               isLoading={isImporting}
             />
+          ) : (
+            <div className="p-8 text-center">
+              <p className="text-muted-foreground">No CSV data to display. Please try again.</p>
+            </div>
           )}
         </DialogContent>
       </Dialog>

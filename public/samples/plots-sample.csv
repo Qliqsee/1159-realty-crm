@@ -1,9 +1,9 @@
-coordinate,size,byRoadSide,status
-A-101,500 sqm,yes,AVAILABLE
-A-102,500 sqm,yes,AVAILABLE
-A-103,500 sqm,no,AVAILABLE
-B-201,1000 sqm,yes,AVAILABLE
-B-202,1000 sqm,no,SOLD
-C-301,750 sqm,yes,AVAILABLE
-C-302,750 sqm,yes,AVAILABLE
-D-401,300 sqm,no,ARCHIVED
+plotId,unit,coordinate,feature,status
+A-101,500 sqm,6.5244 3.3792,Roadside,AVAILABLE
+A-102,500 sqm,6.5245 3.3793,Corner plot,AVAILABLE
+A-103,500 sqm,6.5246 3.3794,,AVAILABLE
+B-201,1000 sqm,6.5247 3.3795,River view,RESERVED
+B-202,1000 sqm,6.5248 3.3796,Gym nearby,SOLD
+C-301,750 sqm,6.5249 3.3797,Roadside,AVAILABLE
+C-302,750 sqm,6.5250 3.3798,Park view,AVAILABLE
+D-401,300 sqm,6.5251 3.3799,,ARCHIVED

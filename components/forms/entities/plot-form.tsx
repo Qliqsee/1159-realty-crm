@@ -7,14 +7,14 @@ import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
 import { Select } from "@/components/inputs/select"
-import { Checkbox } from "@/components/inputs/checkbox"
 import type { Plot, PlotStatus } from "@/types"
 
 const plotSchema = z.object({
-  coordinate: z.string().min(1, "Plot ID/Coordinate is required"),
-  size: z.string().min(1, "Size is required"),
-  byRoadSide: z.boolean().default(false),
-  status: z.enum(["AVAILABLE", "SOLD", "ARCHIVED"]),
+  plotId: z.string().min(1, "Plot ID is required"),
+  unit: z.string().min(1, "Unit is required"),
+  coordinate: z.string().min(1, "Coordinate is required"),
+  feature: z.string().optional(),
+  status: z.enum(["AVAILABLE", "SOLD", "RESERVED", "ARCHIVED"]),
 })
 
 type PlotFormData = z.infer<typeof plotSchema>
@@ -30,9 +30,10 @@ export function PlotForm({ initialData, onSubmit, onCancel, isLoading }: PlotFor
   const form = useForm<PlotFormData>({
     resolver: zodResolver(plotSchema),
     defaultValues: {
+      plotId: initialData?.plotId || "",
+      unit: initialData?.unit || "",
       coordinate: initialData?.coordinate || "",
-      size: initialData?.size || "",
-      byRoadSide: initialData?.byRoadSide || false,
+      feature: initialData?.feature || "",
       status: initialData?.status || "AVAILABLE",
     },
   })
@@ -40,11 +41,35 @@ export function PlotForm({ initialData, onSubmit, onCancel, isLoading }: PlotFor
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="coordinate">Plot ID / Coordinate *</Label>
+        <Label htmlFor="plotId">Plot ID *</Label>
+        <Input
+          id="plotId"
+          {...form.register("plotId")}
+          placeholder="e.g., A-101, B-202"
+        />
+        {form.formState.errors.plotId && (
+          <p className="text-sm text-destructive">{form.formState.errors.plotId.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="unit">Unit *</Label>
+        <Input
+          id="unit"
+          {...form.register("unit")}
+          placeholder="e.g., 500 sqm, 1000 sqm"
+        />
+        {form.formState.errors.unit && (
+          <p className="text-sm text-destructive">{form.formState.errors.unit.message}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="coordinate">Coordinate *</Label>
         <Input
           id="coordinate"
           {...form.register("coordinate")}
-          placeholder="e.g., A-101 or 6.5244, 3.3792"
+          placeholder="e.g., 6.5244, 3.3792"
         />
         {form.formState.errors.coordinate && (
           <p className="text-sm text-destructive">{form.formState.errors.coordinate.message}</p>
@@ -52,14 +77,14 @@ export function PlotForm({ initialData, onSubmit, onCancel, isLoading }: PlotFor
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="size">Size *</Label>
+        <Label htmlFor="feature">Feature</Label>
         <Input
-          id="size"
-          {...form.register("size")}
-          placeholder="e.g., 500 sqm, 1000 sqm"
+          id="feature"
+          {...form.register("feature")}
+          placeholder="e.g., Roadside, River view, Gym nearby"
         />
-        {form.formState.errors.size && (
-          <p className="text-sm text-destructive">{form.formState.errors.size.message}</p>
+        {form.formState.errors.feature && (
+          <p className="text-sm text-destructive">{form.formState.errors.feature.message}</p>
         )}
       </div>
 
@@ -72,20 +97,10 @@ export function PlotForm({ initialData, onSubmit, onCancel, isLoading }: PlotFor
           options={[
             { value: "AVAILABLE", label: "Available" },
             { value: "SOLD", label: "Sold" },
+            { value: "RESERVED", label: "Reserved" },
             { value: "ARCHIVED", label: "Archived" },
           ]}
         />
-      </div>
-
-      <div className="flex items-center space-x-2">
-        <Checkbox
-          id="byRoadSide"
-          checked={form.watch("byRoadSide")}
-          onCheckedChange={(checked) => form.setValue("byRoadSide", checked === true)}
-        />
-        <Label htmlFor="byRoadSide" className="cursor-pointer">
-          By Road Side
-        </Label>
       </div>
 
       <div className="flex justify-end gap-3 pt-4">

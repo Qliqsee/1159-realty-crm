@@ -29,6 +29,8 @@ export interface Enrollment {
   // Agent & Assignment
   agentId: string;
   agentName: string;
+  partnerId?: string;
+  partnerName?: string;
   enrollmentType?: EnrollmentType;
 
   // Pricing

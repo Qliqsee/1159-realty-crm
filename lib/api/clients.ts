@@ -115,3 +115,33 @@ export const deleteClient = async (id: string): Promise<void> => {
     mockClients.splice(index, 1)
   }
 }
+
+export const searchClients = async (query: string): Promise<Client[]> => {
+  await new Promise((resolve) => setTimeout(resolve, 300))
+  if (!query) return mockClients
+
+  const lowerQuery = query.toLowerCase()
+  return mockClients.filter(
+    (client) =>
+      client.fullName.toLowerCase().includes(lowerQuery) ||
+      client.email.toLowerCase().includes(lowerQuery) ||
+      client.phone.includes(query)
+  )
+}
+
+export const searchPartners = async (query: string): Promise<Client[]> => {
+  await new Promise((resolve) => setTimeout(resolve, 300))
+  const partners = mockClients.filter(
+    (client) => client.isPartner && client.partnershipStatus === "Approved"
+  )
+
+  if (!query) return partners
+
+  const lowerQuery = query.toLowerCase()
+  return partners.filter(
+    (partner) =>
+      partner.fullName.toLowerCase().includes(lowerQuery) ||
+      partner.email.toLowerCase().includes(lowerQuery) ||
+      partner.phone.includes(query)
+  )
+}

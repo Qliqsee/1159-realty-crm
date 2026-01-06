@@ -171,3 +171,16 @@ export const deleteProperty = async (id: string): Promise<void> => {
     mockProperties.splice(index, 1)
   }
 }
+
+export const searchProperties = async (query: string): Promise<Property[]> => {
+  await new Promise((resolve) => setTimeout(resolve, 300))
+  if (!query) return mockProperties
+
+  const lowerQuery = query.toLowerCase()
+  return mockProperties.filter(
+    (property) =>
+      property.name.toLowerCase().includes(lowerQuery) ||
+      property.address.toLowerCase().includes(lowerQuery) ||
+      property.state?.toLowerCase().includes(lowerQuery)
+  )
+}

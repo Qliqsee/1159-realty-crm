@@ -1,19 +1,19 @@
-"use client"
+"use client";
 
-import { useForm, useFieldArray, Controller } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { useState, useEffect } from "react"
-import { Plus, X } from "lucide-react"
-import { Button } from "@/components/buttons/button"
-import { Input, InputWithAddon } from "@/components/inputs/input"
-import { Label } from "@/components/layout/label"
-import { Select } from "@/components/inputs/select"
-import { Textarea } from "@/components/inputs/textarea"
-import { CurrencyInput } from "@/components/inputs/currency-input"
-import { MediaUpload, type MediaItem } from "@/components/inputs/media-upload"
-import { Checkbox } from "@/components/inputs/checkbox"
-import { Separator } from "@/components/display/separator"
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useState, useEffect } from "react";
+import { Plus, X } from "lucide-react";
+import { Button } from "@/components/buttons/button";
+import { Input, InputWithAddon } from "@/components/inputs/input";
+import { Label } from "@/components/layout/label";
+import { Select } from "@/components/inputs/select";
+import { Textarea } from "@/components/inputs/textarea";
+import { CurrencyInput } from "@/components/inputs/currency-input";
+import { MediaUpload, type MediaItem } from "@/components/inputs/media-upload";
+import { Checkbox } from "@/components/inputs/checkbox";
+import { Separator } from "@/components/display/separator";
 import {
   type Property,
   type PropertyType,
@@ -24,90 +24,120 @@ import {
   LAND_SUBTYPES,
   COUNTRIES,
   PROPERTY_FEATURE_ICONS,
-} from "@/types"
-import * as Icons from "lucide-react"
-import { toast } from "sonner"
+} from "@/types";
+import * as Icons from "lucide-react";
+import { toast } from "sonner";
 
 // Validation Schema
-const propertySchema = z.object({
-  // Basic Information
-  name: z.string().min(1, "This field is required"),
-  type: z.enum(["Land", "Apartment"]),
-  subtype: z.string().min(1, "This field is required"),
-  status: z.enum(["Available", "Pre-launch", "Sold Out", "Reserved", "Disabled"]),
-  description: z.string().min(10, "Description must be at least 10 characters"),
+const propertySchema = z
+  .object({
+    // Basic Information
+    name: z.string().min(1, "This field is required"),
+    type: z.enum(["Land", "Apartment"]),
+    subtype: z.string().min(1, "This field is required"),
+    status: z.enum(["Available", "Pre-launch", "Sold Out", "Reserved", "Disabled"]),
+    description: z.string().min(10, "Description must be at least 10 characters"),
 
-  // Conditional Fields
-  agriculturalFee: z.object({
-    amount: z.number().min(0),
-    isActive: z.boolean(),
-  }).optional(),
-  requiredDocuments: z.array(z.string()).default([]),
+    // Conditional Fields
+    agriculturalFee: z
+      .object({
+        amount: z.number().min(0),
+        isActive: z.boolean(),
+      })
+      .optional(),
+    requiredDocuments: z.array(z.string()).default([]),
 
-  // Location
-  country: z.enum(["Nigeria", "Others"]),
-  state: z.string().optional(),
-  address: z.string().min(1, "This field is required"),
-  nearbyLandmark: z.string().min(1, "This field is required"),
+    // Location
+    country: z.enum(["Nigeria", "Others"]),
+    state: z.string().optional(),
+    address: z.string().min(1, "This field is required"),
+    nearbyLandmark: z.string().min(1, "This field is required"),
 
-  // Features
-  features: z.array(z.object({
-    name: z.string(),
-    icon: z.string(),
-  })).default([]),
+    // Features
+    features: z
+      .array(
+        z.object({
+          name: z.string(),
+          icon: z.string(),
+        })
+      )
+      .default([]),
 
-  // Unit Pricing
-  unitPricing: z.array(z.object({
-    unit: z.string().min(1, "This field is required"),
-    regularPrice: z.number().min(1, "Price must be greater than 0"),
-    prelaunchPrice: z.number().min(1, "Price must be greater than 0"),
-  })).min(1, "Add at least one unit pricing"),
+    // Unit Pricing
+    unitPricing: z
+      .array(
+        z.object({
+          unit: z.string().min(1, "This field is required"),
+          regularPrice: z.number().min(1, "Price must be greater than 0"),
+          prelaunchPrice: z.number().min(1, "Price must be greater than 0"),
+        })
+      )
+      .min(1, "Add at least one unit pricing"),
 
-  // Discount
-  salesDiscount: z.object({
-    percentage: z.number().min(0).max(100),
-    isActive: z.boolean(),
-  }).optional(),
+    // Discount
+    salesDiscount: z
+      .object({
+        percentage: z.number().min(0).max(100),
+        isActive: z.boolean(),
+      })
+      .optional(),
 
-  // Payment Terms
-  overdueInterestRate: z.number().min(0),
-  paymentCycle: z.number().min(1),
+    // Payment Terms
+    overdueInterestRate: z.number().min(0),
+    paymentCycle: z.number().min(1),
 
-  // Payment Plans
-  paymentPlans: z.array(z.object({
-    durationMonths: z.number().min(1, "Duration must be at least 1 month"),
-    interestRate: z.number().min(0).max(100),
-  })).min(1, "Add at least one payment plan"),
+    // Payment Plans
+    paymentPlans: z
+      .array(
+        z.object({
+          durationMonths: z.number().min(1, "Duration must be at least 1 month"),
+          interestRate: z.number().min(0).max(100),
+        })
+      )
+      .min(1, "Add at least one payment plan"),
 
-  // Map Configuration
-  mapConfig: z.object({
-    src: z.string().url("Invalid URL").optional().or(z.literal("")),
-    width: z.string().optional(),
-    height: z.string().optional(),
-  }).optional(),
-}).refine((data) => {
-  // State is required if country is Nigeria
-  if (data.country === "Nigeria" && !data.state) {
-    return false
-  }
-  return true
-}, {
-  message: "This field is required",
-  path: ["state"],
-})
+    // Map Configuration
+    mapConfig: z
+      .object({
+        src: z.string().url("Invalid URL").optional().or(z.literal("")),
+        width: z.string().optional(),
+        height: z.string().optional(),
+      })
+      .optional(),
+  })
+  .refine(
+    (data) => {
+      // State is required if country is Nigeria
+      if (data.country === "Nigeria" && !data.state) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "This field is required",
+      path: ["state"],
+    }
+  );
 
-type PropertyFormData = z.infer<typeof propertySchema>
+type PropertyFormData = z.infer<typeof propertySchema>;
 
 interface PropertyFormProps {
-  initialData?: Partial<Property>
-  onSubmit: (data: PropertyFormData & { media: MediaItem[] }) => void | Promise<void>
-  onCancel?: () => void
-  isLoading?: boolean
+  initialData?: Partial<Property>;
+  onSubmit: (data: PropertyFormData & { media: MediaItem[] }) => void | Promise<void>;
+  onCancel?: () => void;
+  isLoading?: boolean;
 }
 
 export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: PropertyFormProps) {
-  const [media, setMedia] = useState<MediaItem[]>([])
-  const [mediaError, setMediaError] = useState<string>("")
+  const [media, setMedia] = useState<MediaItem[]>([]);
+  const [mediaError, setMediaError] = useState<string>("");
+
+  // Clear media error when media is added
+  useEffect(() => {
+    if (media.length > 0 && mediaError) {
+      setMediaError("");
+    }
+  }, [media]);
 
   const form = useForm<PropertyFormData>({
     resolver: zodResolver(propertySchema) as any,
@@ -133,69 +163,94 @@ export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: Pro
       paymentPlans: initialData?.paymentPlans || [{ durationMonths: 0, interestRate: 0 }],
       mapConfig: initialData?.mapConfig || { src: "", width: "600", height: "450" },
     },
-  })
+  });
 
-  const { fields: unitPricingFields, append: appendUnitPricing, remove: removeUnitPricing } = useFieldArray({
+  const {
+    fields: unitPricingFields,
+    append: appendUnitPricing,
+    remove: removeUnitPricing,
+  } = useFieldArray({
     control: form.control,
     name: "unitPricing",
-  })
+  });
 
-  const { fields: paymentPlansFields, append: appendPaymentPlan, remove: removePaymentPlan } = useFieldArray({
+  const {
+    fields: paymentPlansFields,
+    append: appendPaymentPlan,
+    remove: removePaymentPlan,
+  } = useFieldArray({
     control: form.control,
     name: "paymentPlans",
-  })
+  });
 
-  const [features, setFeatures] = useState<PropertyFeature[]>(initialData?.features || [])
-  const [requiredDocuments, setRequiredDocuments] = useState<string[]>(initialData?.requiredDocuments || [])
+  const [features, setFeatures] = useState<PropertyFeature[]>(initialData?.features || []);
+  const [requiredDocuments, setRequiredDocuments] = useState<string[]>(initialData?.requiredDocuments || []);
 
-  const watchType = form.watch("type")
-  const watchSubtype = form.watch("subtype")
-  const watchCountry = form.watch("country")
-  const watchSalesDiscountActive = form.watch("salesDiscount.isActive")
-  const watchAgriculturalFeeActive = form.watch("agriculturalFee.isActive")
+  const watchType = form.watch("type");
+  const watchSubtype = form.watch("subtype");
+  const watchCountry = form.watch("country");
+  const watchSalesDiscountActive = form.watch("salesDiscount.isActive");
+  const watchAgriculturalFeeActive = form.watch("agriculturalFee.isActive");
 
   // Reset subtype when type changes
   useEffect(() => {
-    form.setValue("subtype", "")
-  }, [watchType])
+    form.setValue("subtype", "");
+  }, [watchType]);
 
   const handleFormSubmit = async (data: PropertyFormData) => {
     // Validate media
     if (media.length === 0) {
-      setMediaError("Add at least one media item")
-      toast.error("Please complete all required fields")
-      return
+      setMediaError("Add at least one media item");
+      toast.error("Please complete all required fields");
+      return;
     }
 
-    setMediaError("")
+    setMediaError("");
 
     try {
-      await onSubmit({ ...data, features, requiredDocuments, media })
+      await onSubmit({ ...data, features, requiredDocuments, media });
     } catch (error) {
-      toast.error("Failed to save property")
+      toast.error("Failed to save property");
     }
-  }
+  };
 
   const handleInvalidSubmit = (errors: any) => {
-    console.log("Form validation errors:", errors)
+    console.log("Form validation errors:", errors);
+
+    // Check media validation
+    if (media.length === 0) {
+      setMediaError("Add at least one media item");
+    }
 
     // Check which section has errors
-    const errorFields = Object.keys(errors)
+    const errorFields = Object.keys(errors);
     if (errorFields.length > 0) {
-      toast.error("Please complete all required fields")
+      toast.error("Please complete all required fields");
     }
-  }
+  };
 
-  const propertyTypeOptions = PROPERTY_TYPES.map((type) => ({ value: type, label: type }))
-  const propertyStatusOptions = PROPERTY_STATUS.map((status) => ({ value: status, label: status }))
-  const countryOptions = COUNTRIES.map((country) => ({ value: country, label: country }))
-  const landSubtypeOptions = LAND_SUBTYPES.map((subtype) => ({ value: subtype, label: subtype }))
+  const propertyTypeOptions = PROPERTY_TYPES.map((type) => ({ value: type, label: type }));
+  const propertyStatusOptions = PROPERTY_STATUS.map((status) => ({ value: status, label: status }));
+  const countryOptions = COUNTRIES.map((country) => ({ value: country, label: country }));
+  const landSubtypeOptions = LAND_SUBTYPES.map((subtype) => ({ value: subtype, label: subtype }));
 
   // Nigerian states (simplified - you can expand this)
   const nigerianStates = [
-    "Lagos", "Abuja", "Kano", "Rivers", "Oyo", "Kaduna", "Enugu",
-    "Anambra", "Delta", "Edo", "Ogun", "Ondo", "Osun", "Ekiti"
-  ].map((state) => ({ value: state, label: state }))
+    "Lagos",
+    "Abuja",
+    "Kano",
+    "Rivers",
+    "Oyo",
+    "Kaduna",
+    "Enugu",
+    "Anambra",
+    "Delta",
+    "Edo",
+    "Ogun",
+    "Ondo",
+    "Osun",
+    "Ekiti",
+  ].map((state) => ({ value: state, label: state }));
 
   return (
     <form onSubmit={form.handleSubmit(handleFormSubmit, handleInvalidSubmit)} noValidate className="space-y-6">
@@ -295,11 +350,7 @@ export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: Pro
                 name="agriculturalFee.isActive"
                 control={form.control}
                 render={({ field }) => (
-                  <Checkbox
-                    id="agriculturalFeeActive"
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
+                  <Checkbox id="agriculturalFeeActive" checked={field.value} onCheckedChange={field.onChange} />
                 )}
               />
               <Label htmlFor="agriculturalFeeActive">Apply Agricultural Fee</Label>
@@ -334,9 +385,9 @@ export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: Pro
                 <Input
                   value={doc}
                   onChange={(e) => {
-                    const newDocs = [...requiredDocuments]
-                    newDocs[index] = e.target.value
-                    setRequiredDocuments(newDocs)
+                    const newDocs = [...requiredDocuments];
+                    newDocs[index] = e.target.value;
+                    setRequiredDocuments(newDocs);
                   }}
                   placeholder="Document name"
                 />
@@ -350,12 +401,7 @@ export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: Pro
                 </Button>
               </div>
             ))}
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setRequiredDocuments([...requiredDocuments, ""])}
-            >
+            <Button type="button" variant="outline" size="sm" onClick={() => setRequiredDocuments([...requiredDocuments, ""])}>
               <Plus className="h-4 w-4 mr-2" />
               Add Document
             </Button>
@@ -438,7 +484,7 @@ export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: Pro
         <h3 className="text-sm font-medium text-foreground">Features</h3>
         <div className="space-y-3">
           {features.map((feature, index) => {
-            const IconComponent = Icons[feature.icon as keyof typeof Icons] as React.ComponentType<any>
+            const IconComponent = Icons[feature.icon as keyof typeof Icons] as React.ComponentType<any>;
 
             return (
               <div key={index} className="flex gap-2">
@@ -447,22 +493,22 @@ export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: Pro
                     <Select
                       value={feature.icon}
                       onValueChange={(value) => {
-                        const newFeatures = [...features]
-                        newFeatures[index].icon = value
-                        setFeatures(newFeatures)
+                        const newFeatures = [...features];
+                        newFeatures[index].icon = value;
+                        setFeatures(newFeatures);
                       }}
-                      options={PROPERTY_FEATURE_ICONS.map(icon => ({
+                      options={PROPERTY_FEATURE_ICONS.map((icon) => ({
                         value: icon.value,
-                        label: icon.label
+                        label: icon.label,
                       }))}
                       placeholder="Select icon"
                     />
                     <Input
                       value={feature.name}
                       onChange={(e) => {
-                        const newFeatures = [...features]
-                        newFeatures[index].name = e.target.value
-                        setFeatures(newFeatures)
+                        const newFeatures = [...features];
+                        newFeatures[index].name = e.target.value;
+                        setFeatures(newFeatures);
                       }}
                       placeholder="Feature name"
                     />
@@ -484,7 +530,7 @@ export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: Pro
                   </Button>
                 </div>
               </div>
-            )
+            );
           })}
           <Button
             type="button"
@@ -503,21 +549,14 @@ export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: Pro
       {/* Unit Pricing */}
       <div className="space-y-4">
         <h3 className="text-sm font-medium text-foreground">Unit Configurations & Pricing *</h3>
-        <p className="text-sm text-muted-foreground">
-          Define different unit types/sizes with their pricing
-        </p>
+        <p className="text-sm text-muted-foreground">Define different unit types/sizes with their pricing</p>
         <div className="space-y-4">
           {unitPricingFields.map((field, index) => (
             <div key={field.id} className="p-4 border rounded-lg space-y-3">
               <div className="flex justify-between items-center">
                 <h4 className="font-medium">Unit {index + 1}</h4>
                 {unitPricingFields.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => removeUnitPricing(index)}
-                  >
+                  <Button type="button" variant="outline" size="sm" onClick={() => removeUnitPricing(index)}>
                     <X className="h-4 w-4 mr-1" />
                     Remove
                   </Button>
@@ -593,13 +632,7 @@ export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: Pro
             <Controller
               name="salesDiscount.isActive"
               control={form.control}
-              render={({ field }) => (
-                <Checkbox
-                  id="salesDiscountActive"
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              )}
+              render={({ field }) => <Checkbox id="salesDiscountActive" checked={field.value} onCheckedChange={field.onChange} />}
             />
             <Label htmlFor="salesDiscountActive">Apply Sales Discount</Label>
           </div>
@@ -681,21 +714,14 @@ export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: Pro
       {/* Payment Plans */}
       <div className="space-y-4">
         <h3 className="text-sm font-medium text-foreground">Payment Plans *</h3>
-        <p className="text-sm text-muted-foreground">
-          Define installment payment plans with duration and interest rates
-        </p>
+        <p className="text-sm text-muted-foreground">Define installment payment plans with duration and interest rates</p>
         <div className="space-y-4">
           {paymentPlansFields.map((field, index) => (
             <div key={field.id} className="p-4 border rounded-lg space-y-3">
               <div className="flex justify-between items-center">
                 <h4 className="font-medium">Plan {index + 1}</h4>
                 {paymentPlansFields.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => removePaymentPlan(index)}
-                  >
+                  <Button type="button" variant="outline" size="sm" onClick={() => removePaymentPlan(index)}>
                     <X className="h-4 w-4 mr-1" />
                     Remove
                   </Button>
@@ -745,11 +771,7 @@ export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: Pro
               </div>
             </div>
           ))}
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => appendPaymentPlan({ durationMonths: 0, interestRate: 0 })}
-          >
+          <Button type="button" variant="outline" onClick={() => appendPaymentPlan({ durationMonths: 0, interestRate: 0 })}>
             <Plus className="h-4 w-4 mr-2" />
             Add Payment Plan
           </Button>
@@ -764,9 +786,7 @@ export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: Pro
       {/* Map Configuration */}
       <div className="space-y-4">
         <h3 className="text-sm font-medium text-foreground">Map Configuration (Optional)</h3>
-        <p className="text-sm text-muted-foreground">
-          Paste the Google Maps embed code fields
-        </p>
+        <p className="text-sm text-muted-foreground">Paste the Google Maps embed code fields</p>
 
         <div className="space-y-3">
           <div className="space-y-2">
@@ -782,20 +802,12 @@ export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: Pro
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="mapWidth">Width (px)</Label>
-              <Input
-                id="mapWidth"
-                {...form.register("mapConfig.width")}
-                placeholder="600"
-              />
+              <Input id="mapWidth" {...form.register("mapConfig.width")} placeholder="600" />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="mapHeight">Height (px)</Label>
-              <Input
-                id="mapHeight"
-                {...form.register("mapConfig.height")}
-                placeholder="450"
-              />
+              <Input id="mapHeight" {...form.register("mapConfig.height")} placeholder="450" />
             </div>
           </div>
         </div>
@@ -828,5 +840,5 @@ export function PropertyForm({ initialData, onSubmit, onCancel, isLoading }: Pro
         </Button>
       </div>
     </form>
-  )
+  );
 }

@@ -114,11 +114,12 @@ export function MediaUpload({
         {/* Upload Button */}
         <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogTrigger asChild>
-          <Button
+          <button
             type="button"
-            variant="outline"
             className={cn(
-              "w-full h-24 border-dashed shadow-soft",
+              "w-full h-24 border-2 border-dashed rounded-md shadow-soft",
+              "hover:bg-accent/50 transition-colors cursor-pointer",
+              "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
               borderColor
             )}
           >
@@ -131,7 +132,7 @@ export function MediaUpload({
                 {value.length}/{maxItems} items
               </span>
             </div>
-          </Button>
+          </button>
         </DialogTrigger>
         <DialogContent className="max-w-2xl">
           <DialogHeader>

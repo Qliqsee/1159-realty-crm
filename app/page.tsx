@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/cards/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/navigation/tabs"
-import { useAuthStore } from "@/lib/store/auth-store"
+import Link from "next/link";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/cards/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/navigation/tabs";
+import { useAuthStore } from "@/lib/store/auth-store";
 import {
   Users,
   Building2,
@@ -17,11 +17,11 @@ import {
   PieChart,
   Wallet,
   ShoppingBag,
-} from "lucide-react"
-import { MetricCard } from "@/components/cards/metric-card"
+} from "lucide-react";
+import { MetricCard } from "@/components/cards/metric-card";
 
 export default function Home() {
-  const user = useAuthStore((state) => state.user)
+  const user = useAuthStore((state) => state.user);
 
   const metrics = [
     {
@@ -112,18 +112,14 @@ export default function Home() {
       color: "text-amber-600 dark:text-amber-400",
       bgColor: "bg-amber-100 dark:bg-amber-900/30",
     },
-  ]
+  ];
 
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
       <div className="bg-gradient-to-br from-primary/10 via-accent/10 to-background p-6 rounded-lg shadow-soft">
-        <h1 className="text-3xl font-bold mb-2">
-          Welcome back, {user?.firstName || "User"}! 👋
-        </h1>
-        <p className="text-muted-foreground">
-          Here's what's happening with your real estate business today.
-        </p>
+        <h1 className="text-3xl font-bold mb-2">Welcome back, {user?.firstName || "User"}! 👋</h1>
+        <p className="text-muted-foreground">Here's what's happening with your real estate business today.</p>
       </div>
 
       {/* Metrics Grid */}
@@ -282,10 +278,7 @@ export default function Home() {
                       </span>
                     </div>
                     <div className="relative h-3 bg-muted rounded-full overflow-hidden">
-                      <div
-                        className={`h-full ${stage.color} transition-all`}
-                        style={{ width: `${stage.percentage}%` }}
-                      />
+                      <div className={`h-full ${stage.color} transition-all`} style={{ width: `${stage.percentage}%` }} />
                     </div>
                   </div>
                 ))}
@@ -358,16 +351,15 @@ export default function Home() {
                       <strong className="text-green-600 dark:text-green-400">25% above</strong> the team average.
                     </p>
                     <p>
-                      📈 <strong className="text-foreground">Lekki Gardens Phase 2</strong> is your best performer
-                      with <strong className="text-foreground">12 sales</strong> this quarter.
+                      📈 <strong className="text-foreground">Lekki Gardens Phase 2</strong> is your best performer with{" "}
+                      <strong className="text-foreground">12 sales</strong> this quarter.
                     </p>
                     <p>
-                      💰 You have <strong className="text-foreground">₦2.1M in overdue payments</strong>.
-                      Following up could unlock commission on completed sales.
+                      💰 You have <strong className="text-foreground">₦2.1M in overdue payments</strong>. Following up could
+                      unlock commission on completed sales.
                     </p>
                     <p>
-                      ⭐ You're ranked <strong className="text-primary">#3</strong> in the sales team.
-                      Keep up the excellent work!
+                      ⭐ You're ranked <strong className="text-primary">#3</strong> in the sales team. Keep up the excellent work!
                     </p>
                   </div>
                 </div>
@@ -377,5 +369,5 @@ export default function Home() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

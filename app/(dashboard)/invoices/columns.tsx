@@ -38,7 +38,7 @@ export const columns: ColumnDef<Invoice>[] = [
             <FileText className="h-3.5 w-3.5 text-muted-foreground" />
             <span className="font-medium">{invoice.invoiceNumber}</span>
           </div>
-          <span className="text-xs text-muted-foreground mt-1">{invoice.type}</span>
+          <span className="text-xs text-muted-foreground mt-1">#{invoice.enrollmentNumber}</span>
         </div>
       )
     },
@@ -84,7 +84,7 @@ export const columns: ColumnDef<Invoice>[] = [
     },
   },
   {
-    accessorKey: "total",
+    accessorKey: "totalAmount",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Amount" />
     ),
@@ -92,10 +92,10 @@ export const columns: ColumnDef<Invoice>[] = [
       const invoice = row.original
       return (
         <div className="flex flex-col">
-          <span className="font-semibold text-sm">{formatCurrency(invoice.total)}</span>
-          {invoice.status === "Partially Paid" && (
+          <span className="font-semibold text-sm">{formatCurrency(invoice.totalAmount)}</span>
+          {invoice.paidAmount > 0 && invoice.status !== "Paid" && (
             <span className="text-xs text-muted-foreground">
-              {formatCurrency(invoice.amountPaid)} paid
+              {formatCurrency(invoice.paidAmount)} paid
             </span>
           )}
         </div>
@@ -103,9 +103,9 @@ export const columns: ColumnDef<Invoice>[] = [
     },
   },
   {
-    accessorKey: "amountDue",
+    accessorKey: "balanceAmount",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Amount Due" />
+      <DataTableColumnHeader column={column} title="Balance Due" />
     ),
     cell: ({ row }) => {
       const invoice = row.original
@@ -116,7 +116,7 @@ export const columns: ColumnDef<Invoice>[] = [
 
       return (
         <span className={`font-semibold text-sm ${invoice.status === "Overdue" ? "text-red-600 dark:text-red-400" : ""}`}>
-          {formatCurrency(invoice.amountDue)}
+          {formatCurrency(invoice.balanceAmount)}
         </span>
       )
     },
@@ -152,7 +152,7 @@ export const columns: ColumnDef<Invoice>[] = [
           <span className={`text-sm ${isOverdue ? "text-red-600 dark:text-red-400 font-medium" : ""}`}>
             {format(new Date(invoice.dueDate), "MMM dd, yyyy")}
           </span>
-          {!isOverdue && daysUntil > 0 && daysUntil <= 7 && invoice.status === "Sent" && (
+          {!isOverdue && daysUntil > 0 && daysUntil <= 7 && invoice.status === "Pending" && (
             <span className="text-xs text-orange-600 dark:text-orange-400 mt-0.5">
               Due in {daysUntil}d
             </span>
@@ -184,27 +184,25 @@ export const columns: ColumnDef<Invoice>[] = [
             <DropdownMenuItem>Download PDF</DropdownMenuItem>
             <DropdownMenuItem>Print invoice</DropdownMenuItem>
             <DropdownMenuSeparator />
-            {invoice.status === "Draft" && (
+            {invoice.status === "Pending" && (
               <>
                 <DropdownMenuItem>Edit invoice</DropdownMenuItem>
-                <DropdownMenuItem>Send invoice</DropdownMenuItem>
-              </>
-            )}
-            {(invoice.status === "Sent" || invoice.status === "Overdue") && (
-              <>
                 <DropdownMenuItem>Send reminder</DropdownMenuItem>
                 <DropdownMenuItem>Record payment</DropdownMenuItem>
               </>
             )}
-            {invoice.status === "Partially Paid" && (
-              <DropdownMenuItem>Record payment</DropdownMenuItem>
+            {invoice.status === "Overdue" && (
+              <>
+                <DropdownMenuItem>Send reminder</DropdownMenuItem>
+                <DropdownMenuItem>Record payment</DropdownMenuItem>
+              </>
             )}
             <DropdownMenuItem>View client</DropdownMenuItem>
             {invoice.enrollmentId && (
               <DropdownMenuItem>View enrollment</DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
-            {invoice.status !== "Paid" && invoice.status !== "Cancelled" && (
+            {invoice.status !== "Paid" && invoice.status !== "Resolved" && (
               <DropdownMenuItem className="text-destructive">Cancel invoice</DropdownMenuItem>
             )}
           </DropdownMenuContent>

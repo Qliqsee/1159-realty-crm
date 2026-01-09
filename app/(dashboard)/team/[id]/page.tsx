@@ -416,12 +416,6 @@ export default function TeamMemberDetailPage() {
                   Deactivate Account
                 </Button>
               )}
-              {member.status === "Inactive" && (
-                <Button className="w-full text-green-600" variant="outline" onClick={() => toast.success("Activating user...")}>
-                  <UserCheck className="h-4 w-4 mr-2" />
-                  Activate Account
-                </Button>
-              )}
             </CardContent>
           </Card>
 

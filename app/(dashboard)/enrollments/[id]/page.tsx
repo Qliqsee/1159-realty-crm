@@ -183,24 +183,14 @@ export default function EnrollmentDetailPage() {
     try {
       setIsProcessing(true)
       await createInvoice({
-        type: "Monthly Payment",
         clientId: enrollment.clientId,
         clientName: enrollment.clientName,
-        clientEmail: `${enrollment.clientId}@example.com`,
         enrollmentId: enrollment.id,
         enrollmentNumber: enrollment.enrollmentNumber,
         propertyId: enrollment.propertyId,
         propertyName: enrollment.propertyName,
         amount: installment.amount,
-        items: [
-          {
-            id: `item-${installment.id}`,
-            description: `Payment installment #${installment.installmentNumber} for ${enrollment.propertyName}`,
-            quantity: 1,
-            unitPrice: installment.amount,
-            total: installment.amount,
-          },
-        ],
+        installmentNumber: installment.installmentNumber,
       })
       toast.success("Invoice generated successfully")
       loadEnrollmentData()
@@ -381,17 +371,7 @@ export default function EnrollmentDetailPage() {
     <div className="space-y-6">
       <PageHeader
         title={enrollment.enrollmentNumber}
-        description={
-          <div className="flex items-center gap-2 flex-wrap">
-            <Link href={`/clients/${enrollment.clientId}`} className="hover:text-primary transition-colors">
-              {enrollment.clientName}
-            </Link>
-            <span>-</span>
-            <Link href={`/properties/${enrollment.propertyId}`} className="hover:text-primary transition-colors">
-              {enrollment.propertyName}
-            </Link>
-          </div>
-        }
+        description={`${enrollment.clientName} - ${enrollment.propertyName}`}
         actions={
           <div className="flex gap-3">
             <Button variant="outline" size="sm" onClick={() => router.back()}>

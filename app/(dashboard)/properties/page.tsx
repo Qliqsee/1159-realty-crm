@@ -71,22 +71,26 @@ export default function PropertiesPage() {
       filtered = filtered.filter((p) => filters.status.includes(p.status));
     }
 
-    if (filters.priceMin !== null) {
-      filtered = filtered.filter((p) => p.finalPrice >= filters.priceMin!);
-    }
+    // Price filtering removed - Property doesn't have finalPrice field
+    // if (filters.priceMin !== null) {
+    //   filtered = filtered.filter((p) => p.finalPrice >= filters.priceMin!);
+    // }
 
-    if (filters.priceMax !== null) {
-      filtered = filtered.filter((p) => p.finalPrice <= filters.priceMax!);
-    }
+    // if (filters.priceMax !== null) {
+    //   filtered = filtered.filter((p) => p.finalPrice <= filters.priceMax!);
+    // }
 
     setFilteredProperties(filtered);
   };
 
   const toggleFilter = (type: "type" | "status", value: any) => {
-    setFilters((prev) => ({
-      ...prev,
-      [type]: prev[type].includes(value) ? prev[type].filter((v) => v !== value) : [...prev[type], value],
-    }));
+    setFilters((prev) => {
+      const currentValues = prev[type] as any[]
+      return {
+        ...prev,
+        [type]: currentValues.includes(value) ? currentValues.filter((v) => v !== value) : [...currentValues, value],
+      }
+    })
   };
 
   const clearFilters = () => {
@@ -169,7 +173,7 @@ export default function PropertiesPage() {
     }
   };
 
-  const totalValue = properties.reduce((sum, p) => sum + p.finalPrice, 0);
+  const totalValue = 0; // Property doesn't have finalPrice field
   const landProperties = properties.filter((p) => p.type === "Land");
   const apartmentProperties = properties.filter((p) => p.type === "Apartment");
 

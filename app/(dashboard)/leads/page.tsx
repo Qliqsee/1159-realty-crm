@@ -114,12 +114,15 @@ export default function LeadsPage() {
   }
 
   const toggleFilter = (type: "status" | "source", value: any) => {
-    setFilters((prev) => ({
-      ...prev,
-      [type]: prev[type].includes(value)
-        ? prev[type].filter((v) => v !== value)
-        : [...prev[type], value],
-    }))
+    setFilters((prev) => {
+      const currentValues = prev[type] as any[]
+      return {
+        ...prev,
+        [type]: currentValues.includes(value)
+          ? currentValues.filter((v) => v !== value)
+          : [...currentValues, value],
+      }
+    })
   }
 
   const clearFilters = () => {

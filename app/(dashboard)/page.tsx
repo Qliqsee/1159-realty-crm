@@ -131,7 +131,7 @@ export default function DashboardPage() {
           Welcome back, {user?.firstName || "User"}! 👋
         </h1>
         <p className="text-muted-foreground">
-          Here's what's happening with your real estate business today.
+          Here&apos;s what&apos;s happening with your real estate business today.
         </p>
       </div>
 
@@ -311,7 +311,7 @@ export default function DashboardPage() {
             <Card className="shadow-soft">
               <CardHeader>
                 <CardTitle>My Payment Collections</CardTitle>
-                <CardDescription>Your clients' payment status breakdown</CardDescription>
+                <CardDescription>Your clients&apos; payment status breakdown</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -360,7 +360,7 @@ export default function DashboardPage() {
             <Card className="shadow-soft">
               <CardHeader>
                 <CardTitle>My Top Selling Properties</CardTitle>
-                <CardDescription>Properties you've sold the most</CardDescription>
+                <CardDescription>Properties you&apos;ve sold the most</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 {[
@@ -459,7 +459,7 @@ export default function DashboardPage() {
                       Following up could unlock commission on completed sales.
                     </p>
                     <p>
-                      ⭐ You're ranked <strong className="text-primary">#3</strong> in the sales team.
+                      ⭐ You&apos;re ranked <strong className="text-primary">#3</strong> in the sales team.
                       Keep up the excellent work!
                     </p>
                   </div>

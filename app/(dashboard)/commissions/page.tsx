@@ -40,12 +40,12 @@ export default function CommissionsPage() {
 
   const totalCommission = commissions.reduce((sum, c) => sum + c.commissionAmount, 0)
   const paidCommissions = commissions.filter(c => c.status === "Paid")
-  const totalPaid = paidCommissions.reduce((sum, c) => sum + c.finalAmount, 0)
-  const pendingCommissions = commissions.filter(c => c.status === "Pending" || c.status === "Approved")
-  const totalPending = pendingCommissions.reduce((sum, c) => sum + c.finalAmount, 0)
+  const totalPaid = paidCommissions.reduce((sum, c) => sum + c.commissionAmount, 0)
+  const pendingCommissions = commissions.filter(c => c.status === "Pending")
+  const totalPending = pendingCommissions.reduce((sum, c) => sum + c.commissionAmount, 0)
 
-  const agentCommissions = commissions.filter(c => c.type === "Agent")
-  const partnerCommissions = commissions.filter(c => c.type === "Partner")
+  const agentCommissions = commissions.filter(c => c.recipientType === "Agent")
+  const partnerCommissions = commissions.filter(c => c.recipientType === "Partner")
 
   return (
     <div className="space-y-6">
@@ -131,7 +131,7 @@ export default function CommissionsPage() {
               {agentCommissions.length}
             </p>
             <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-              {formatCurrency(agentCommissions.reduce((sum, c) => sum + c.finalAmount, 0))}
+              {formatCurrency(agentCommissions.reduce((sum, c) => sum + c.commissionAmount, 0))}
             </p>
           </div>
 
@@ -141,7 +141,7 @@ export default function CommissionsPage() {
               {partnerCommissions.length}
             </p>
             <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
-              {formatCurrency(partnerCommissions.reduce((sum, c) => sum + c.finalAmount, 0))}
+              {formatCurrency(partnerCommissions.reduce((sum, c) => sum + c.commissionAmount, 0))}
             </p>
           </div>
         </div>
@@ -156,27 +156,19 @@ export default function CommissionsPage() {
           </div>
 
           <div className="rounded-lg bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-4 shadow-soft">
-            <p className="text-sm font-medium text-green-800 dark:text-green-300">Approved</p>
+            <p className="text-sm font-medium text-green-800 dark:text-green-300">Paid</p>
             <p className="text-3xl font-bold text-green-900 dark:text-green-100">
-              {commissions.filter(c => c.status === "Approved").length}
+              {commissions.filter(c => c.status === "Paid").length}
             </p>
-            <p className="text-xs text-green-600 dark:text-green-400 mt-1">Ready for payment</p>
-          </div>
-
-          <div className="rounded-lg bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-900/20 dark:to-slate-900/20 p-4 shadow-soft">
-            <p className="text-sm font-medium text-gray-800 dark:text-gray-300">On Hold</p>
-            <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              {commissions.filter(c => c.status === "On Hold").length}
-            </p>
-            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Temporarily paused</p>
+            <p className="text-xs text-green-600 dark:text-green-400 mt-1">Completed</p>
           </div>
 
           <div className="rounded-lg bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 p-4 shadow-soft">
-            <p className="text-sm font-medium text-red-800 dark:text-red-300">Rejected</p>
+            <p className="text-sm font-medium text-red-800 dark:text-red-300">Cancelled</p>
             <p className="text-3xl font-bold text-red-900 dark:text-red-100">
-              {commissions.filter(c => c.status === "Rejected").length}
+              {commissions.filter(c => c.status === "Cancelled").length}
             </p>
-            <p className="text-xs text-red-600 dark:text-red-400 mt-1">Not approved</p>
+            <p className="text-xs text-red-600 dark:text-red-400 mt-1">Not paid</p>
           </div>
         </div>
       </div>

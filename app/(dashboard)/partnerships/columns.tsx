@@ -1,6 +1,6 @@
 "use client"
 
-import { ColumnDef } from "@tantml:react-table"
+import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal, CheckCircle, XCircle } from "lucide-react"
 import type { Partnership } from "@/types"
 import { Button } from "@/components/buttons/button"

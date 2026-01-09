@@ -113,7 +113,7 @@ export const columns = ({ onEdit, onDelete }: ColumnsProps): ColumnDef<Property>
           <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
             <MapPin className="h-3 w-3" />
             <span>
-              {property.area}, {property.lga}
+              {property.address}
             </span>
           </div>
         </div>

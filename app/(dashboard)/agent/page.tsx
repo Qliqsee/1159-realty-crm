@@ -549,7 +549,7 @@ export default function AgentDashboardPage() {
                     Great Performance!
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    You're performing <strong className="text-foreground">25% above average</strong> compared to other agents.
+                    You&apos;re performing <strong className="text-foreground">25% above average</strong> compared to other agents.
                     Your conversion rate of <strong className="text-foreground">{agentMetrics.conversionRate}%</strong> is
                     in the top 20%. Keep up the excellent work!
                   </p>

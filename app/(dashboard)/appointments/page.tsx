@@ -61,7 +61,7 @@ export default function AppointmentsPage() {
 
     try {
       // TODO: Implement send reminder API call
-      toast.success(`Reminder sent to ${sendingReminderFor.clientName}`)
+      toast.success(`Reminder sent for appointment`)
       setSendingReminderFor(null)
     } catch (error) {
       toast.error("Failed to send reminder")
@@ -106,7 +106,7 @@ export default function AppointmentsPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Cancel Appointment</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to cancel this appointment with {cancellingAppointment?.clientName}? This action cannot be undone.
+              Are you sure you want to cancel this appointment? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -124,7 +124,7 @@ export default function AppointmentsPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Send Reminder</AlertDialogTitle>
             <AlertDialogDescription>
-              Send appointment reminder to {sendingReminderFor?.clientName}?
+              Send appointment reminder to interested clients?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

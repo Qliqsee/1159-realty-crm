@@ -139,7 +139,7 @@ export function AdvancedFilterPanel({
               <Filter className="h-12 w-12 mx-auto mb-3 opacity-50" />
               <p className="text-sm">No filters added yet</p>
               <p className="text-xs mt-1">
-                Click "Add Condition" to start filtering
+                Click &quot;Add Condition&quot; to start filtering
               </p>
             </div>
           ) : (

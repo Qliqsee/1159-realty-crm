@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
         <Card className="w-full max-w-md shadow-soft-lg">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Check your email</CardTitle>
-            <CardDescription>We've sent instructions to {email}</CardDescription>
+            <CardDescription>We&apos;ve sent instructions to {email}</CardDescription>
           </CardHeader>
           <CardContent>
             <Button variant="outline" className="w-full" onClick={() => router.push("/login")}>
@@ -57,7 +57,7 @@ export default function ForgotPasswordPage() {
       <Card className="w-full max-w-md shadow-soft-lg">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Forgot Password?</CardTitle>
-          <CardDescription>No worries, we'll send you reset instructions</CardDescription>
+          <CardDescription>No worries, we&apos;ll send you reset instructions</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">

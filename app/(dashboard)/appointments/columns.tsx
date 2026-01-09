@@ -24,19 +24,17 @@ interface ColumnsProps {
 
 export const columns = ({ onCancelAppointment, onSendReminder }: ColumnsProps): ColumnDef<Appointment>[] => [
   {
-    accessorKey: "clientName",
+    accessorKey: "interestedClients",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Client" />
+      <DataTableColumnHeader column={column} title="Interested Clients" />
     ),
     cell: ({ row }) => {
       const appointment = row.original
+      const count = appointment.interestedClients?.length || 0
       return (
-        <Link
-          href={`/clients/${appointment.clientId}`}
-          className="text-sm font-medium text-primary hover:underline"
-        >
-          {appointment.clientName}
-        </Link>
+        <span className="text-sm font-medium">
+          {count} {count === 1 ? 'client' : 'clients'}
+        </span>
       )
     },
   },
@@ -82,7 +80,7 @@ export const columns = ({ onCancelAppointment, onSendReminder }: ColumnsProps): 
           <div className="flex items-center gap-1.5 mt-1">
             <Clock className="h-3.5 w-3.5 text-muted-foreground" />
             <span className="text-xs text-muted-foreground">
-              {format(new Date(appointment.startTime), "hh:mm a")} - {format(new Date(appointment.endTime), "hh:mm a")}
+              {appointment.inspectionTime}
             </span>
           </div>
           {isPast && appointment.status === "Active" && (
@@ -135,9 +133,6 @@ export const columns = ({ onCancelAppointment, onSendReminder }: ColumnsProps): 
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>Edit appointment</DropdownMenuItem>
-            {appointment.isVirtual && appointment.meetingLink && (
-              <DropdownMenuItem>Join meeting</DropdownMenuItem>
-            )}
             <DropdownMenuItem onClick={() => onSendReminder(appointment)}>
               Send reminder
             </DropdownMenuItem>
@@ -147,9 +142,6 @@ export const columns = ({ onCancelAppointment, onSendReminder }: ColumnsProps): 
                 <DropdownMenuItem>Reschedule</DropdownMenuItem>
                 <DropdownMenuItem>Mark as completed</DropdownMenuItem>
               </>
-            )}
-            {appointment.status === "Closed" && appointment.followUpRequired && (
-              <DropdownMenuItem>Schedule follow-up</DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
             <DropdownMenuItem

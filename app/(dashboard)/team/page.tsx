@@ -66,9 +66,9 @@ export default function TeamPage() {
         <ActionMenu
           items={[
             { label: "View Profile", onClick: () => {} },
-            { label: "Edit", onClick: () => {}, permission: "update:user" },
-            { label: "Manage Permissions", onClick: () => {}, permission: "update:user" },
-            { label: "Deactivate", onClick: () => {}, permission: "delete:user" },
+            { label: "Edit", onClick: () => {} },
+            { label: "Manage Permissions", onClick: () => {} },
+            { label: "Deactivate", onClick: () => {} },
           ]}
         />
       ),

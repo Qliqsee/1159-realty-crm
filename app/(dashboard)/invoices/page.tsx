@@ -40,8 +40,8 @@ export default function InvoicesPage() {
 
   const paidInvoices = invoices.filter(i => i.status === "Paid")
   const overdueInvoices = invoices.filter(i => i.status === "Overdue")
-  const totalRevenue = invoices.filter(i => i.status === "Paid").reduce((sum, i) => sum + i.total, 0)
-  const outstandingAmount = invoices.filter(i => i.status !== "Paid" && i.status !== "Cancelled").reduce((sum, i) => sum + i.amountDue, 0)
+  const totalRevenue = invoices.filter(i => i.status === "Paid").reduce((sum, i) => sum + i.totalAmount, 0)
+  const outstandingAmount = invoices.filter(i => i.status !== "Paid" && i.status !== "Resolved").reduce((sum, i) => sum + i.balanceAmount, 0)
 
   return (
     <div className="space-y-6">
@@ -142,35 +142,35 @@ export default function InvoicesPage() {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="rounded-lg bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 p-4 shadow-soft">
-            <p className="text-sm font-medium text-blue-800 dark:text-blue-300">Draft</p>
+            <p className="text-sm font-medium text-blue-800 dark:text-blue-300">Pending</p>
             <p className="text-3xl font-bold text-blue-900 dark:text-blue-100">
-              {invoices.filter(i => i.status === "Draft").length}
+              {invoices.filter(i => i.status === "Pending").length}
             </p>
-            <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">Not sent</p>
+            <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">Awaiting payment</p>
+          </div>
+
+          <div className="rounded-lg bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-4 shadow-soft">
+            <p className="text-sm font-medium text-green-800 dark:text-green-300">Paid</p>
+            <p className="text-3xl font-bold text-green-900 dark:text-green-100">
+              {invoices.filter(i => i.status === "Paid").length}
+            </p>
+            <p className="text-xs text-green-600 dark:text-green-400 mt-1">Completed</p>
           </div>
 
           <div className="rounded-lg bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 p-4 shadow-soft">
-            <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">Sent</p>
+            <p className="text-sm font-medium text-yellow-800 dark:text-yellow-300">Overdue</p>
             <p className="text-3xl font-bold text-yellow-900 dark:text-yellow-100">
-              {invoices.filter(i => i.status === "Sent").length}
+              {invoices.filter(i => i.status === "Overdue").length}
             </p>
-            <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">Awaiting payment</p>
-          </div>
-
-          <div className="rounded-lg bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-4 shadow-soft">
-            <p className="text-sm font-medium text-purple-800 dark:text-purple-300">Partial</p>
-            <p className="text-3xl font-bold text-purple-900 dark:text-purple-100">
-              {invoices.filter(i => i.status === "Partially Paid").length}
-            </p>
-            <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">Part payment</p>
+            <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">Past due</p>
           </div>
 
           <div className="rounded-lg bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 p-4 shadow-soft">
-            <p className="text-sm font-medium text-red-800 dark:text-red-300">Cancelled</p>
+            <p className="text-sm font-medium text-red-800 dark:text-red-300">Resolved</p>
             <p className="text-3xl font-bold text-red-900 dark:text-red-100">
-              {invoices.filter(i => i.status === "Cancelled").length}
+              {invoices.filter(i => i.status === "Resolved").length}
             </p>
-            <p className="text-xs text-red-600 dark:text-red-400 mt-1">Voided</p>
+            <p className="text-xs text-red-600 dark:text-red-400 mt-1">Completed</p>
           </div>
         </div>
       </div>

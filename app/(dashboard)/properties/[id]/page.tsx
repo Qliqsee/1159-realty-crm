@@ -34,9 +34,7 @@ const unitCSVSchema = z.object({
   unit: z.string().min(1, "Unit is required"),
   coordinate: z.string().min(1, "Coordinate is required"),
   feature: z.string().optional(),
-  status: z.enum(["AVAILABLE", "SOLD", "RESERVED", "ARCHIVED"], {
-    errorMap: () => ({ message: "Status must be AVAILABLE, SOLD, RESERVED, or ARCHIVED" })
-  }).default("AVAILABLE"),
+  status: z.enum(["AVAILABLE", "SOLD", "RESERVED", "ARCHIVED"]).default("AVAILABLE"),
 })
 
 // Unit columns definition will be created inside the component to access handlers
@@ -169,8 +167,6 @@ export default function PropertyDetailPage() {
         state: data.stateId === "state-1" ? "Lagos" : "Abuja",
         lga: data.lgaId === "lga-1" ? "Ikeja" : "Lekki",
         area: data.areaId === "area-1" ? "Phase 1" : "Phase 2",
-        availablePlots: property.availablePlots,
-        allocatedPlots: property.allocatedPlots,
       })
 
       toast.success("Property updated successfully")
@@ -343,15 +339,13 @@ export default function PropertyDetailPage() {
     Disabled: "bg-gray-500",
   }
 
-  const plotsAvailablePercentage = property.totalPlots > 0
-    ? (property.availablePlots / property.totalPlots) * 100
-    : 0
+  const plotsAvailablePercentage = 0
 
   return (
     <div className="space-y-6">
       <PageHeader
         title={property.name}
-        description={`${property.type} · ${property.subtype} · ${property.area}, ${property.lga}`}
+        description={`${property.type} · ${property.subtype} · ${property.address}`}
         actions={
           <div className="flex gap-3">
             <Button variant="outline" size="sm" onClick={() => router.back()}>
@@ -370,25 +364,25 @@ export default function PropertyDetailPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           title="Total Views"
-          value={property.views.toLocaleString()}
+          value={(property.views || 0).toLocaleString()}
           icon={Eye}
           variant="primary"
         />
         <MetricCard
           title="Interests"
-          value={property.interests.toLocaleString()}
+          value={(property.interests || 0).toLocaleString()}
           icon={Users}
           variant="success"
         />
         <MetricCard
           title="Enrollments"
-          value={property.enrollments.toLocaleString()}
+          value={(property.enrollments || 0).toLocaleString()}
           icon={TrendingUp}
           variant="warning"
         />
         <MetricCard
           title="Sold"
-          value={property.sold.toLocaleString()}
+          value={(property.sold || 0).toLocaleString()}
           icon={DollarSign}
           variant="danger"
         />
@@ -415,7 +409,7 @@ export default function PropertyDetailPage() {
                   <MapPin className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="text-sm text-muted-foreground">Location</p>
-                    <p className="font-medium">{property.area}, {property.lga}</p>
+                    <p className="font-medium">{property.address}</p>
                   </div>
                 </div>
 
@@ -431,7 +425,7 @@ export default function PropertyDetailPage() {
                   <Eye className="h-5 w-5 text-muted-foreground" />
                   <div>
                     <p className="text-sm text-muted-foreground">Total Views</p>
-                    <p className="font-medium">{property.views.toLocaleString()}</p>
+                    <p className="font-medium">{(property.views || 0).toLocaleString()}</p>
                   </div>
                 </div>
               </div>
@@ -455,18 +449,18 @@ export default function PropertyDetailPage() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Regular Price</p>
-                  <p className="text-xl font-bold">₦{property.regularPrice.toLocaleString()}</p>
+                  <p className="text-sm text-muted-foreground">Unit Pricing</p>
+                  <p className="text-xl font-bold">{property.unitPricing?.length || 0} plans</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Discount</p>
                   <p className="text-xl font-bold text-orange-600">
-                    {property.discountPercentage || 0}%
+                    {property.salesDiscount?.percentage || 0}%
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Final Price</p>
-                  <p className="text-xl font-bold text-green-600">₦{property.finalPrice.toLocaleString()}</p>
+                  <p className="text-sm text-muted-foreground">Payment Cycle</p>
+                  <p className="text-xl font-bold text-green-600">{property.paymentCycle} days</p>
                 </div>
               </div>
 
@@ -474,17 +468,17 @@ export default function PropertyDetailPage() {
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Interest Rate</p>
-                  <p className="text-lg font-semibold">{property.interestRate}%</p>
+                  <p className="text-sm text-muted-foreground">Overdue Interest</p>
+                  <p className="text-lg font-semibold">{property.overdueInterestRate}%</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Penalty Rate</p>
-                  <p className="text-lg font-semibold">{property.overduepenaltyRate}%</p>
+                  <p className="text-sm text-muted-foreground">Payment Cycle</p>
+                  <p className="text-lg font-semibold">{property.paymentCycle} days</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Market Price</p>
+                  <p className="text-sm text-muted-foreground">Payment Plans</p>
                   <p className="text-lg font-semibold">
-                    {property.marketPrice ? `₦${property.marketPrice.toLocaleString()}` : "N/A"}
+                    {property.paymentPlans?.length || 0} plans
                   </p>
                 </div>
               </div>
@@ -502,26 +496,26 @@ export default function PropertyDetailPage() {
             <TabsContent value="sizes">
               <Card>
                 <CardHeader>
-                  <CardTitle>Available Plot Sizes</CardTitle>
+                  <CardTitle>Unit Pricing</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {property.availableSizes.length > 0 ? (
+                  {property.unitPricing && property.unitPricing.length > 0 ? (
                     <div className="space-y-3">
-                      {property.availableSizes.map((size) => (
+                      {property.unitPricing.map((pricing, index) => (
                         <div
-                          key={size.id}
+                          key={index}
                           className="flex items-center justify-between p-3 rounded-lg bg-muted/50"
                         >
                           <div>
                             <p className="font-medium">
-                              {size.size} {size.unit}
+                              {pricing.unit}
                             </p>
                             <p className="text-sm text-muted-foreground">
-                              {size.isAvailable ? "Available" : "Not Available"}
+                              Prelaunch: ₦{pricing.prelaunchPrice.toLocaleString()}
                             </p>
                           </div>
                           <p className="text-lg font-bold text-primary">
-                            ₦{size.price.toLocaleString()}
+                            ₦{pricing.regularPrice.toLocaleString()}
                           </p>
                         </div>
                       ))}
@@ -536,23 +530,16 @@ export default function PropertyDetailPage() {
             <TabsContent value="landmarks">
               <Card>
                 <CardHeader>
-                  <CardTitle>Nearby Landmarks</CardTitle>
+                  <CardTitle>Nearby Landmark</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {property.nearbyLandmarks.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {property.nearbyLandmarks.map((landmark, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-2 p-3 rounded-lg bg-muted/50"
-                        >
-                          <MapPin className="h-4 w-4 text-primary" />
-                          <span className="text-sm font-medium">{landmark}</span>
-                        </div>
-                      ))}
+                  {property.nearbyLandmark ? (
+                    <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
+                      <MapPin className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-medium">{property.nearbyLandmark}</span>
                     </div>
                   ) : (
-                    <p className="text-sm text-muted-foreground">No landmarks information available</p>
+                    <p className="text-sm text-muted-foreground">No landmark information available</p>
                   )}
                 </CardContent>
               </Card>
@@ -637,16 +624,16 @@ export default function PropertyDetailPage() {
 
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div>
-                  <p className="text-2xl font-bold">{property.totalPlots}</p>
-                  <p className="text-xs text-muted-foreground">Total</p>
+                  <p className="text-2xl font-bold">{property.views || 0}</p>
+                  <p className="text-xs text-muted-foreground">Views</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-green-600">{property.availablePlots}</p>
-                  <p className="text-xs text-muted-foreground">Available</p>
+                  <p className="text-2xl font-bold text-green-600">{property.interests || 0}</p>
+                  <p className="text-xs text-muted-foreground">Interests</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-orange-600">{property.allocatedPlots}</p>
-                  <p className="text-xs text-muted-foreground">Allocated</p>
+                  <p className="text-2xl font-bold text-orange-600">{property.enrollments || 0}</p>
+                  <p className="text-xs text-muted-foreground">Enrollments</p>
                 </div>
               </div>
             </CardContent>

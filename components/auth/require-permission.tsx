@@ -62,7 +62,7 @@ export function RequirePermission({
     return fallback ? (
       <>{fallback}</>
     ) : (
-      <LoadingSkeleton variant="page" count={1} />
+      <LoadingSkeleton variant="card" count={1} />
     )
   }
 

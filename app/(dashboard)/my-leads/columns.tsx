@@ -133,7 +133,7 @@ function ActionsCell({ lead, onEdit, onDelete, onRefresh }: { lead: Lead } & Col
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete the lead "{lead.fullName}". This action cannot be
+              This will permanently delete the lead &quot;{lead.fullName}&quot;. This action cannot be
               undone.
             </AlertDialogDescription>
           </AlertDialogHeader>

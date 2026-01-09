@@ -26,7 +26,7 @@ const formatCurrency = (amount: number) => {
 
 export const columns: ColumnDef<Commission>[] = [
   {
-    accessorKey: "commissionNumber",
+    accessorKey: "id",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Commission" />
     ),
@@ -34,16 +34,16 @@ export const columns: ColumnDef<Commission>[] = [
       const commission = row.original
       return (
         <div className="flex flex-col min-w-[180px]">
-          <span className="font-medium">{commission.commissionNumber}</span>
+          <span className="font-medium">{commission.id}</span>
           <div className="flex items-center gap-2 mt-1">
             <span className={`text-xs px-2 py-0.5 rounded-full ${
-              commission.type === "Agent"
+              commission.recipientType === "Agent"
                 ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
                 : "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300"
             }`}>
-              {commission.type}
+              {commission.recipientType}
             </span>
-            <span className="text-xs text-muted-foreground">{commission.commissionRate}%</span>
+            <span className="text-xs text-muted-foreground">{commission.commissionPercentage}%</span>
           </div>
         </div>
       )
@@ -76,13 +76,13 @@ export const columns: ColumnDef<Commission>[] = [
     },
   },
   {
-    accessorKey: "salesAmount",
+    accessorKey: "saleAmount",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Sales Value" />
     ),
     cell: ({ row }) => {
       return (
-        <span className="text-sm font-medium">{formatCurrency(row.getValue("salesAmount"))}</span>
+        <span className="text-sm font-medium">{formatCurrency(row.getValue("saleAmount"))}</span>
       )
     },
   },
@@ -99,17 +99,12 @@ export const columns: ColumnDef<Commission>[] = [
             <DollarSign className="h-3.5 w-3.5 text-primary" />
             <span className="font-semibold text-sm">{formatCurrency(commission.commissionAmount)}</span>
           </div>
-          {commission.taxAmount > 0 && (
-            <span className="text-xs text-muted-foreground">
-              Tax: {formatCurrency(commission.taxAmount)}
-            </span>
-          )}
         </div>
       )
     },
   },
   {
-    accessorKey: "finalAmount",
+    accessorKey: "commissionAmount",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Net Amount" />
     ),
@@ -117,12 +112,7 @@ export const columns: ColumnDef<Commission>[] = [
       const commission = row.original
       return (
         <div className="flex flex-col">
-          <span className="font-bold text-sm text-primary">{formatCurrency(commission.finalAmount)}</span>
-          {commission.deductions > 0 && (
-            <span className="text-xs text-red-600 dark:text-red-400">
-              -{formatCurrency(commission.deductions)} deducted
-            </span>
-          )}
+          <span className="font-bold text-sm text-primary">{formatCurrency(commission.commissionAmount)}</span>
         </div>
       )
     },
@@ -139,16 +129,16 @@ export const columns: ColumnDef<Commission>[] = [
     },
   },
   {
-    accessorKey: "saleDate",
+    accessorKey: "earnedDate",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Sale Date" />
+      <DataTableColumnHeader column={column} title="Earned Date" />
     ),
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-1.5">
           <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
           <span className="text-sm">
-            {format(new Date(row.getValue("saleDate")), "MMM dd, yyyy")}
+            {format(new Date(row.getValue("earnedDate")), "MMM dd, yyyy")}
           </span>
         </div>
       )
@@ -180,19 +170,10 @@ export const columns: ColumnDef<Commission>[] = [
             <DropdownMenuSeparator />
             {commission.status === "Pending" && (
               <>
-                <DropdownMenuItem>Approve commission</DropdownMenuItem>
+                <DropdownMenuItem>Mark as paid</DropdownMenuItem>
                 <DropdownMenuItem>Edit commission</DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive">Reject commission</DropdownMenuItem>
+                <DropdownMenuItem className="text-destructive">Cancel commission</DropdownMenuItem>
               </>
-            )}
-            {commission.status === "Approved" && (
-              <>
-                <DropdownMenuItem>Process payment</DropdownMenuItem>
-                <DropdownMenuItem>Put on hold</DropdownMenuItem>
-              </>
-            )}
-            {commission.status === "On Hold" && (
-              <DropdownMenuItem>Release hold</DropdownMenuItem>
             )}
             {commission.status === "Paid" && (
               <DropdownMenuItem>View payment receipt</DropdownMenuItem>

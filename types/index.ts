@@ -4,7 +4,7 @@ export * from "./user";
 // Core Modules
 export * from "./lead";
 export * from "./property";
-export * from "./plot";
+export * from "./unit";
 export * from "./client";
 export * from "./enrollment";
 export * from "./invoice";

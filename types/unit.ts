@@ -1,30 +1,30 @@
-export type PlotStatus = "AVAILABLE" | "SOLD" | "RESERVED" | "ARCHIVED"
+export type UnitStatus = "AVAILABLE" | "SOLD" | "RESERVED" | "ARCHIVED"
 
-export interface Plot {
+export interface Unit {
   id: string
   propertyId: string
-  plotId: string // e.g., "A-101", "B-202"
+  unitId: string // e.g., "A-101", "B-202"
   unit: string // e.g., "500 sqm", "1000 sqm"
   coordinate: string // e.g., "6.5244, 3.3792"
   feature?: string // e.g., "Roadside", "River view", "Gym nearby"
-  status: PlotStatus
+  status: UnitStatus
   createdAt: Date
   updatedAt: Date
 }
 
-export interface CreatePlotInput {
+export interface CreateUnitInput {
   propertyId: string
-  plotId: string
+  unitId: string
   unit: string
   coordinate: string
   feature?: string
-  status?: PlotStatus
+  status?: UnitStatus
 }
 
-export interface UpdatePlotInput {
-  plotId?: string
+export interface UpdateUnitInput {
+  unitId?: string
   unit?: string
   coordinate?: string
   feature?: string
-  status?: PlotStatus
+  status?: UnitStatus
 }

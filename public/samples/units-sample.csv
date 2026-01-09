@@ -1,4 +1,4 @@
-plotId,unit,coordinate,feature,status
+unitId,unit,coordinate,feature,status
 A-101,500 sqm,6.5244 3.3792,Roadside,AVAILABLE
 A-102,500 sqm,6.5245 3.3793,Corner plot,AVAILABLE
 A-103,500 sqm,6.5246 3.3794,,AVAILABLE

@@ -15,22 +15,22 @@ import { MetricCard } from "@/components/cards/metric-card"
 import { DataTable } from "@/components/data/data-table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/overlays/dropdown-menu"
 import { PropertyForm } from "@/components/forms/entities/property-form"
-import { PlotForm } from "@/components/forms/entities/plot-form"
+import { UnitForm } from "@/components/forms/entities/unit-form"
 import { CSVImportTable } from "@/components/data/csv-import-table"
 import { getProperty, updateProperty } from "@/lib/api/properties"
-import { getPlots, updatePlot, deletePlot, createPlot, bulkCreatePlots } from "@/lib/api/plots"
+import { getUnits, updateUnit, deleteUnit, createUnit, bulkCreateUnits } from "@/lib/api/units"
 import * as z from "zod"
 import { format } from "date-fns"
 import { useEffect, useState } from "react"
-import type { Property, Plot } from "@/types"
+import type { Property, Unit } from "@/types"
 import type { ColumnDef } from "@tanstack/react-table"
 import { toast } from "sonner"
 import { StatusBadge } from "@/components/badges/status-badge"
 import { DataTableColumnHeader } from "@/components/data/data-table-column-header"
 
-// Plot CSV schema for validation
-const plotCSVSchema = z.object({
-  plotId: z.string().min(1, "Plot ID is required"),
+// Unit CSV schema for validation
+const unitCSVSchema = z.object({
+  unitId: z.string().min(1, "Unit ID is required"),
   unit: z.string().min(1, "Unit is required"),
   coordinate: z.string().min(1, "Coordinate is required"),
   feature: z.string().optional(),
@@ -39,15 +39,15 @@ const plotCSVSchema = z.object({
   }).default("AVAILABLE"),
 })
 
-// Plot columns definition will be created inside the component to access handlers
-const createPlotColumns = (
-  onEdit: (plot: Plot) => void,
-  onDelete: (plot: Plot) => void
-): ColumnDef<Plot>[] => [
+// Unit columns definition will be created inside the component to access handlers
+const createUnitColumns = (
+  onEdit: (unit: Unit) => void,
+  onDelete: (unit: Unit) => void
+): ColumnDef<Unit>[] => [
   {
-    accessorKey: "plotId",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Plot ID" />,
-    cell: ({ row }) => <span className="font-medium">{row.getValue("plotId")}</span>,
+    accessorKey: "unitId",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Unit ID" />,
+    cell: ({ row }) => <span className="font-medium">{row.getValue("unitId")}</span>,
   },
   {
     accessorKey: "unit",
@@ -70,7 +70,7 @@ const createPlotColumns = (
   {
     id: "actions",
     cell: ({ row }) => {
-      const plot = row.original
+      const unit = row.original
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -81,14 +81,14 @@ const createPlotColumns = (
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => onEdit(plot)}>
+            <DropdownMenuItem onClick={() => onEdit(unit)}>
               <Edit className="h-4 w-4 mr-2" />
-              Edit Plot
+              Edit Unit
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive" onClick={() => onDelete(plot)}>
+            <DropdownMenuItem className="text-destructive" onClick={() => onDelete(unit)}>
               <Trash2 className="h-4 w-4 mr-2" />
-              Delete Plot
+              Delete Unit
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -102,26 +102,26 @@ export default function PropertyDetailPage() {
   const router = useRouter()
   const propertyId = params.id as string
   const [property, setProperty] = useState<Property | null>(null)
-  const [plots, setPlots] = useState<Plot[]>([])
+  const [units, setUnits] = useState<Unit[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [isLoadingPlots, setIsLoadingPlots] = useState(false)
+  const [isLoadingUnits, setIsLoadingUnits] = useState(false)
   const [showEditDialog, setShowEditDialog] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
-  // Plot dialogs state
-  const [showAddPlotDialog, setShowAddPlotDialog] = useState(false)
-  const [showEditPlotDialog, setShowEditPlotDialog] = useState(false)
-  const [showDeletePlotDialog, setShowDeletePlotDialog] = useState(false)
+  // Unit dialogs state
+  const [showAddUnitDialog, setShowAddUnitDialog] = useState(false)
+  const [showEditUnitDialog, setShowEditUnitDialog] = useState(false)
+  const [showDeleteUnitDialog, setShowDeleteUnitDialog] = useState(false)
   const [showImportCSVDialog, setShowImportCSVDialog] = useState(false)
-  const [selectedPlot, setSelectedPlot] = useState<Plot | null>(null)
-  const [isSavingPlot, setIsSavingPlot] = useState(false)
+  const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null)
+  const [isSavingUnit, setIsSavingUnit] = useState(false)
   const [csvData, setCSVData] = useState<string[][]>([])
   const [isImporting, setIsImporting] = useState(false)
   const csvFileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     loadProperty()
-    loadPlots()
+    loadUnits()
   }, [propertyId])
 
   const loadProperty = async () => {
@@ -142,15 +142,15 @@ export default function PropertyDetailPage() {
     }
   }
 
-  const loadPlots = async () => {
+  const loadUnits = async () => {
     try {
-      setIsLoadingPlots(true)
-      const data = await getPlots(propertyId)
-      setPlots(data)
+      setIsLoadingUnits(true)
+      const data = await getUnits(propertyId)
+      setUnits(data)
     } catch (error) {
-      console.error("Failed to load plots:", error)
+      console.error("Failed to load units:", error)
     } finally {
-      setIsLoadingPlots(false)
+      setIsLoadingUnits(false)
     }
   }
 
@@ -184,76 +184,76 @@ export default function PropertyDetailPage() {
     }
   }
 
-  // Plot handlers
-  const handleAddPlot = async (data: any) => {
+  // Unit handlers
+  const handleAddUnit = async (data: any) => {
     try {
-      setIsSavingPlot(true)
-      await createPlot({
+      setIsSavingUnit(true)
+      await createUnit({
         propertyId,
-        plotId: data.plotId,
+        unitId: data.unitId,
         unit: data.unit,
         coordinate: data.coordinate,
         feature: data.feature,
         status: data.status,
       })
-      toast.success("Plot added successfully")
-      setShowAddPlotDialog(false)
-      loadPlots()
+      toast.success("Unit added successfully")
+      setShowAddUnitDialog(false)
+      loadUnits()
     } catch (error) {
-      toast.error("Failed to add plot")
+      toast.error("Failed to add unit")
       console.error(error)
     } finally {
-      setIsSavingPlot(false)
+      setIsSavingUnit(false)
     }
   }
 
-  const handleEditPlot = async (data: any) => {
-    if (!selectedPlot) return
+  const handleEditUnit = async (data: any) => {
+    if (!selectedUnit) return
 
     try {
-      setIsSavingPlot(true)
-      await updatePlot(selectedPlot.id, {
-        plotId: data.plotId,
+      setIsSavingUnit(true)
+      await updateUnit(selectedUnit.id, {
+        unitId: data.unitId,
         unit: data.unit,
         coordinate: data.coordinate,
         feature: data.feature,
         status: data.status,
       })
-      toast.success("Plot updated successfully")
-      setShowEditPlotDialog(false)
-      setSelectedPlot(null)
-      loadPlots()
+      toast.success("Unit updated successfully")
+      setShowEditUnitDialog(false)
+      setSelectedUnit(null)
+      loadUnits()
     } catch (error) {
-      toast.error("Failed to update plot")
+      toast.error("Failed to update unit")
       console.error(error)
     } finally {
-      setIsSavingPlot(false)
+      setIsSavingUnit(false)
     }
   }
 
-  const handleDeletePlot = async () => {
-    if (!selectedPlot) return
+  const handleDeleteUnit = async () => {
+    if (!selectedUnit) return
 
     try {
-      await deletePlot(selectedPlot.id)
-      toast.success("Plot deleted successfully")
-      setShowDeletePlotDialog(false)
-      setSelectedPlot(null)
-      loadPlots()
+      await deleteUnit(selectedUnit.id)
+      toast.success("Unit deleted successfully")
+      setShowDeleteUnitDialog(false)
+      setSelectedUnit(null)
+      loadUnits()
     } catch (error) {
-      toast.error("Failed to delete plot")
+      toast.error("Failed to delete unit")
       console.error(error)
     }
   }
 
-  const openEditPlotDialog = (plot: Plot) => {
-    setSelectedPlot(plot)
-    setShowEditPlotDialog(true)
+  const openEditUnitDialog = (unit: Unit) => {
+    setSelectedUnit(unit)
+    setShowEditUnitDialog(true)
   }
 
-  const openDeletePlotDialog = (plot: Plot) => {
-    setSelectedPlot(plot)
-    setShowDeletePlotDialog(true)
+  const openDeleteUnitDialog = (unit: Unit) => {
+    setSelectedUnit(unit)
+    setShowDeleteUnitDialog(true)
   }
 
   const handleCSVFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -295,31 +295,31 @@ export default function PropertyDetailPage() {
     }
   }
 
-  const handleBulkImportPlots = async (validatedData: z.infer<typeof plotCSVSchema>[]) => {
+  const handleBulkImportUnits = async (validatedData: z.infer<typeof unitCSVSchema>[]) => {
     try {
       setIsImporting(true)
-      await bulkCreatePlots(validatedData.map(data => ({
+      await bulkCreateUnits(validatedData.map(data => ({
         propertyId,
-        plotId: data.plotId,
+        unitId: data.unitId,
         unit: data.unit,
         coordinate: data.coordinate,
         feature: data.feature,
         status: data.status,
       })))
-      toast.success(`Successfully imported ${validatedData.length} plots`)
+      toast.success(`Successfully imported ${validatedData.length} units`)
       setShowImportCSVDialog(false)
       setCSVData([])
-      loadPlots()
+      loadUnits()
     } catch (error) {
-      toast.error("Failed to import plots")
+      toast.error("Failed to import units")
       console.error(error)
     } finally {
       setIsImporting(false)
     }
   }
 
-  // Create plot columns with handlers
-  const plotColumns = createPlotColumns(openEditPlotDialog, openDeletePlotDialog)
+  // Create unit columns with handlers
+  const unitColumns = createUnitColumns(openEditUnitDialog, openDeleteUnitDialog)
 
   if (isLoading) {
     return (
@@ -614,10 +614,10 @@ export default function PropertyDetailPage() {
             </CardContent>
           </Card>
 
-          {/* Plot Information Card */}
+          {/* Unit Information Card */}
           <Card>
             <CardHeader>
-              <CardTitle>Plot Information</CardTitle>
+              <CardTitle>Unit Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -690,27 +690,27 @@ export default function PropertyDetailPage() {
         </div>
       </div>
 
-      {/* Plots List Section */}
+      {/* Units List Section */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Property Plots</CardTitle>
+              <CardTitle>Property Units</CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
-                Manage individual plots for this property
+                Manage individual units for this property
               </p>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button size="sm">
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Plots
+                  Add Units
                   <ChevronDown className="h-4 w-4 ml-2" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Add Plots</DropdownMenuLabel>
-                <DropdownMenuItem onClick={() => setShowAddPlotDialog(true)}>
+                <DropdownMenuLabel>Add Units</DropdownMenuLabel>
+                <DropdownMenuItem onClick={() => setShowAddUnitDialog(true)}>
                   <Plus className="h-4 w-4 mr-2" />
                   Add One by One
                 </DropdownMenuItem>
@@ -731,24 +731,24 @@ export default function PropertyDetailPage() {
           </div>
         </CardHeader>
         <CardContent>
-          {plots.length === 0 ? (
+          {units.length === 0 ? (
             <div className="text-center py-12">
               <MapPin className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium mb-2">No plots yet</h3>
+              <h3 className="text-lg font-medium mb-2">No units yet</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Add plots to this property to start tracking inventory
+                Add units to this property to start tracking inventory
               </p>
-              <Button onClick={() => setShowAddPlotDialog(true)}>
+              <Button onClick={() => setShowAddUnitDialog(true)}>
                 <Plus className="h-4 w-4 mr-2" />
-                Add Your First Plot
+                Add Your First Unit
               </Button>
             </div>
           ) : (
             <DataTable
-              columns={plotColumns}
-              data={plots}
-              searchKey="plotId"
-              searchPlaceholder="Search plots by ID..."
+              columns={unitColumns}
+              data={units}
+              searchKey="unitId"
+              searchPlaceholder="Search units by Unit ID..."
             />
           )}
         </CardContent>
@@ -769,83 +769,83 @@ export default function PropertyDetailPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Add Plot Dialog */}
-      <Dialog open={showAddPlotDialog} onOpenChange={setShowAddPlotDialog}>
+      {/* Add Unit Dialog */}
+      <Dialog open={showAddUnitDialog} onOpenChange={setShowAddUnitDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Add New Plot</DialogTitle>
+            <DialogTitle>Add New Unit</DialogTitle>
             <DialogDescription>
-              Add a new plot to this property
+              Add a new unit to this property
             </DialogDescription>
           </DialogHeader>
-          <PlotForm
-            onSubmit={handleAddPlot}
-            onCancel={() => setShowAddPlotDialog(false)}
-            isLoading={isSavingPlot}
+          <UnitForm
+            onSubmit={handleAddUnit}
+            onCancel={() => setShowAddUnitDialog(false)}
+            isLoading={isSavingUnit}
           />
         </DialogContent>
       </Dialog>
 
-      {/* Edit Plot Dialog */}
-      <Dialog open={showEditPlotDialog} onOpenChange={setShowEditPlotDialog}>
+      {/* Edit Unit Dialog */}
+      <Dialog open={showEditUnitDialog} onOpenChange={setShowEditUnitDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Edit Plot</DialogTitle>
+            <DialogTitle>Edit Unit</DialogTitle>
             <DialogDescription>
-              Update plot information
+              Update unit information
             </DialogDescription>
           </DialogHeader>
-          <PlotForm
-            initialData={selectedPlot || undefined}
-            onSubmit={handleEditPlot}
+          <UnitForm
+            initialData={selectedUnit || undefined}
+            onSubmit={handleEditUnit}
             onCancel={() => {
-              setShowEditPlotDialog(false)
-              setSelectedPlot(null)
+              setShowEditUnitDialog(false)
+              setSelectedUnit(null)
             }}
-            isLoading={isSavingPlot}
+            isLoading={isSavingUnit}
           />
         </DialogContent>
       </Dialog>
 
-      {/* Delete Plot Dialog */}
-      <AlertDialog open={showDeletePlotDialog} onOpenChange={setShowDeletePlotDialog}>
+      {/* Delete Unit Dialog */}
+      <AlertDialog open={showDeleteUnitDialog} onOpenChange={setShowDeleteUnitDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Plot</AlertDialogTitle>
+            <AlertDialogTitle>Delete Unit</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete plot <strong>{selectedPlot?.plotId}</strong>? This action cannot be undone.
+              Are you sure you want to delete unit <strong>{selectedUnit?.unitId}</strong>? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setSelectedPlot(null)}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeletePlot} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogCancel onClick={() => setSelectedUnit(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteUnit} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Import Plots from CSV Dialog */}
+      {/* Import Units from CSV Dialog */}
       <Dialog open={showImportCSVDialog} onOpenChange={setShowImportCSVDialog}>
         <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Import Plots from CSV</DialogTitle>
+            <DialogTitle>Import Units from CSV</DialogTitle>
             <DialogDescription>
-              Map CSV columns to plot fields and review data before importing
+              Map CSV columns to unit fields and review data before importing
             </DialogDescription>
           </DialogHeader>
           {csvData.length > 0 ? (
             <CSVImportTable
               csvData={csvData}
-              schema={plotCSVSchema}
+              schema={unitCSVSchema}
               fieldMappings={[
-                { targetField: "plotId", label: "Plot ID", required: true },
+                { targetField: "unitId", label: "Unit ID", required: true },
                 { targetField: "unit", label: "Unit", required: true },
                 { targetField: "coordinate", label: "Coordinate", required: true },
                 { targetField: "feature", label: "Feature" },
                 { targetField: "status", label: "Status" },
               ]}
-              onSubmit={handleBulkImportPlots}
+              onSubmit={handleBulkImportUnits}
               onCancel={() => {
                 setShowImportCSVDialog(false)
                 setCSVData([])

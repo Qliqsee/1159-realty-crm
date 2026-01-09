@@ -7,30 +7,30 @@ import { Button } from "@/components/buttons/button"
 import { Input } from "@/components/inputs/input"
 import { Label } from "@/components/layout/label"
 import { Select } from "@/components/inputs/select"
-import type { Plot, PlotStatus } from "@/types"
+import type { Unit, UnitStatus } from "@/types"
 
-const plotSchema = z.object({
-  plotId: z.string().min(1, "Plot ID is required"),
+const unitSchema = z.object({
+  unitId: z.string().min(1, "Unit ID is required"),
   unit: z.string().min(1, "Unit is required"),
   coordinate: z.string().min(1, "Coordinate is required"),
   feature: z.string().optional(),
   status: z.enum(["AVAILABLE", "SOLD", "RESERVED", "ARCHIVED"]),
 })
 
-type PlotFormData = z.infer<typeof plotSchema>
+type UnitFormData = z.infer<typeof unitSchema>
 
-interface PlotFormProps {
-  initialData?: Partial<Plot>
-  onSubmit: (data: PlotFormData) => void | Promise<void>
+interface UnitFormProps {
+  initialData?: Partial<Unit>
+  onSubmit: (data: UnitFormData) => void | Promise<void>
   onCancel?: () => void
   isLoading?: boolean
 }
 
-export function PlotForm({ initialData, onSubmit, onCancel, isLoading }: PlotFormProps) {
-  const form = useForm<PlotFormData>({
-    resolver: zodResolver(plotSchema),
+export function UnitForm({ initialData, onSubmit, onCancel, isLoading }: UnitFormProps) {
+  const form = useForm<UnitFormData>({
+    resolver: zodResolver(unitSchema),
     defaultValues: {
-      plotId: initialData?.plotId || "",
+      unitId: initialData?.unitId || "",
       unit: initialData?.unit || "",
       coordinate: initialData?.coordinate || "",
       feature: initialData?.feature || "",
@@ -41,14 +41,14 @@ export function PlotForm({ initialData, onSubmit, onCancel, isLoading }: PlotFor
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="plotId">Plot ID *</Label>
+        <Label htmlFor="unitId">Unit ID *</Label>
         <Input
-          id="plotId"
-          {...form.register("plotId")}
+          id="unitId"
+          {...form.register("unitId")}
           placeholder="e.g., A-101, B-202"
         />
-        {form.formState.errors.plotId && (
-          <p className="text-sm text-destructive">{form.formState.errors.plotId.message}</p>
+        {form.formState.errors.unitId && (
+          <p className="text-sm text-destructive">{form.formState.errors.unitId.message}</p>
         )}
       </div>
 
@@ -93,7 +93,7 @@ export function PlotForm({ initialData, onSubmit, onCancel, isLoading }: PlotFor
         <Select
           id="status"
           value={form.watch("status")}
-          onValueChange={(value) => form.setValue("status", value as PlotStatus)}
+          onValueChange={(value) => form.setValue("status", value as UnitStatus)}
           options={[
             { value: "AVAILABLE", label: "Available" },
             { value: "SOLD", label: "Sold" },
@@ -110,7 +110,7 @@ export function PlotForm({ initialData, onSubmit, onCancel, isLoading }: PlotFor
           </Button>
         )}
         <Button type="submit" disabled={isLoading}>
-          {isLoading ? "Saving..." : initialData ? "Update Plot" : "Add Plot"}
+          {isLoading ? "Saving..." : initialData ? "Update Unit" : "Add Unit"}
         </Button>
       </div>
     </form>

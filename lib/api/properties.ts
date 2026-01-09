@@ -1,5 +1,5 @@
 import type { Property, PropertyType, PropertyStatus, PropertySize } from "@/types"
-import { initializeMockPlots } from "@/lib/data/plots"
+import { initializeMockUnits } from "@/lib/data/units"
 
 // Mock data generator for properties
 export const generateMockProperties = (count: number = 30): Property[] => {
@@ -98,8 +98,8 @@ export const generateMockProperties = (count: number = 30): Property[] => {
 
 export const mockProperties = generateMockProperties(30)
 
-// Initialize plots data for properties
-initializeMockPlots(mockProperties)
+// Initialize units data for properties
+initializeMockUnits(mockProperties)
 
 // Mock API functions
 export const getProperties = async (): Promise<Property[]> => {

@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/buttons/button"
-import { Plus, Filter as FilterIcon, X } from "lucide-react"
+import { Plus, Filter as FilterIcon, X, Users, UserCheck, ThumbsUp, CheckCircle } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/dialogs/dialog"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/dialogs/sheet"
 import { Badge } from "@/components/badges/badge"
 import { Checkbox } from "@/components/inputs/checkbox"
 import { DataTable } from "@/components/data/data-table"
 import { LeadForm } from "@/components/forms/entities/lead-form"
+import { MetricCard } from "@/components/cards/metric-card"
 import { getLeads, createLead, updateLead, deleteLead } from "@/lib/api/leads"
 import type { Lead, LeadStatus, LeadSource } from "@/types"
 import { toast } from "sonner"
@@ -220,28 +221,26 @@ export default function MyLeadsPage() {
 
       {/* Stats Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-lg bg-card p-4 shadow-soft">
-          <p className="text-sm font-medium text-muted-foreground">Total Leads</p>
-          <p className="text-2xl font-bold">{leads.length}</p>
-        </div>
-        <div className="rounded-lg bg-card p-4 shadow-soft">
-          <p className="text-sm font-medium text-muted-foreground">New Leads</p>
-          <p className="text-2xl font-bold">
-            {leads.filter((l) => l.status === "New").length}
-          </p>
-        </div>
-        <div className="rounded-lg bg-card p-4 shadow-soft">
-          <p className="text-sm font-medium text-muted-foreground">Qualified</p>
-          <p className="text-2xl font-bold">
-            {leads.filter((l) => l.status === "Qualified").length}
-          </p>
-        </div>
-        <div className="rounded-lg bg-card p-4 shadow-soft">
-          <p className="text-sm font-medium text-muted-foreground">Converted</p>
-          <p className="text-2xl font-bold">
-            {leads.filter((l) => l.status === "Converted").length}
-          </p>
-        </div>
+        <MetricCard
+          title="Total Leads"
+          value={leads.length.toString()}
+          icon={Users}
+        />
+        <MetricCard
+          title="New Leads"
+          value={leads.filter((l) => l.status === "New").length.toString()}
+          icon={UserCheck}
+        />
+        <MetricCard
+          title="Qualified"
+          value={leads.filter((l) => l.status === "Qualified").length.toString()}
+          icon={ThumbsUp}
+        />
+        <MetricCard
+          title="Converted"
+          value={leads.filter((l) => l.status === "Converted").length.toString()}
+          icon={CheckCircle}
+        />
       </div>
 
       {/* Data Table */}
